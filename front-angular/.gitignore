@@ -1,0 +1,30 @@
+# Ignorar node_modules
+node_modules/
+
+# Ignorar builds
+dist/
+out-tsc/
+tmp/
+
+# Ignorar arquivos IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignorar cache
+.angular/
+.cache/
+
+# Ignorar logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignorar coverage
+coverage/
+
+# Ignorar arquivos de sistema
+.DS_Store
+Thumbs.db

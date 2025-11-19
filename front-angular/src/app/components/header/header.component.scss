@@ -1,0 +1,56 @@
+// Estilos específicos do header
+// Os estilos globais estão em styles.scss
+.header_section {
+    padding-top: 10px;
+}
+
+nav.navbar.navbar-expand-lg {
+
+    padding: 10px 0;
+}
+
+.custom_nav-container.navbar-expand-lg .navbar-nav .nav-link {
+    padding: 10px 20px;
+    color: #2d2c2c;
+    font-size: 15px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.custom_nav-container.navbar-expand-lg .navbar-nav .nav-item.active .nav-link {
+    color: #232323;
+}
+
+a,
+a:hover,
+a:focus {
+    text-decoration: none;
+}
+
+a:hover,
+a:focus {
+    color: initial;
+}
+
+.btn,
+.btn:focus {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.top_container {
+    height: 95vh;
+    position: relative;
+}
+
+.top_container::before {
+    content: "";
+    position: absolute;
+    width: 48%;
+    height: 100%;
+    background: url(/assets/images/hero-bg.png);
+    background-size: cover;
+    background-position: right bottom;
+    background-repeat: no-repeat;
+    z-index: -1;
+}

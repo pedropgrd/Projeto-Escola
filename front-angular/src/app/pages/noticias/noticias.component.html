@@ -1,0 +1,34 @@
+<app-header></app-header>
+
+<div class="top_container sub_pages">
+    <section class="hero_section">
+        <div class="hero-container container">
+            <div class="hero_detail-box">
+                <h1>Notícias</h1>
+                <p>Fique por dentro de tudo que acontece na escola</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="noticias_section layout_padding">
+    <div class="container">
+        <h2 class="main-heading">
+            Últimas Notícias
+        </h2>
+
+        <div class="noticias-container">
+            <div class="row">
+                <div class="col-md-12" *ngFor="let noticia of noticias">
+                    <div class="noticia-card">
+                        <h3>{{ noticia.titulo }}</h3>
+                        <p class="data">{{ noticia.data }}</p>
+                        <p>{{ noticia.conteudo }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

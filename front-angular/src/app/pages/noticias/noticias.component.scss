@@ -1,0 +1,26 @@
+.noticias-container {
+    margin-top: 40px;
+}
+
+.noticia-card {
+    background: white;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+    h3 {
+        color: #082465;
+        margin-bottom: 10px;
+    }
+
+    .data {
+        color: #999;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    p {
+        line-height: 1.6;
+    }
+}
