@@ -21,7 +21,7 @@ if command -v psql &> /dev/null; then
         echo ""
         echo "📝 OPÇÕES:"
         echo "1. Se você tem Docker instalado:"
-        echo "   docker run --name ceta_trajano_postgres -e POSTGRES_USER=trajano_user -e POSTGRES_PASSWORD=trajano_pass2025 -e POSTGRES_DB=CETA_TRAJANO_ALM -p 5432:5432 -d postgres:16-alpine"
+        echo "   docker run --name ceta_trajano_postgres -e POSTGRES_USER=user -e POSTGRES_PASSWORD=xxxxx -e POSTGRES_DB=CETA_TRAJANO_ALM -p 5432:5432 -d postgres:16-alpine"
         echo ""
         echo "2. Se você tem PostgreSQL instalado localmente:"
         echo "   createdb CETA_TRAJANO_ALM"
