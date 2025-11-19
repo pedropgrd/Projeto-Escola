@@ -65,13 +65,10 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ authService.user()?.nomeCompleto }}
                             </a>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" (click)="goToProfile()">Meu Perfil</a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><a class="dropdown-item text-danger" (click)="logout()">Sair</a></li>
-                            </ul>
+                            <button style="border-radius: 10px; background-color: rgb(201, 70, 70); color:white"  class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" (click)="logout()">
+                                Sair
+                            </button>
+                            
                         </li>
                         } @else {
                         <!-- Menu para usuário não autenticado -->
@@ -82,9 +79,7 @@
                         </li>
                         }
                     </ul>
-                    <form class="form-inline my-2 my-lg-0 ml-0 ml-lg-4 mb-3 mb-lg-0">
-                        <button class="btn my-2 my-sm-0 nav_search-btn" type="submit"></button>
-                    </form>
+                  
                 </div>
             </div>
         </nav>
