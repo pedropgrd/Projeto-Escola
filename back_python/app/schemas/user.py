@@ -1,11 +1,13 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, ConfigDict
 from app.models.user import UserRole
 
 
 class UserBase(BaseModel):
     """Schema base para usuário"""
+    model_config = ConfigDict(use_enum_values=False)
+    
     email: EmailStr
     nome_completo: str = Field(min_length=3, max_length=100)
     perfil: UserRole = UserRole.ALUNO
@@ -13,6 +15,18 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     """Schema para criação de usuário (Sign-up) - Apenas ADMIN pode criar"""
+    model_config = ConfigDict(
+        use_enum_values=False,
+        json_schema_extra={
+            "example": {
+                "email": "aluno@escola.com",
+                "nome_completo": "João Silva",
+                "perfil": "ALUNO",
+                "senha": "senha123"
+            }
+        }
+    )
+    
     senha: str = Field(min_length=6, max_length=72)
     
     @field_validator('senha')
@@ -28,16 +42,6 @@ class UserCreate(UserBase):
         if not any(char.isalpha() for char in v):
             raise ValueError('Senha deve conter pelo menos uma letra')
         return v
-    
-    class Config:
-        json_schema_extra = {
-            "example": {
-                "email": "aluno@escola.com",
-                "nome_completo": "João Silva",
-                "perfil": "ALUNO",
-                "senha": "senha123"
-            }
-        }
 
 
 class UserUpdate(BaseModel):
@@ -50,14 +54,10 @@ class UserUpdate(BaseModel):
 
 class UserResponse(UserBase):
     """Schema de resposta de usuário (sem dados sensíveis)"""
-    id: int
-    ativo: bool
-    criado_em: datetime
-    atualizado_em: Optional[datetime] = None
-    
-    class Config:
-        from_attributes = True
-        json_schema_extra = {
+    model_config = ConfigDict(
+        use_enum_values=False,
+        from_attributes=True,
+        json_schema_extra={
             "example": {
                 "id": 1,
                 "email": "aluno@escola.com",
@@ -68,6 +68,12 @@ class UserResponse(UserBase):
                 "atualizado_em": None
             }
         }
+    )
+    
+    id: int
+    ativo: bool
+    criado_em: datetime
+    atualizado_em: Optional[datetime] = None
 
 
 class UserInDB(UserResponse):

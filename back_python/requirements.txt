@@ -2,7 +2,7 @@ annotated-types==0.7.0
 anyio==4.11.0
 async-timeout==5.0.1
 asyncpg==0.29.0
-bcrypt==4.1.2
+bcrypt==5.0.0
 cffi==2.0.0
 click==8.3.1
 cryptography==46.0.3
@@ -14,7 +14,6 @@ greenlet==3.2.4
 h11==0.16.0
 httptools==0.7.1
 idna==3.11
-passlib==1.7.4
 pyasn1==0.6.1
 pycparser==2.23
 pydantic==2.5.3

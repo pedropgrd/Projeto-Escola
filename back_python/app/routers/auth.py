@@ -79,7 +79,7 @@ async def login(
     
     Valida credenciais e retorna tokens JWT:
     - **access_token**: Token de curta duração (30 min) para acessar recursos
-    - **refresh_token**: Token de longa duração (7 dias) para renovar o access_token
+    - **refresh_token**: Token de longa duração (4 horas) para renovar o access_token
     
     **Segurança:**
     - Verifica se o usuário está ativo (is_active=True)

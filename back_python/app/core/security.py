@@ -1,15 +1,16 @@
 """
 Módulo de Segurança - JWT e Autenticação
 Usando PyJWT para tokens simples e seguros
+Usando bcrypt diretamente para hash de senhas
 """
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Any
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from passlib.context import CryptContext
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 import jwt
+import bcrypt
 
 from app.core.config import settings
 from app.database.session import get_session
@@ -17,9 +18,6 @@ from app.models.user import User
 
 
 # ==================== CONFIGURAÇÕES ====================
-
-# Contexto de hash de senha (bcrypt)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Security scheme para Bearer Token
 security = HTTPBearer(
@@ -32,23 +30,35 @@ security = HTTPBearer(
 
 def get_password_hash(password: str) -> str:
     """
-    Hash de senha usando bcrypt
+    Hash de senha usando bcrypt diretamente
     Limita a 72 bytes para evitar erro do bcrypt
     """
     # Bcrypt tem limite de 72 bytes
-    if len(password.encode('utf-8')) > 72:
-        password = password[:72]
-    return pwd_context.hash(password)
+    password_bytes = password.encode('utf-8')
+    if len(password_bytes) > 72:
+        password_bytes = password_bytes[:72]
+    
+    # Gerar hash com bcrypt
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verifica se a senha corresponde ao hash
+    Verifica se a senha corresponde ao hash usando bcrypt diretamente
     """
-    # Bcrypt tem limite de 72 bytes
-    if len(plain_password.encode('utf-8')) > 72:
-        plain_password = plain_password[:72]
-    return pwd_context.verify(plain_password, hashed_password)
+    try:
+        # Bcrypt tem limite de 72 bytes
+        password_bytes = plain_password.encode('utf-8')
+        if len(password_bytes) > 72:
+            password_bytes = password_bytes[:72]
+        
+        # Verificar hash com bcrypt
+        hashed_bytes = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password_bytes, hashed_bytes)
+    except Exception:
+        return False
 
 
 # ==================== FUNÇÕES JWT ====================
@@ -107,7 +117,8 @@ def create_refresh_token(user_id: int) -> str:
     Cria um refresh token JWT (apenas com ID do usuário)
     """
     now = datetime.now(timezone.utc)
-    expire = now + timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    # Usar horas para expiração do refresh token
+    expire = now + timedelta(hours=settings.REFRESH_TOKEN_EXPIRE_HOURS)
 
     iat = int(now.timestamp())
     exp = int(expire.timestamp())
