@@ -24,13 +24,13 @@ class AlunoCreate(AlunoBase):
     class Config:
         json_schema_extra = {
             "example": {
-                "id_usuario": 2,
-                "nome": "João da Silva Santos",
-                "cpf": "12345678900",
-                "data_nascimento": "2010-05-15",
-                "endereco": "Rua das Flores, 123",
-                "telefone": "(11) 98765-4321",
-                "nome_responsavel": "Maria da Silva"
+            "cpf": "12345678900",
+            "data_nascimento": "2010-05-15",
+            "endereco": "Rua das Flores, 123",
+            "id_usuario": 14,
+            "matricula": "2025001",
+            "nome": "João Pedro Santos",
+            "telefone": "11987654321"
             }
         }
 
@@ -42,7 +42,6 @@ class AlunoUpdate(BaseModel):
     data_nascimento: Optional[date] = None
     endereco: Optional[str] = Field(None, max_length=255)
     telefone: Optional[str] = Field(None, max_length=20)
-    nome_responsavel: Optional[str] = Field(None, max_length=150)
 
 
 class AlunoResponse(AlunoBase):
