@@ -1,36 +1,17 @@
-// Angular Core
-export * from '@angular/common';
-export * from '@angular/forms';
-export * from '@angular/router';
-
-// Angular Material
-export * from '@angular/material/button';
-export * from '@angular/material/card';
-export * from '@angular/material/form-field';
-export * from '@angular/material/input';
-export * from '@angular/material/icon';
-export * from '@angular/material/toolbar';
-export * from '@angular/material/sidenav';
-export * from '@angular/material/list';
-export * from '@angular/material/table';
-export * from '@angular/material/paginator';
-export * from '@angular/material/sort';
-export * from '@angular/material/dialog';
-export * from '@angular/material/snack-bar';
-export * from '@angular/material/progress-spinner';
-export * from '@angular/material/select';
-export * from '@angular/material/datepicker';
-export * from '@angular/material/core';
-export * from '@angular/material/checkbox';
-export * from '@angular/material/radio';
-export * from '@angular/material/menu';
-export * from '@angular/material/tooltip';
-export * from '@angular/material/chips';
-export * from '@angular/material/autocomplete';
-export * from '@angular/material/tabs';
-export * from '@angular/material/expansion';
-export * from '@angular/material/badge';
-export * from '@angular/material/progress-bar';
-
-// Re-export the module
+// Shared Module
 export { SharedModule } from './shared.module';
+
+// Shared Components
+export * from './components/confirm-dialog/confirm-dialog.component';
+export * from './components/loading/loading.component';
+
+// Shared Directives
+export * from './directives/cpf-mask.directive';
+export * from './directives/phone-mask.directive';
+
+// Shared Pipes
+export * from './pipes/cpf.pipe';
+export * from './pipes/phone.pipe';
+
+// Shared Validators
+export * from './validators/custom-validators';

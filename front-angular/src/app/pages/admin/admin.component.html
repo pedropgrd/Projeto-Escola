@@ -1,0 +1,94 @@
+<app-header></app-header>
+<body>
+    <div class="app">
+        <aside>
+            <div class="brand">Escola Modelo</div>
+            <nav>
+                <a href="#">Dashboard</a>
+                <a routerLink="/cadastro-login">Cadastro Login</a>
+                <a href="#">Alunos</a>
+                <a href="#">Professores</a>
+                <a href="#">Turmas</a>
+                <a href="#">Calendário</a>
+                <a href="#">Configurações</a>
+            </nav>
+            <div style="margin-top:auto;font-size:13px;opacity:0.95">
+                Versão grátis • <br> Desenvolvido por você
+            </div>
+        </aside>
+
+        <main>
+            <header>
+                <div>
+                    <h2 style="margin:0 0 6px 0">Painel</h2>
+                    <div style="color:var(--muted);font-size:14px">Visão geral dos últimos registros</div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:center">
+                    <div class="search">🔍 Buscar aluno, turma...</div>
+                    <div style="background:var(--card);padding:8px 12px;border-radius:10px">Olá, Admin</div>
+                </div>
+            </header>
+
+            <section class="grid" style="margin-bottom:16px">
+                <div class="card stats">
+                    <div style="color:var(--muted);font-size:13px">Alunos</div>
+                    <div class="num">328</div>
+                    <div style="font-size:13px;color:var(--muted)">Matriculados neste ano</div>
+                </div>
+                <div class="card stats">
+                    <div style="color:var(--muted);font-size:13px">Professores</div>
+                    <div class="num">24</div>
+                    <div style="font-size:13px;color:var(--muted)">Ativos</div>
+                </div>
+                <div class="card stats">
+                    <div style="color:var(--muted);font-size:13px">Turmas</div>
+                    <div class="num">18</div>
+                    <div style="font-size:13px;color:var(--muted)">Criadas</div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h3 style="margin-top:0">Lista de Alunos</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>RA</th>
+                            <th>Turma</th>
+                            <th>Idade</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Maria Silva</td>
+                            <td>2025-001</td>
+                            <td>6º A</td>
+                            <td>11</td>
+                            <td>Ativo</td>
+                            <td class="actions"><button>Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td>João Pereira</td>
+                            <td>2025-002</td>
+                            <td>7º B</td>
+                            <td>12</td>
+                            <td>Ativo</td>
+                            <td class="actions"><button>Ver</button></td>
+                        </tr>
+                        <tr>
+                            <td>Ana Costa</td>
+                            <td>2025-003</td>
+                            <td>5º C</td>
+                            <td>10</td>
+                            <td>Matriculado</td>
+                            <td class="actions"><button>Ver</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+</body>

@@ -1,0 +1,130 @@
+ :root {
+     --bg: #f4f7fb;
+     --card: #ffffff;
+     --accent: #2b6fb6;
+     --muted: #6b7280;
+     --gap: 18px;
+     font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+ }
+
+ * {
+     box-sizing: border-box
+ }
+
+ body {
+     margin: 0;
+     background: var(--bg);
+     color: #111;
+ }
+
+ .app {
+     display: flex;
+     min-height: 100vh
+ }
+
+ aside {
+     width: 260px;
+     background: linear-gradient(180deg, #0d4a85 0%, #536888 100%);
+     color: #ffffff;
+     padding: 28px;
+     display: flex;
+     flex-direction: column;
+     gap: 20px
+ }
+
+ .brand {
+     font-weight: 700;
+     font-size: 20px
+ }
+
+ nav a {
+     color: rgba(255, 255, 255, 0.95);
+     text-decoration: none;
+     padding: 10px 12px;
+     border-radius: 8px;
+     display: block
+ }
+
+ nav a:hover {
+     background: rgba(255, 255, 255, 0.06)
+ }
+
+ main {
+     flex: 1;
+     padding: 28px
+ }
+
+ header {
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     margin-bottom: 20px
+ }
+
+ .search {
+     background: var(--card);
+     padding: 8px 12px;
+     border-radius: 10px;
+     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04)
+ }
+
+ .card {
+     background: var(--card);
+     padding: 16px;
+     border-radius: 12px;
+     box-shadow: 0 6px 18px rgba(18, 38, 63, 0.06);
+     margin-bottom: var(--gap)
+ }
+
+ .grid {
+     display: grid;
+     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+     gap: 16px
+ }
+
+ .stats {
+     display: flex;
+     flex-direction: column;
+     gap: 6px
+ }
+
+ .stats .num {
+     font-size: 20px;
+     font-weight: 700
+ }
+
+ table {
+     width: 100%;
+     border-collapse: collapse
+ }
+
+ th,
+ td {
+     padding: 12px 10px;
+     text-align: left;
+     border-bottom: 1px solid #eef3fb;
+     font-size: 14px
+ }
+
+ th {
+     color: var(--muted);
+     font-weight: 600
+ }
+
+ .actions button {
+     background: none;
+     border: 1px solid #e6eefc;
+     padding: 6px 9px;
+     border-radius: 8px;
+     cursor: pointer
+ }
+
+ @media (max-width:720px) {
+     aside {
+         display: none
+     }
+
+     .app {
+         flex-direction: column
+     }
+ }

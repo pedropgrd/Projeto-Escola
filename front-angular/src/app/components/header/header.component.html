@@ -3,14 +3,14 @@
         <nav class="navbar navbar-expand-lg custom_nav-container">
             <a class="navbar-brand" routerLink="/">
                 <img src="assets/images/logo.png" alt="">
-                <span>Blog</span>
+                <span>TRAJANO DE ALMEIDA</span>
             </a>
             <button class="navbar-toggler" type="button" (click)="toggleNavbar()"
-                [attr.aria-expanded]="!isNavbarCollapsed" aria-label="Toggle navigation">
+                [attr.aria-expanded]="!isNavbarCollapsed()" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" [class.show]="!isNavbarCollapsed" id="navbarSupportedContent">
+            <div class="collapse navbar-collapse" [class.show]="!isNavbarCollapsed()" id="navbarSupportedContent">
                 <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
                     <ul class="navbar-nav">
                         <li class="nav-item active">
@@ -20,14 +20,67 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/noticias" (click)="toggleNavbar()">
-                                Noticias
+                                Notícias
                             </a>
                         </li>
+
+                        <!-- Menu condicional baseado em autenticação -->
+                        @if (authService.isAuthenticated()) {
+                        <!-- Menu para usuário autenticado -->
+
+                        <!-- Menu ADMIN -->
+                        @if (authService.isAdmin()) {
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/admin" (click)="toggleNavbar()">
+                                Painel Admin
+                            </a>
+                        </li>
+                        }
+
+                        <!-- Menu PROFESSOR (ADMIN também vê) -->
+                        @if (authService.isProfessor() || authService.isAdmin()) {
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/professores" (click)="toggleNavbar()">
+                                Professores
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/turmas" (click)="toggleNavbar()">
+                                Turmas
+                            </a>
+                        </li>
+                        }
+
+                        <!-- Menu ALUNO -->
+                        @if (authService.isAluno() || authService.isAdmin()) {
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/alunos" (click)="toggleNavbar()">
+                                Alunos
+                            </a>
+                        </li>
+                        }
+
+                        <!-- Dropdown do usuário -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                {{ authService.user()?.nomeCompleto }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" (click)="goToProfile()">Meu Perfil</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item text-danger" (click)="logout()">Sair</a></li>
+                            </ul>
+                        </li>
+                        } @else {
+                        <!-- Menu para usuário não autenticado -->
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/login" (click)="toggleNavbar()">
                                 Login
                             </a>
                         </li>
+                        }
                     </ul>
                     <form class="form-inline my-2 my-lg-0 ml-0 ml-lg-4 mb-3 mb-lg-0">
                         <button class="btn my-2 my-sm-0 nav_search-btn" type="submit"></button>

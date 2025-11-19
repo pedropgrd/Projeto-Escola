@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { UserRole } from '../../core/models/auth.models';
 
 @Component({
     selector: 'app-header',
@@ -10,9 +12,26 @@ import { RouterModule } from '@angular/router';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-    isNavbarCollapsed = true;
+    authService = inject(AuthService);
+    private router = inject(Router);
 
-    toggleNavbar() {
-        this.isNavbarCollapsed = !this.isNavbarCollapsed;
+    isNavbarCollapsed = signal(true);
+
+    // Expor UserRole para uso no template
+    readonly UserRole = UserRole;
+
+    toggleNavbar(): void {
+        this.isNavbarCollapsed.update(v => !v);
+    }
+
+    logout(): void {
+        if (confirm('Deseja realmente sair?')) {
+            this.authService.logout();
+        }
+    }
+
+    goToProfile(): void {
+        this.router.navigate(['/perfil']);
     }
 }
+

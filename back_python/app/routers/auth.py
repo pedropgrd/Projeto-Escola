@@ -26,7 +26,7 @@ router = APIRouter(prefix="/auth", tags=["Autenticação"])
 async def sign_up(
     user_data: UserCreate,
     session: AsyncSession = Depends(get_session),
-    current_user: User = Depends(get_current_active_admin)
+    #current_user: User = Depends(get_current_active_admin)
 ):
     """
     ## Registro de novo usuário (Sign-up) - APENAS ADMIN

@@ -1,0 +1,216 @@
+.hero_section {
+    /* Dá espaço para o texto não bater no topo/menu */
+    padding-top: 80px;
+    padding-bottom: 40px;
+
+    .hero_detail-box {
+
+        /* Garante que o texto amarelo tenha respiro */
+        h1 {
+            margin-bottom: 10px;
+            font-weight: bold;
+            /* Caso precise ajustar a cor para bater com o print */
+            color: #fdbc2c;
+        }
+
+        p {
+            margin-bottom: 0;
+            color: #555;
+        }
+    }
+}
+
+/* --- Seção do Cadastro --- */
+.cadastro_section {
+    min-height: 60vh;
+    /* Removemos o padding-top padrão exagerado e puxamos o card para cima */
+    padding-top: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.cadastro-form {
+    background: white;
+    padding: 2.5rem;
+    /* Aumentei um pouco o padding interno */
+    border-radius: 12px;
+    /* Arredondamento mais moderno */
+    /* Sombra mais suave e difusa */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+    /* TRUQUE DE ESPAÇAMENTO: Puxa o formulário para perto do título */
+    margin-top: -20px;
+
+    .main-heading {
+        color: #2c3e50;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    /* Melhorando o espaçamento entre o título "Novo Usuário" e o formulário */
+    .d-flex.justify-content-between {
+        margin-bottom: 2rem !important;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 1rem;
+    }
+
+    .form-group {
+        /* Aumentei o espaço entre os inputs para não ficar "apertado" */
+        margin-bottom: 1.8rem;
+
+        label {
+            display: block;
+            margin-bottom: 0.6rem;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            /* Input mais "alto" é mais elegante */
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.2s ease-in-out;
+
+            &:focus {
+                border-color: #fdbc2c;
+                /* Cor do tema ao focar */
+                outline: 0;
+                box-shadow: 0 0 0 0.2rem rgba(253, 188, 44, 0.25);
+            }
+
+            &:disabled {
+                background-color: #f8f9fa;
+                opacity: 1;
+            }
+        }
+
+        .input-group {
+            display: flex;
+
+            /* Correção visual do botão de senha */
+            .form-control {
+                border-right: none;
+            }
+
+            .btn {
+                border-left: none;
+                border-color: #dee2e6;
+                background: white;
+                z-index: 0;
+
+                &:hover {
+                    background-color: #f8f9fa;
+                }
+            }
+        }
+
+        small.form-text {
+            margin-top: 0.4rem;
+            font-size: 0.8rem;
+        }
+    }
+
+    /* Botões */
+    .d-flex.justify-content-between.mt-4 {
+        /* Mais espaço acima dos botões */
+        margin-top: 2.5rem !important;
+        gap: 15px;
+        /* Espaço entre os botões no mobile */
+    }
+
+    .btn_on-hover {
+        background-color: #00204a;
+        /* Azul escuro do seu tema */
+        color: white;
+        padding: 0.8rem 2.5rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+
+        &:hover:not(:disabled) {
+            background-color: #003060;
+            transform: translateY(-2px);
+        }
+
+        &:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+    }
+
+    .btn-secondary {
+        background-color: #ecf0f1;
+        color: #2c3e50;
+        padding: 0.8rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-weight: 500;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #dfe6e9;
+            color: #000;
+        }
+    }
+
+    .btn-outline-secondary {
+        border: 1px solid #dee2e6;
+        padding: 0.4rem 1rem;
+        font-size: 0.85rem;
+        border-radius: 20px;
+        /* Botão voltar arredondado */
+
+        &:hover {
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+    }
+
+    /* Ajustes de alertas */
+    .alert {
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 6px;
+        font-size: 0.95rem;
+    }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .hero_section {
+        padding-top: 60px;
+        text-align: center;
+    }
+
+    .cadastro-form {
+        padding: 1.5rem;
+        margin-top: 0;
+        /* No mobile, remove a margem negativa */
+
+        .d-flex.justify-content-between {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 1rem;
+
+            button {
+                width: 100%;
+            }
+        }
+
+        /* Botões de ação final empilhados no mobile */
+        .d-flex.mt-4 {
+            flex-direction: column-reverse;
+
+            button {
+                width: 100%;
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
-# Front-end Angular 18+ - Sistema de Gestão Escolar
+# Front-end Angular 18+ - Sistema de Gestão Escolar 🎓
 
-Sistema desenvolvido com Angular 18+ utilizando standalone components e as melhores práticas mais recentes.
+Sistema desenvolvido com Angular 18+ utilizando standalone components, Signals e as melhores práticas mais recentes.
 
 ## 🚀 Tecnologias
 
@@ -9,8 +9,28 @@ Sistema desenvolvido com Angular 18+ utilizando standalone components e as melho
 - **SCSS** - Pré-processador CSS
 - **RxJS 7.8** - Programação reativa
 - **Standalone Components** - Nova arquitetura do Angular
+- **Signals** - Sistema de reatividade moderno do Angular
 
-## 📦 Instalação
+## � Sistema de Autenticação e Segurança
+
+### ✨ Funcionalidades Implementadas
+
+- ✅ Login/Logout com JWT
+- ✅ Interceptor automático de tokens
+- ✅ Guards funcionais para controle de acesso (RBAC)
+- ✅ Decodificação automática de JWT
+- ✅ Suporte a 3 perfis: ADMIN, PROFESSOR, ALUNO
+- ✅ BehaviorSubject + Signals para estado reativo
+- ✅ Tratamento global de erros 401/403
+- ✅ Logout automático em caso de token expirado
+
+### 📚 Documentação
+
+- **[SECURITY_GUIDE.md](./SECURITY_GUIDE.md)** - Guia completo de segurança e autenticação
+- **[IMPLEMENTATION_SUMMARY.md](./IMPLEMENTATION_SUMMARY.md)** - Resumo da implementação
+- **[SNIPPETS.md](./SNIPPETS.md)** - Exemplos práticos e receitas
+
+## �📦 Instalação
 
 ```bash
 # Instalar dependências
@@ -28,26 +48,42 @@ npm start
 front-angular/
 ├── src/
 │   ├── app/
-│   │   ├── core/              # Serviços core, guards, interceptors
-│   │   │   ├── guards/        # Guards de rota (auth.guard.ts)
-│   │   │   ├── interceptors/  # HTTP interceptors (auth.interceptor.ts)
-│   │   │   └── services/      # Serviços compartilhados (auth.service.ts)
-│   │   ├── features/          # Módulos de funcionalidades
-│   │   │   ├── auth/          # Login e autenticação
-│   │   │   ├── dashboard/     # Dashboard principal
-│   │   │   ├── alunos/        # Gerenciamento de alunos
-│   │   │   ├── professores/   # Gerenciamento de professores
-│   │   │   └── noticias/      # Notícias e eventos
-│   │   ├── shared/            # Componentes compartilhados
-│   │   ├── app.component.ts   # Componente raiz
-│   │   ├── app.config.ts      # Configuração da aplicação
-│   │   └── app.routes.ts      # Configuração de rotas
-│   ├── assets/                # Recursos estáticos
-│   ├── styles.scss            # Estilos globais
-│   ├── index.html             # HTML principal
-│   └── main.ts                # Ponto de entrada
-├── angular.json               # Configuração do Angular
-├── tsconfig.json              # Configuração do TypeScript
+│   │   ├── core/                    # Serviços core, guards, interceptors
+│   │   │   ├── guards/              
+│   │   │   │   └── auth.guard.ts    # ✅ Guards funcionais (NOVO)
+│   │   │   ├── interceptors/        
+│   │   │   │   └── auth.interceptor.ts  # ✅ Interceptor JWT (NOVO)
+│   │   │   ├── services/            
+│   │   │   │   ├── api.service.ts   # ✅ HTTP genérico (NOVO)
+│   │   │   │   └── auth.service.ts  # ✅ Autenticação (ATUALIZADO)
+│   │   │   └── models/              
+│   │   │       └── auth.models.ts   # ✅ Interfaces e types (NOVO)
+│   │   ├── pages/                   # Páginas da aplicação
+│   │   │   ├── home/                
+│   │   │   ├── login/               # ✅ Atualizado com novos services
+│   │   │   └── noticias/            
+│   │   ├── components/              # Componentes compartilhados
+│   │   │   ├── header/              # ✅ Menu condicional por perfil
+│   │   │   └── footer/              
+│   │   ├── shared/                  # Utilitários compartilhados
+│   │   ├── examples/                # ✅ Exemplos de uso (NOVO)
+│   │   │   └── api-usage.example.ts 
+│   │   ├── app.component.ts         # Componente raiz
+│   │   ├── app.config.ts            # Configuração da aplicação
+│   │   └── app.routes.ts            # Configuração de rotas
+│   ├── environments/                # ✅ Configurações de ambiente (NOVO)
+│   │   ├── environment.ts           
+│   │   └── environment.prod.ts      
+│   ├── assets/                      # Recursos estáticos
+│   ├── styles.scss                  # Estilos globais
+│   ├── index.html                   # HTML principal
+│   └── main.ts                      # Ponto de entrada
+├── SECURITY_GUIDE.md                # ✅ Guia de segurança (NOVO)
+├── IMPLEMENTATION_SUMMARY.md        # ✅ Resumo da implementação (NOVO)
+├── SNIPPETS.md                      # ✅ Snippets úteis (NOVO)
+├── angular.json                     # Configuração do Angular
+├── tsconfig.json                    # Configuração do TypeScript
+```
 ├── proxy.conf.json            # Proxy para API backend
 └── package.json               # Dependências do projeto
 ```

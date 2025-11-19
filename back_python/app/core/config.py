@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import Optional
+from typing import Optional, List
 
 
 class Settings(BaseSettings):
@@ -21,10 +21,13 @@ class Settings(BaseSettings):
     APP_NAME: str = "Sistema de Gerenciamento Escolar - CETA Trajano"
     DEBUG: bool = False
     
-    # CORS
-    CORS_ORIGINS: list[str] = [
+    # CORS - Origens permitidas para requisições
+    # Pode ser sobrescrito via variável de ambiente CORS_ORIGINS (separado por vírgula)
+    CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
+        "http://localhost:4200",  # Angular dev server
         "http://localhost:8080",
+        "http://127.0.0.1:4200",  # Variação do Angular
     ]
     
     class Config:
