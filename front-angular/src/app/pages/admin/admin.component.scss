@@ -178,8 +178,13 @@
  }
 
  @keyframes spin {
-     0% { transform: rotate(0deg); }
-     100% { transform: rotate(360deg); }
+     0% {
+         transform: rotate(0deg);
+     }
+
+     100% {
+         transform: rotate(360deg);
+     }
  }
 
  .no-results {
@@ -298,6 +303,87 @@
      }
  }
 
+ // Toggle e controles
+ .controls-header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+     flex-wrap: wrap;
+     gap: 16px;
+ }
+
+ .toggle-container {
+     display: flex;
+     gap: 8px;
+     background: #f0f4f8;
+     padding: 4px;
+     border-radius: 10px;
+ }
+
+ .toggle-btn {
+     padding: 10px 20px;
+     border: none;
+     background: transparent;
+     color: var(--muted);
+     font-size: 14px;
+     font-weight: 500;
+     border-radius: 8px;
+     cursor: pointer;
+     transition: all 0.2s ease;
+
+     &:hover {
+         background: rgba(255, 255, 255, 0.6);
+         color: var(--accent);
+     }
+
+     &.active {
+         background: white;
+         color: var(--accent);
+         font-weight: 600;
+         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+     }
+ }
+
+ .header-controls {
+     display: flex;
+     gap: 12px;
+     align-items: center;
+ }
+
+ .items-per-page {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+
+     label {
+         font-size: 14px;
+         color: var(--muted);
+         font-weight: 500;
+     }
+
+     select {
+         padding: 8px 12px;
+         border: 1px solid #e6eefc;
+         border-radius: 8px;
+         background: white;
+         color: #111;
+         font-size: 14px;
+         cursor: pointer;
+         transition: all 0.2s ease;
+
+         &:hover {
+             border-color: var(--accent);
+         }
+
+         &:focus {
+             outline: none;
+             border-color: var(--accent);
+             box-shadow: 0 0 0 3px rgba(43, 111, 182, 0.1);
+         }
+     }
+ }
+
  @media (max-width:720px) {
      aside {
          display: none
@@ -305,5 +391,29 @@
 
      .app {
          flex-direction: column
+     }
+
+     .controls-header {
+         flex-direction: column;
+         align-items: stretch;
+     }
+
+     .toggle-container {
+         width: 100%;
+     }
+
+     .toggle-btn {
+         flex: 1;
+     }
+
+     .header-controls {
+         flex-direction: column;
+         align-items: stretch;
+     }
+
+     .items-per-page {
+         select {
+             width: 100%;
+         }
      }
  }

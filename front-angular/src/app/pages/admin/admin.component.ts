@@ -20,8 +20,27 @@ interface Aluno {
   atualizado_em: string | null;
 }
 
+interface Professor {
+  id_professor: number;
+  id_usuario: number;
+  nome: string;
+  cpf: string;
+  email: string;
+  endereco: string;
+  telefone: string;
+  criado_em: string;
+  atualizado_em: string | null;
+}
+
 interface AlunoListResponse {
   items: Aluno[];
+  total: number;
+  offset: number;
+  limit: number;
+}
+
+interface ProfessorListResponse {
+  items: Professor[];
   total: number;
   offset: number;
   limit: number;
@@ -39,26 +58,62 @@ export class AdminComponent implements OnInit {
 
   // Signals para gerenciamento de estado
   alunos = signal<Aluno[]>([]);
+  professores = signal<Professor[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
 
+  // Toggle entre alunos e professores
+  viewMode = signal<'alunos' | 'professores'>('alunos');
+
   // Paginação
   currentPage = signal(1);
   totalAlunos = signal(0);
-  itemsPerPage = 10;
+  totalProfessores = signal(0);
+  itemsPerPage = signal(10);
+  itemsPerPageOptions = [10, 20, 30, 50, 100];
   totalPages = signal(0);
 
   // Busca
   searchQuery = '';
 
-  endPoint = '/api/v1/alunos/';
+  alunosEndPoint = '/api/v1/alunos/';
+  professoresEndPoint = '/api/v1/professores/';
 
   // Expor Math para o template
   Math = Math;
 
   ngOnInit(): void {
-    this.loadAlunos();
+    this.loadData();
+  }
+
+  /**
+   * Alterna entre visualização de alunos e professores
+   */
+  toggleView(mode: 'alunos' | 'professores'): void {
+    this.viewMode.set(mode);
+    this.currentPage.set(1);
+    this.searchQuery = '';
+    this.loadData();
+  }
+
+  /**
+   * Carrega dados baseado no modo atual
+   */
+  loadData(): void {
+    if (this.viewMode() === 'alunos') {
+      this.loadAlunos();
+    } else {
+      this.loadProfessores();
+    }
+  }
+
+  /**
+   * Atualiza quantidade de itens por página
+   */
+  onItemsPerPageChange(): void {
+    this.currentPage.set(1);
+    this.loadData();
   }
 
   /**
@@ -68,11 +123,12 @@ export class AdminComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    const offset = (this.currentPage() - 1) * this.itemsPerPage;
+    const offset = (this.currentPage() - 1) * this.itemsPerPage();
+
 
     let params = new HttpParams()
       .set('offset', offset.toString())
-      .set('limit', this.itemsPerPage.toString());
+      .set('limit', this.itemsPerPage().toString());
 
     // Adicionar busca se houver query
     if (this.searchQuery.trim()) {
@@ -80,11 +136,11 @@ export class AdminComponent implements OnInit {
       // params = params.set('search', this.searchQuery.trim());
     }
 
-    this.apiService.get<AlunoListResponse>(this.endPoint, params).subscribe({
+    this.apiService.get<AlunoListResponse>(this.alunosEndPoint, params).subscribe({
       next: (response) => {
         this.alunos.set(response.items || []);
         this.totalAlunos.set(response.total || 0);
-        this.totalPages.set(Math.ceil(response.total / this.itemsPerPage));
+        this.totalPages.set(Math.ceil(response.total / this.itemsPerPage()));
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -97,13 +153,38 @@ export class AdminComponent implements OnInit {
   }
 
   /**
+   * Carrega lista de professores com paginação e busca
+   */
+  loadProfessores(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    const offset = (this.currentPage() - 1) * this.itemsPerPage();
+
+    let params = new HttpParams()
+      .set('offset', offset.toString())
+      .set('limit', this.itemsPerPage().toString());
+
+    this.apiService.get<ProfessorListResponse>(this.professoresEndPoint, params).subscribe({
+      next: (response) => {
+        this.professores.set(response.items || []);
+        this.totalProfessores.set(response.total || 0);
+        this.totalPages.set(Math.ceil(response.total / this.itemsPerPage()));
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar professores:', error);
+        this.errorMessage.set('Erro ao carregar lista de professores');
+        this.isLoading.set(false);
+        this.professores.set([]);
+      }
+    });
+  }  /**
    * Busca alunos por texto (filtra localmente por enquanto)
    */
   onSearch(): void {
-    // Se quiser implementar busca no backend, modifique loadAlunos() para aceitar query
-    // Por enquanto, vamos resetar a página e carregar
     this.currentPage.set(1);
-    this.loadAlunos();
+    this.loadData();
   }
 
   /**
@@ -123,12 +204,35 @@ export class AdminComponent implements OnInit {
   }
 
   /**
+   * Filtra professores localmente baseado na busca
+   */
+  get filteredProfessores(): Professor[] {
+    if (!this.searchQuery.trim()) {
+      return this.professores();
+    }
+
+    const query = this.searchQuery.toLowerCase();
+    return this.professores().filter(professor =>
+      professor.nome.toLowerCase().includes(query) ||
+      professor.email.toLowerCase().includes(query) ||
+      professor.cpf.includes(query)
+    );
+  }
+
+  /**
+   * Retorna o total baseado no modo atual
+   */
+  get currentTotal(): number {
+    return this.viewMode() === 'alunos' ? this.totalAlunos() : this.totalProfessores();
+  }
+
+  /**
    * Navega para página anterior
    */
   previousPage(): void {
     if (this.currentPage() > 1) {
       this.currentPage.update(p => p - 1);
-      this.loadAlunos();
+      this.loadData();
     }
   }
 
@@ -138,7 +242,7 @@ export class AdminComponent implements OnInit {
   nextPage(): void {
     if (this.currentPage() < this.totalPages()) {
       this.currentPage.update(p => p + 1);
-      this.loadAlunos();
+      this.loadData();
     }
   }
 
@@ -148,7 +252,7 @@ export class AdminComponent implements OnInit {
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) {
       this.currentPage.set(page);
-      this.loadAlunos();
+      this.loadData();
     }
   }
 
@@ -193,6 +297,18 @@ export class AdminComponent implements OnInit {
   }
 
   /**
+   * Formata CPF parcialmente oculto para exibição (123.***.***-00)
+   */
+  formatCpfMasked(cpf: string): string {
+    if (!cpf) return '';
+    const numeros = cpf.replace(/\D/g, '');
+    if (numeros.length === 11) {
+      return `${numeros.substring(0, 3)}.***.***-${numeros.substring(9)}`;
+    }
+    return cpf;
+  }
+
+  /**
    * Confirma e deleta aluno
    */
   deleteAluno(aluno: Aluno): void {
@@ -204,14 +320,10 @@ export class AdminComponent implements OnInit {
     this.errorMessage.set('');
     this.successMessage.set('');
 
-    this.apiService.delete(`${this.endPoint}${aluno.id_aluno}`).subscribe({
+    this.apiService.delete(`${this.alunosEndPoint}${aluno.id_aluno}`).subscribe({
       next: () => {
         this.successMessage.set(`Aluno ${aluno.nome} excluído com sucesso!`);
-
-        // Recarregar lista
         this.loadAlunos();
-
-        // Limpar mensagem após 3 segundos
         setTimeout(() => {
           this.successMessage.set('');
         }, 3000);
@@ -219,13 +331,46 @@ export class AdminComponent implements OnInit {
       error: (error) => {
         console.error('Erro ao excluir aluno:', error);
         this.isLoading.set(false);
-
         if (error.status === 403) {
           this.errorMessage.set('Você não tem permissão para excluir alunos');
         } else if (error.status === 404) {
           this.errorMessage.set('Aluno não encontrado');
         } else {
           this.errorMessage.set('Erro ao excluir aluno. Tente novamente.');
+        }
+      }
+    });
+  }
+
+  /**
+   * Confirma e deleta professor
+   */
+  deleteProfessor(professor: Professor): void {
+    const confirmacao = confirm(`Tem certeza que deseja excluir o professor ${professor.nome}?`);
+
+    if (!confirmacao) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+    this.successMessage.set('');
+
+    this.apiService.delete(`${this.professoresEndPoint}${professor.id_professor}`).subscribe({
+      next: () => {
+        this.successMessage.set(`Professor ${professor.nome} excluído com sucesso!`);
+        this.loadProfessores();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      },
+      error: (error) => {
+        console.error('Erro ao excluir professor:', error);
+        this.isLoading.set(false);
+        if (error.status === 403) {
+          this.errorMessage.set('Você não tem permissão para excluir professores');
+        } else if (error.status === 404) {
+          this.errorMessage.set('Professor não encontrado');
+        } else {
+          this.errorMessage.set('Erro ao excluir professor. Tente novamente.');
         }
       }
     });

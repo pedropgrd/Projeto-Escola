@@ -8,6 +8,7 @@
                 <a href="#">Dashboard</a>
                 <a routerLink="/cadastro-login">Cadastro Login</a>
                 <a routerLink="/cadastro-aluno">Cadastro Aluno</a>
+                <a routerLink="/cadastro-professor">Cadastro Professor</a>
                 <a href="#">Alunos</a>
                 <a href="#">Professores</a>
                 <a href="#">Turmas</a>
@@ -39,10 +40,36 @@
             </section>
 
             <section class="card">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-                    <h3 style="margin:0">Lista de Alunos</h3>
-                    <button class="btn-primary" routerLink="/cadastro-aluno">+ Novo Aluno</button>
+                <!-- Toggle e controles -->
+                <div class="controls-header">
+                    <div class="toggle-container">
+                        <button class="toggle-btn" [class.active]="viewMode() === 'alunos'"
+                            (click)="toggleView('alunos')">
+                            👨‍🎓 Alunos
+                        </button>
+                        <button class="toggle-btn" [class.active]="viewMode() === 'professores'"
+                            (click)="toggleView('professores')">
+                            👨‍🏫 Professores
+                        </button>
+                    </div>
+
+                    <div class="items-per-page">
+                        <label for="itemsPerPage">Itens por página:</label>
+                        <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()"
+                            class="form-select">
+                            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
+                                {{ option }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <button class="btn-primary"
+                        [routerLink]="viewMode() === 'alunos' ? '/cadastro-aluno' : '/cadastro-professor'">
+                        + Novo {{ viewMode() === 'alunos' ? 'Aluno' : 'Professor' }}
+                    </button>
                 </div>
+
+                <h3 style="margin-top:16px">Total: {{ currentTotal }}</h3>
 
                 <!-- Mensagens de sucesso/erro -->
                 <div *ngIf="successMessage()" class="alert alert-success">
@@ -55,50 +82,91 @@
                 <!-- Loading -->
                 <div *ngIf="isLoading()" class="loading-container">
                     <div class="spinner"></div>
-                    <p>Carregando alunos...</p>
+                    <p>Carregando {{ viewMode() === 'alunos' ? 'alunos' : 'professores' }}...</p>
                 </div>
 
-                <!-- Tabela de alunos -->
+                <!-- Tabelas -->
                 <div *ngIf="!isLoading()">
-                    <table *ngIf="filteredAlunos.length > 0">
-                        <thead>
-                            <tr>
-                                <th>Matrícula</th>
-                                <th>Nome</th>
-                                <th>CPF</th>
-                                <th>Data Nasc.</th>
-                                <th>Idade</th>
-                                <th>Telefone</th>
-                                <th>Endereço</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let aluno of filteredAlunos">
-                                <td><strong>{{ aluno.matricula }}</strong></td>
-                                <td>{{ aluno.nome }}</td>
-                                <td>{{ formatCpf(aluno.cpf) }}</td>
-                                <td>{{ aluno.data_nascimento | date: 'dd/MM/yyyy' }}</td>
-                                <td>{{ calcularIdade(aluno.data_nascimento) }} anos</td>
-                                <td>{{ formatTelefone(aluno.telefone) }}</td>
-                                <td>{{ aluno.endereco }}</td>
-                                <td class="actions">
-                                    <button class="btn-danger-small" (click)="deleteAluno(aluno)" title="Excluir aluno">
-                                        🗑️ Excluir
-                                    </button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <!-- Tabela de Alunos -->
+                    <div *ngIf="viewMode() === 'alunos'">
+                        <table *ngIf="filteredAlunos.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Matrícula</th>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>Data Nasc.</th>
+                                    <th>Idade</th>
+                                    <th>Telefone</th>
+                                    <th>Endereço</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let aluno of filteredAlunos">
+                                    <td><strong>{{ aluno.matricula }}</strong></td>
+                                    <td>{{ aluno.nome }}</td>
+                                    <td>{{ formatCpfMasked(aluno.cpf) }}</td>
+                                    <td>{{ aluno.data_nascimento | date: 'dd/MM/yyyy' }}</td>
+                                    <td>{{ calcularIdade(aluno.data_nascimento) }} anos</td>
+                                    <td>{{ formatTelefone(aluno.telefone) }}</td>
+                                    <td>{{ aluno.endereco }}</td>
+                                    <td class="actions">
+                                        <button class="btn-danger-small" (click)="deleteAluno(aluno)"
+                                            title="Excluir aluno">
+                                            🗑️ Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tabela de Professores -->
+                    <div *ngIf="viewMode() === 'professores'">
+                        <table *ngIf="filteredProfessores.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Endereço</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let professor of filteredProfessores">
+                                    <td><strong>{{ professor.nome }}</strong></td>
+                                    <td>{{ formatCpfMasked(professor.cpf) }}</td>
+                                    <td>{{ professor.email }}</td>
+                                    <td>{{ formatTelefone(professor.telefone) }}</td>
+                                    <td>{{ professor.endereco }}</td>
+                                    <td class="actions">
+                                        <button class="btn-danger-small" (click)="deleteProfessor(professor)"
+                                            title="Excluir professor">
+                                            🗑️ Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <!-- Mensagem quando não há resultados -->
-                    <div *ngIf="filteredAlunos.length === 0" class="no-results">
+                    <div *ngIf="viewMode() === 'alunos' && filteredAlunos.length === 0" class="no-results">
                         <p>Nenhum aluno encontrado.</p>
                         <button class="btn-primary" routerLink="/cadastro-aluno">Cadastrar Primeiro Aluno</button>
                     </div>
 
+                    <div *ngIf="viewMode() === 'professores' && filteredProfessores.length === 0" class="no-results">
+                        <p>Nenhum professor encontrado.</p>
+                        <button class="btn-primary" routerLink="/cadastro-professor">Cadastrar Primeiro
+                            Professor</button>
+                    </div>
+
                     <!-- Paginação -->
-                    <div *ngIf="filteredAlunos.length > 0 && totalPages() > 1" class="pagination">
+                    <div *ngIf="currentTotal > 0 && totalPages() > 1" class="pagination">
                         <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage() === 1">
                             ← Anterior
                         </button>
@@ -115,10 +183,10 @@
                         </button>
                     </div>
 
-                    <div class="pagination-info" *ngIf="filteredAlunos.length > 0">
-                        Mostrando {{ (currentPage() - 1) * itemsPerPage + 1 }} -
-                        {{ Math.min(currentPage() * itemsPerPage, totalAlunos()) }}
-                        de {{ totalAlunos() }} alunos
+                    <div class="pagination-info" *ngIf="currentTotal > 0">
+                        Mostrando {{ (currentPage() - 1) * itemsPerPage() + 1 }} -
+                        {{ Math.min(currentPage() * itemsPerPage(), currentTotal) }}
+                        de {{ currentTotal }} {{ viewMode() === 'alunos' ? 'alunos' : 'professores' }}
                     </div>
                 </div>
             </section>
