@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>
+    <mat-icon>edit</mat-icon>
+    Editar Professor
+</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="professorForm" class="dialog-form">
+        <!-- Nome -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome Completo</mat-label>
+            <input matInput formControlName="nome" placeholder="Digite o nome completo">
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-error *ngIf="hasError('nome')">
+                {{ getErrorMessage('nome') }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- CPF -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>CPF</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00">
+            <mat-icon matPrefix>assignment_ind</mat-icon>
+            <mat-error *ngIf="hasError('cpf')">
+                {{ getErrorMessage('cpf') }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- E-mail -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>E-mail</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="exemplo@email.com">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="hasError('email')">
+                {{ getErrorMessage('email') }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Telefone -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Telefone</mat-label>
+            <input matInput formControlName="telefone" placeholder="(00) 00000-0000">
+            <mat-icon matPrefix>phone</mat-icon>
+            <mat-error *ngIf="hasError('telefone')">
+                {{ getErrorMessage('telefone') }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Endereço -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Endereço</mat-label>
+            <textarea matInput formControlName="endereco" rows="3" placeholder="Digite o endereço completo"></textarea>
+            <mat-icon matPrefix>home</mat-icon>
+            <mat-error *ngIf="hasError('endereco')">
+                {{ getErrorMessage('endereco') }}
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Mensagem de erro -->
+        <div *ngIf="errorMessage" class="error-message">
+            <mat-icon>error</mat-icon>
+            {{ errorMessage }}
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+        <mat-icon>close</mat-icon>
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="onSave()" [disabled]="isLoading || professorForm.invalid">
+        <mat-icon>save</mat-icon>
+        {{ isLoading ? 'Salvando...' : 'Salvar' }}
+    </button>
+</mat-dialog-actions>

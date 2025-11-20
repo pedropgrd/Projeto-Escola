@@ -2,10 +2,15 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { SharedModule } from '../../shared';
 import { HeaderComponent } from "../../components/header/header.component";
 import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
+import { EditAlunoDialogComponent } from './edit-aluno-dialog/edit-aluno-dialog.component';
+import { EditProfessorDialogComponent } from './edit-professor-dialog/edit-professor-dialog.component';
 
 interface Aluno {
   id_aluno: number;
@@ -49,12 +54,22 @@ interface ProfessorListResponse {
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SharedModule, HeaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterModule,
+    MatDialogModule,
+    MatIconModule,
+    MatButtonModule,
+    SharedModule,
+    HeaderComponent
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })
 export class AdminComponent implements OnInit {
   private apiService = inject(ApiService);
+  private dialog = inject(MatDialog);
 
   // Signals para gerenciamento de estado
   alunos = signal<Aluno[]>([]);
@@ -101,11 +116,11 @@ export class AdminComponent implements OnInit {
    * Carrega dados baseado no modo atual
    */
   loadData(): void {
-    if (this.viewMode() === 'alunos') {
+    // if (this.viewMode() === 'alunos') {
       this.loadAlunos();
-    } else {
+    // } else {
       this.loadProfessores();
-    }
+    // }
   }
 
   /**
@@ -306,6 +321,67 @@ export class AdminComponent implements OnInit {
       return `${numeros.substring(0, 3)}.***.***-${numeros.substring(9)}`;
     }
     return cpf;
+  }
+
+  /**
+   * Abre dialog para editar aluno
+   */
+  openEditAlunoDialog(aluno: Aluno): void {
+    const dialogRef = this.dialog.open(EditAlunoDialogComponent, {
+      width: '600px',
+      data: {
+        id_aluno: aluno.id_aluno,
+        matricula: aluno.matricula,
+        nome: aluno.nome,
+        cpf: aluno.cpf,
+        data_nascimento: aluno.data_nascimento,
+        endereco: aluno.endereco,
+        telefone: aluno.telefone
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Aluno atualizado com sucesso!');
+        this.loadAlunos();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
+  }
+
+  /**
+   * Abre dialog para editar professor
+   */
+  openEditProfessorDialog(professor: Professor): void {
+    const dialogRef = this.dialog.open(EditProfessorDialogComponent, {
+      width: '600px',
+      data: {
+        id_professor: professor.id_professor,
+        nome: professor.nome,
+        cpf: professor.cpf,
+        email: professor.email,
+        endereco: professor.endereco,
+        telefone: professor.telefone
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Professor atualizado com sucesso!');
+        this.loadProfessores();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
   }
 
   /**

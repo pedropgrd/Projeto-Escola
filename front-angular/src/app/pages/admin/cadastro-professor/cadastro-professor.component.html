@@ -1,22 +1,34 @@
 <app-header></app-header>
 
-<div class="top_container sub_pages">
+<div class="hero_area">
     <section class="hero_section">
-        <div class="hero-container container">
+        <div class="container">
             <div class="hero_detail-box">
-                <h1>Cadastro de Professor</h1>
-                <p>Preencha os dados do novo professor</p>
+                <h1>
+                    Cadastro de <br>
+                    <span>Professor</span>
+                </h1>
+                <p>Preencha os dados abaixo para cadastrar um novo professor.</p>
             </div>
         </div>
     </section>
 </div>
 
-<section class="cadastro_section layout_padding">
+<section class="cadastro_section">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-10 col-lg-8 mx-auto">
                 <div class="cadastro-form">
-                    <h2 class="main-heading">Dados do Professor</h2>
+
+                    <div class="header_form">
+                        <h2 class="main-heading">Dados do Professor</h2>
+
+                        <div>
+                            <button type="button" class="btn_on_clear" (click)="resetForm()" [disabled]="isLoading()">
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Mensagem de sucesso -->
                     <div class="alert alert-success" role="alert" *ngIf="successMessage()">
@@ -27,10 +39,6 @@
                     <div class="alert alert-danger" role="alert" *ngIf="errorMessage()">
                         <strong>⚠</strong> {{ errorMessage() }}
                     </div>
-
-                    <button type="button" class="btn btn-secondary" [disabled]="isLoading()" (click)="resetForm()">
-                        Limpar Formulário
-                    </button>
 
                     <form (ngSubmit)="onSubmit()" #professorFormRef="ngForm">
                         <div class="row">
@@ -67,29 +75,29 @@
                             </div>
 
                             <!-- Campo de seleção de usuário (autocomplete) -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_usuario_search">Usuário (pesquisar por nome) <span
+                            <div class="col-md-12">
+                                <div class="form-group bg-light p-3 rounded border">
+                                    <label for="id_usuario_search" class="mb-2">Vincular Usuário do Sistema <span
                                             class="text-danger">*</span></label>
 
                                     <input type="text" id="id_usuario_search"
-                                        [value]="selectedUserEmail ? (selectedUserEmail + ' — ' + (professorForm.id_usuario ?? '')) : ''"
-                                        placeholder="Selecione um usuário ou digite o nome do professor para buscar"
+                                        [value]="selectedUserEmail ? (selectedUserEmail + ' — ID: ' + (professorForm.id_usuario ?? '')) : ''"
+                                        placeholder="Digite o nome do professor acima para buscar usuários..."
                                         class="form-control" readonly [disabled]="isLoading()">
 
                                     <input type="hidden" [(ngModel)]="professorForm.id_usuario" name="id_usuario">
 
-                                    <small class="form-text text-muted">Selecione um usuário através do nome do
-                                        professor. O e-mail do usuário será exibido aqui e o id será enviado.</small>
-
                                     <!-- Lista de sugestões -->
-                                    <ul *ngIf="filteredUsers.length > 0" class="list-group mt-2">
-                                        <li class="list-group-item" *ngFor="let u of filteredUsers"
-                                            (mousedown)="selectUser(u)" style="cursor: pointer;">
-                                            <strong>{{ u.nome_completo }}</strong>
-                                            <div class="small text-muted">{{ u.email }}</div>
+                                    <ul *ngIf="filteredUsers.length > 0" class="list-group mt-2 shadow-sm">
+                                        <li class="list-group-item list-group-item-action"
+                                            *ngFor="let u of filteredUsers" (mousedown)="selectUser(u)"
+                                            style="cursor: pointer;">
+                                            <strong>{{ u.nome_completo }}</strong> <br>
+                                            <small class="text-muted">{{ u.email }}</small>
                                         </li>
                                     </ul>
+                                    <small class="form-text text-muted mt-2">O sistema buscará usuários automaticamente
+                                        enquanto você digita o nome do professor.</small>
                                 </div>
                             </div>
 
@@ -116,13 +124,12 @@
                         </div>
 
                         <!-- Botões -->
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn_on-hover"
                                 [disabled]="!professorFormRef.valid || isLoading()">
                                 <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true"></span>
-                                <span *ngIf="isLoading()">Cadastrando...</span>
-                                <span *ngIf="!isLoading()">Cadastrar Professor</span>
+                                {{ isLoading() ? 'Cadastrando...' : 'CADASTRAR PROFESSOR' }}
                             </button>
                         </div>
                     </form>

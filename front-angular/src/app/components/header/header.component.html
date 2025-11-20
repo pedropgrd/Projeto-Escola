@@ -65,9 +65,6 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ authService.user()?.nomeCompleto }}
                             </a>
-                            <button style="border-radius: 10px; background-color: rgb(201, 70, 70); color:white"  class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" (click)="logout()">
-                                Sair
-                            </button>
                             
                         </li>
                         } @else {
@@ -75,6 +72,14 @@
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/login" (click)="toggleNavbar()">
                                 Login
+                            </a>
+                        </li>
+                        }
+
+                        @if(authService.isAuthenticated()) {
+                        <li class="nav-item">
+                            <a class="nav-link logout" href="#" (click)="logout(); toggleNavbar()">
+                                Sair
                             </a>
                         </li>
                         }

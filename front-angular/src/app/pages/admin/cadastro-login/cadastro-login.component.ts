@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { ApiService } from '../../../core/services/api.service';
@@ -25,7 +26,7 @@ interface SignupResponse {
 @Component({
   selector: 'app-cadastro-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, MatIconModule, HeaderComponent, FooterComponent],
   templateUrl: './cadastro-login.component.html',
   styleUrl: './cadastro-login.component.scss'
 })

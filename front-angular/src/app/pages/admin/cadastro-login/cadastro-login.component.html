@@ -1,81 +1,75 @@
 <app-header></app-header>
 
-<div class="top_container sub_pages">
+<div class="hero_area">
     <section class="hero_section">
-        <div class="hero-container container">
+        <div class="container">
             <div class="hero_detail-box">
-                <h1>Cadastro de Usuário</h1>
+                <h1>
+                    Cadastro de <br>
+                    <span>Usuário</span>
+                </h1>
                 <p>Criar novo login para o sistema</p>
             </div>
         </div>
     </section>
 </div>
 
-<section class="cadastro_section layout_padding">
+<section class="cadastro_section">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-10 col-lg-8 mx-auto">
                 <div class="cadastro-form">
+
+                    <div class="header_form">
+                        <h2 class="main-heading">Novo Usuário</h2>
+
+                        <div>
+                            <button type="button" class="btn_on_clear" (click)="resetForm()" [disabled]="isLoading()">
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Toast de Sucesso -->
                     @if (showToast()) {
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
-                            <strong>✅ Sucesso!</strong> {{ toastMessage() }}
-                        </div>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>✅</strong> {{ toastMessage() }}
+                    </div>
                     }
 
                     <!-- Mensagem de erro -->
                     @if (errorMessage()) {
-                        <div class="alert alert-danger" role="alert">
-                            {{ errorMessage() }}
-                        </div>
+                    <div class="alert alert-danger" role="alert">
+                        <strong>⚠</strong> {{ errorMessage() }}
+                    </div>
                     }
 
                     <form (ngSubmit)="onSubmit()" #cadastroForm="ngForm">
                         <!-- Nome Completo -->
                         <div class="form-group">
-                            <label for="nome_completo">Nome Completo *</label>
-                            <input 
-                                type="text" 
-                                id="nome_completo"
-                                [(ngModel)]="formData.nome_completo" 
-                                name="nome_completo" 
-                                placeholder="Digite o nome completo" 
-                                required
-                                minlength="3"
-                                [disabled]="isLoading()"
-                                class="form-control">
+                            <label for="nome_completo">Nome Completo <span class="text-danger">*</span></label>
+                            <input type="text" id="nome_completo" [(ngModel)]="formData.nome_completo"
+                                name="nome_completo" placeholder="Digite o nome completo" required minlength="3"
+                                [disabled]="isLoading()" class="form-control">
                             <small class="form-text text-muted">Mínimo 3 caracteres</small>
                         </div>
 
                         <!-- E-mail -->
                         <div class="form-group">
-                            <label for="email">E-mail *</label>
-                            <input 
-                                type="email" 
-                                id="email"
-                                [(ngModel)]="formData.email" 
-                                name="email" 
-                                placeholder="usuario@exemplo.com" 
-                                required
-                                email
-                                [disabled]="isLoading()"
+                            <label for="email">E-mail <span class="text-danger">*</span></label>
+                            <input type="email" id="email" [(ngModel)]="formData.email" name="email"
+                                placeholder="usuario@exemplo.com" required email [disabled]="isLoading()"
                                 class="form-control">
                             <small class="form-text text-muted">Será usado para fazer login</small>
                         </div>
 
                         <!-- Perfil -->
                         <div class="form-group">
-                            <label for="perfil">Perfil *</label>
-                            <select 
-                                id="perfil"
-                                [(ngModel)]="formData.perfil" 
-                                name="perfil" 
-                                required
-                                [disabled]="isLoading()"
-                                class="form-control">
+                            <label for="perfil">Perfil <span class="text-danger">*</span></label>
+                            <select id="perfil" [(ngModel)]="formData.perfil" name="perfil" required
+                                [disabled]="isLoading()" class="form-control">
                                 @for (perfil of perfis; track perfil.value) {
-                                    <option [value]="perfil.value">{{ perfil.label }}</option>
+                                <option [value]="perfil.value">{{ perfil.label }}</option>
                                 }
                             </select>
                             <small class="form-text text-muted">Define as permissões do usuário</small>
@@ -83,24 +77,14 @@
 
                         <!-- Senha -->
                         <div class="form-group">
-                            <label for="senha">Senha *</label>
+                            <label for="senha">Senha <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input 
-                                    [type]="showPassword() ? 'text' : 'password'"
-                                    id="senha"
-                                    [(ngModel)]="formData.senha" 
-                                    name="senha" 
-                                    placeholder="Mínimo 6 caracteres"
-                                    required
-                                    minlength="6"
-                                    [disabled]="isLoading()"
-                                    class="form-control">
-                                <button 
-                                    type="button"
-                                    class="btn btn-outline-secondary"
-                                    (click)="togglePasswordVisibility()"
+                                <input [type]="showPassword() ? 'text' : 'password'" id="senha"
+                                    [(ngModel)]="formData.senha" name="senha" placeholder="Mínimo 6 caracteres" required
+                                    minlength="6" [disabled]="isLoading()" class="form-control">
+                                <button type="button" class="btn-outline-secondary" (click)="togglePasswordVisibility()"
                                     [disabled]="isLoading()">
-                                    {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
+                                    <mat-icon>{{ showPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
                                 </button>
                             </div>
                             <small class="form-text text-muted">Mínimo 6 caracteres</small>
@@ -108,24 +92,15 @@
 
                         <!-- Confirmar Senha -->
                         <div class="form-group">
-                            <label for="confirmarSenha">Confirmar Senha *</label>
+                            <label for="confirmarSenha">Confirmar Senha <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input 
-                                    [type]="showConfirmPassword() ? 'text' : 'password'"
-                                    id="confirmarSenha"
-                                    [(ngModel)]="formData.confirmarSenha" 
-                                    name="confirmarSenha" 
-                                    placeholder="Digite a senha novamente"
-                                    required
-                                    minlength="6"
-                                    [disabled]="isLoading()"
-                                    class="form-control">
-                                <button 
-                                    type="button"
-                                    class="btn btn-outline-secondary"
-                                    (click)="toggleConfirmPasswordVisibility()"
-                                    [disabled]="isLoading()">
-                                    {{ showConfirmPassword() ? '👁️' : '👁️‍🗨️' }}
+                                <input [type]="showConfirmPassword() ? 'text' : 'password'" id="confirmarSenha"
+                                    [(ngModel)]="formData.confirmarSenha" name="confirmarSenha"
+                                    placeholder="Digite a senha novamente" required minlength="6"
+                                    [disabled]="isLoading()" class="form-control">
+                                <button type="button" class="btn-outline-secondary"
+                                    (click)="toggleConfirmPasswordVisibility()" [disabled]="isLoading()">
+                                    <mat-icon>{{ showConfirmPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
                                 </button>
                             </div>
                             <small class="form-text text-muted">Deve ser igual à senha digitada acima</small>
@@ -133,23 +108,14 @@
 
                         <!-- Botões -->
                         <div class="d-flex justify-content-between mt-4">
-                            <button 
-                                type="button" 
-                                class="btn btn-secondary"
-                                (click)="resetForm()"
-                                [disabled]="isLoading()">
-                                Limpar
-                            </button>
-                            
-                            <button 
-                                type="submit" 
-                                class="btn_on-hover" 
-                                [disabled]="!cadastroForm.valid || isLoading()">
+
+                            <button type="submit" class="btn_on-hover" [disabled]="!cadastroForm.valid || isLoading()">
                                 @if (isLoading()) {
-                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                    Cadastrando...
+                                <span class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                Cadastrando...
                                 } @else {
-                                    Cadastrar Usuário
+                                CADASTRAR USUÁRIO
                                 }
                             </button>
                         </div>

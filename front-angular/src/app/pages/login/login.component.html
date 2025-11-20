@@ -40,8 +40,9 @@
                                     [(ngModel)]="loginForm.senha" name="senha" placeholder="Digite sua senha" required
                                     minlength="6" [disabled]="isLoading()" class="form-control">
                                 <button type="button" class="btn btn-outline-secondary"
-                                    (click)="togglePasswordVisibility()" [disabled]="isLoading()">
-                                    {{ showPassword() ? '👁️' : '👁️‍🗨️' }}
+                                    (click)="togglePasswordVisibility()" [disabled]="isLoading()"
+                                    aria-label="Toggle password visibility">
+                                    <mat-icon>{{ showPassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
                                 </button>
                             </div>
                         </div>

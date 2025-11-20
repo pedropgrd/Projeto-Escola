@@ -37,7 +37,9 @@
 
             <section class="card stat-totals">
                 <h3 style="margin-top:0">Total de Alunos: {{ totalAlunos() }}</h3>
+                <h3 style="margin-top:0">Total de Professores {{ totalProfessores() }}</h3>
             </section>
+
 
             <section class="card">
                 <!-- Toggle e controles -->
@@ -112,9 +114,13 @@
                                     <td>{{ formatTelefone(aluno.telefone) }}</td>
                                     <td>{{ aluno.endereco }}</td>
                                     <td class="actions">
+                                        <button class="btn-edit-small" (click)="openEditAlunoDialog(aluno)"
+                                            title="Editar aluno">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
                                         <button class="btn-danger-small" (click)="deleteAluno(aluno)"
                                             title="Excluir aluno">
-                                            🗑️ Excluir
+                                            <mat-icon>delete</mat-icon>
                                         </button>
                                     </td>
                                 </tr>
@@ -143,9 +149,13 @@
                                     <td>{{ formatTelefone(professor.telefone) }}</td>
                                     <td>{{ professor.endereco }}</td>
                                     <td class="actions">
+                                        <button class="btn-edit-small" (click)="openEditProfessorDialog(professor)"
+                                            title="Editar professor">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
                                         <button class="btn-danger-small" (click)="deleteProfessor(professor)"
                                             title="Excluir professor">
-                                            🗑️ Excluir
+                                            <mat-icon>delete</mat-icon>
                                         </button>
                                     </td>
                                 </tr>

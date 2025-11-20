@@ -1,38 +1,45 @@
 <app-header></app-header>
 
-<div class="top_container sub_pages">
+<div class="hero_area">
     <section class="hero_section">
-        <div class="hero-container container">
+        <div class="container">
             <div class="hero_detail-box">
-                <h1>Cadastro de Aluno</h1>
-                <p>Preencha os dados do novo aluno</p>
+                <h1>
+                    Cadastro de <br>
+                    <span>Aluno</span>
+                </h1>
+                <p>Preencha os dados abaixo para matricular um novo estudante.</p>
             </div>
         </div>
     </section>
 </div>
 
-<section class="cadastro_section layout_padding">
+<section class="cadastro_section">
     <div class="container">
         <div class="row">
-            <div class="col-md-8 mx-auto">
+            <div class="col-md-10 col-lg-8 mx-auto">
                 <div class="cadastro-form">
-                    <h2 class="main-heading">Dados do Aluno</h2>
 
-                    <!-- Mensagem de sucesso -->
+                    <div class="header_form">
+                        <h2 class="main-heading">Dados do Aluno</h2>
+
+                        <div>
+                            <button type="button" class="btn_on_clear" (click)="resetForm()">
+                                Limpar
+                            </button>
+                        </div>
+
+                    </div>
+
                     <div class="alert alert-success" role="alert" *ngIf="successMessage()">
                         <strong>✓</strong> {{ successMessage() }}
                     </div>
-
-                    <!-- Mensagem de erro -->
                     <div class="alert alert-danger" role="alert" *ngIf="errorMessage()">
                         <strong>⚠</strong> {{ errorMessage() }}
                     </div>
-                    <button type="button" class="btn btn-secondary" [disabled]="isLoading()" (click)="resetForm()">
-                        Limpar Formulário
-                    </button>
+
                     <form (ngSubmit)="onSubmit()" #alunoFormRef="ngForm">
                         <div class="row">
-                            <!-- Nome Completo -->
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="nome">Nome Completo <span class="text-danger">*</span></label>
@@ -42,18 +49,15 @@
                                 </div>
                             </div>
 
-                            <!-- CPF -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="cpf">CPF <span class="text-danger">*</span></label>
                                     <input type="text" id="cpf" [(ngModel)]="alunoForm.cpf" (input)="onCpfInput($event)"
                                         name="cpf" placeholder="000.000.000-00" required maxlength="14"
                                         [disabled]="isLoading()" class="form-control">
-                                    <small class="form-text text-muted">Apenas números (11 dígitos)</small>
                                 </div>
                             </div>
 
-                            <!-- Data de Nascimento -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="data_nascimento">Data de Nascimento <span
@@ -63,7 +67,6 @@
                                 </div>
                             </div>
 
-                            <!-- Matrícula -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="matricula">Matrícula <span class="text-danger">*</span></label>
@@ -73,64 +76,54 @@
                                 </div>
                             </div>
 
-                            <!-- Campo de seleção de usuário (autocomplete) -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="id_usuario_search">Usuário (pesquisar por nome) <span
-                                            class="text-danger">*</span></label>
-
-                                    <!-- Campo de texto para busca - amarrado ao nome do aluno via onNomeInput -->
-                                    <input type="text" id="id_usuario_search"
-                                        [value]="selectedUserEmail ? (selectedUserEmail + ' — ' + (alunoForm.id_usuario ?? '')) : ''"
-                                        placeholder="Selecione um usuário ou digite o nome do aluno para buscar"
-                                        class="form-control" readonly [disabled]="isLoading()">
-
-                                    <!-- Campo escondido que de fato envia o id_usuario ao backend -->
-                                    <input type="hidden" [(ngModel)]="alunoForm.id_usuario" name="id_usuario">
-
-                                    <small class="form-text text-muted">Selecione um usuário através do nome do aluno. O
-                                        e-mail do usuário será exibido aqui e o id será enviado.</small>
-
-                                    <!-- Lista de sugestões (aparece quando há resultados) -->
-                                    <ul *ngIf="filteredUsers.length > 0" class="list-group mt-2">
-                                        <li class="list-group-item" *ngFor="let u of filteredUsers"
-                                            (mousedown)="selectUser(u)" style="cursor: pointer;">
-                                            <strong>{{ u.nome_completo }}</strong>
-                                            <div class="small text-muted">{{ u.email }}</div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <!-- Telefone -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="telefone">Telefone <span class="text-danger">*</span></label>
                                     <input type="text" id="telefone" [(ngModel)]="alunoForm.telefone"
                                         (input)="onTelefoneInput($event)" name="telefone" placeholder="(00) 00000-0000"
                                         required maxlength="15" [disabled]="isLoading()" class="form-control">
-                                    <small class="form-text text-muted">Telefone com DDD</small>
                                 </div>
                             </div>
 
-                            <!-- Endereço -->
+                            <div class="col-md-12">
+                                <div class="form-group bg-light p-3 rounded border">
+                                    <label for="id_usuario_search" class="mb-2">Vincular Usuário do Sistema <span
+                                            class="text-danger">*</span></label>
+
+                                    <input type="text" id="id_usuario_search"
+                                        [value]="selectedUserEmail ? (selectedUserEmail + ' — ID: ' + (alunoForm.id_usuario ?? '')) : ''"
+                                        placeholder="Digite o nome do aluno acima para buscar usuários..."
+                                        class="form-control" readonly [disabled]="isLoading()">
+
+                                    <input type="hidden" [(ngModel)]="alunoForm.id_usuario" name="id_usuario">
+
+                                    <ul *ngIf="filteredUsers.length > 0" class="list-group mt-2 shadow-sm">
+                                        <li class="list-group-item list-group-item-action"
+                                            *ngFor="let u of filteredUsers" (mousedown)="selectUser(u)"
+                                            style="cursor: pointer;">
+                                            <strong>{{ u.nome_completo }}</strong> <br>
+                                            <small class="text-muted">{{ u.email }}</small>
+                                        </li>
+                                    </ul>
+                                    <small class="form-text text-muted mt-2">O sistema buscará usuários automaticamente
+                                        enquanto você digita o nome do aluno.</small>
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="endereco">Endereço <span class="text-danger">*</span></label>
                                     <input type="text" id="endereco" [(ngModel)]="alunoForm.endereco" name="endereco"
-                                        placeholder="Rua, número, bairro" required maxlength="255"
+                                        placeholder="Rua, número, bairro e cidade" required maxlength="255"
                                         [disabled]="isLoading()" class="form-control">
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Botões -->
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-flex justify-content-end mt-4">
                             <button type="submit" class="btn_on-hover" [disabled]="!alunoFormRef.valid || isLoading()">
-                                <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status"
-                                    aria-hidden="true"></span>
-                                <span *ngIf="isLoading()">Cadastrando...</span>
-                                <span *ngIf="!isLoading()">Cadastrar Aluno</span>
+                                <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2"></span>
+                                {{ isLoading() ? 'Cadastrando...' : 'CADASTRAR ALUNO' }}
                             </button>
                         </div>
                     </form>

@@ -2,6 +2,10 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { AuthService } from '../../core/services/auth.service';
@@ -10,7 +14,16 @@ import { LoginCredentials } from '../../core/models/auth.models';
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
+    imports: [
+        CommonModule, 
+        FormsModule, 
+        MatIconModule, 
+        MatButtonModule,
+        MatInputModule,
+        MatFormFieldModule,
+        HeaderComponent, 
+        FooterComponent
+    ],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
