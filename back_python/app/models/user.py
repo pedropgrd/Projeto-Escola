@@ -26,7 +26,7 @@ class User(SQLModel, table=True):
     
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True, nullable=False)
-    nome_completo: str = Field(nullable=False)
+    cpf: Optional[str] = Field(default=None, max_length=11, unique=True, index=True)
     senha_hash: str = Field(nullable=False)
     
     # Perfil do usuário usando Enum
@@ -50,7 +50,7 @@ class User(SQLModel, table=True):
         json_schema_extra = {
             "example": {
                 "email": "admin@escola.com",
-                "nome_completo": "Administrador do Sistema",
+                "cpf": "12345678900",
                 "perfil": "ADMIN"
             }
         }

@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
+from app.models.enums import TurnoEnum
 
 
 # ============================================
@@ -10,6 +11,8 @@ from pydantic import BaseModel, Field
 class TurmaBase(BaseModel):
     """Schema base para Turma"""
     nome: str = Field(min_length=1, max_length=100, description="Ex: 5º A, 7º B")
+    serie: str = Field(min_length=1, max_length=20, description="Ex: 5º Ano, 6º Ano")
+    turno: TurnoEnum = Field(description="Turno da turma: MANHA, TARDE ou NOITE")
     ano_letivo: int = Field(gt=2000, lt=2100, description="Ano letivo da turma")
     id_professor: int = Field(gt=0, description="ID do professor responsável")
     id_disciplina: int = Field(gt=0, description="ID da disciplina")
@@ -22,6 +25,8 @@ class TurmaCreate(TurmaBase):
         json_schema_extra = {
             "example": {
                 "nome": "5º A",
+                "serie": "5º Ano",
+                "turno": "MANHA",
                 "ano_letivo": 2025,
                 "id_professor": 1,
                 "id_disciplina": 1
@@ -32,6 +37,8 @@ class TurmaCreate(TurmaBase):
 class TurmaUpdate(BaseModel):
     """Schema para atualização de Turma"""
     nome: Optional[str] = Field(None, min_length=1, max_length=100)
+    serie: Optional[str] = Field(None, min_length=1, max_length=20)
+    turno: Optional[TurnoEnum] = None
     ano_letivo: Optional[int] = Field(None, gt=2000, lt=2100)
     id_professor: Optional[int] = Field(None, gt=0)
     id_disciplina: Optional[int] = Field(None, gt=0)
@@ -49,6 +56,8 @@ class TurmaResponse(TurmaBase):
             "example": {
                 "id_turma": 1,
                 "nome": "5º A",
+                "serie": "5º Ano",
+                "turno": "MANHA",
                 "ano_letivo": 2025,
                 "id_professor": 1,
                 "id_disciplina": 1,

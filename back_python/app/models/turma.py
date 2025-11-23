@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
+from app.models.enums import TurnoEnum
 
 
 class Turma(SQLModel, table=True):
@@ -12,6 +13,8 @@ class Turma(SQLModel, table=True):
     
     id_turma: Optional[int] = Field(default=None, primary_key=True)
     nome: str = Field(nullable=False, max_length=100)  # Ex: 5º A, 7º B
+    serie: str = Field(nullable=False, max_length=20)  # Ex: 5º Ano, 6º Ano
+    turno: TurnoEnum = Field(nullable=False)  # Ex: MANHA, TARDE, NOITE
     ano_letivo: int = Field(nullable=False)
     id_professor: int = Field(foreign_key="professor.id_professor", nullable=False)
     id_disciplina: int = Field(foreign_key="disciplina.id_disciplina", nullable=False)
@@ -33,6 +36,8 @@ class Turma(SQLModel, table=True):
         json_schema_extra = {
             "example": {
                 "nome": "5º A",
+                "serie": "5º Ano",
+                "turno": "MANHA",
                 "ano_letivo": 2025,
                 "id_professor": 1,
                 "id_disciplina": 1

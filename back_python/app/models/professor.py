@@ -11,7 +11,7 @@ class Professor(SQLModel, table=True):
     __tablename__ = "professor"
     
     id_professor: Optional[int] = Field(default=None, primary_key=True)
-    id_usuario: int = Field(foreign_key="usuarios.id", unique=True, nullable=False)
+    id_usuario: Optional[int] = Field(default=None, foreign_key="usuarios.id", unique=True)
     nome: str = Field(nullable=False, max_length=150)
     cpf: str = Field(unique=True, index=True, nullable=False, max_length=14)
     endereco: Optional[str] = Field(default=None, max_length=255)

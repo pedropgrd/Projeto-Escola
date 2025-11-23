@@ -9,8 +9,8 @@ class UserBase(BaseModel):
     model_config = ConfigDict(use_enum_values=False)
     
     email: EmailStr
-    nome_completo: str = Field(min_length=3, max_length=100)
     perfil: UserRole = UserRole.ALUNO
+    cpf: Optional[str] = Field(None, min_length=11, max_length=11, pattern="^[0-9]{11}$")
 
 
 class UserCreate(UserBase):
@@ -20,8 +20,8 @@ class UserCreate(UserBase):
         json_schema_extra={
             "example": {
                 "email": "aluno@escola.com",
-                "nome_completo": "João Silva",
                 "perfil": "ALUNO",
+                "cpf": "12345678900",
                 "senha": "senha123"
             }
         }
@@ -46,8 +46,8 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     """Schema para atualização de usuário"""
-    nome_completo: Optional[str] = Field(None, min_length=3, max_length=100)
     email: Optional[EmailStr] = None
+    cpf: Optional[str] = Field(None, min_length=11, max_length=11, pattern="^[0-9]{11}$")
     senha: Optional[str] = Field(None, min_length=6, max_length=72)
     ativo: Optional[bool] = None
 
@@ -61,7 +61,7 @@ class UserResponse(UserBase):
             "example": {
                 "id": 1,
                 "email": "aluno@escola.com",
-                "nome_completo": "João Silva",
+                "cpf": "12345678900",
                 "perfil": "ALUNO",
                 "ativo": True,
                 "criado_em": "2025-01-01T10:00:00",

@@ -27,7 +27,7 @@ class TokenData(BaseModel):
     """
     user_id: int
     email: str
-    nome: str
+    cpf: Optional[str] = None
     perfil: str
     data_acesso: datetime
     
@@ -36,7 +36,7 @@ class TokenData(BaseModel):
             "example": {
                 "user_id": 1,
                 "email": "admin@escola.com",
-                "nome": "Administrador do Sistema",
+                "cpf": "12345678900",
                 "perfil": "ADMIN",
                 "data_acesso": "2025-11-19T10:30:00"
             }

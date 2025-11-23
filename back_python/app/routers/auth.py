@@ -56,7 +56,7 @@ async def sign_up(
     
     new_user = User(
         email=user_data.email,
-        nome_completo=user_data.nome_completo,
+        cpf=user_data.cpf,
         perfil=user_data.perfil,
         senha_hash=senha_hash,
         ativo=True
@@ -109,7 +109,6 @@ async def login(
     access_token = create_access_token(
         user_id=user.id,
         email=user.email,
-        nome_completo=user.nome_completo,
         perfil=user.perfil.value  # Converte Enum para string
     )
     refresh_token = create_refresh_token(user_id=user.id)
@@ -168,7 +167,6 @@ async def refresh_token(
     new_access_token = create_access_token(
         user_id=user.id,
         email=user.email,
-        nome_completo=user.nome_completo,
         perfil=user.perfil.value
     )
     new_refresh_token = create_refresh_token(user_id=user.id)
@@ -200,7 +198,6 @@ async def get_token_info(
     return TokenData(
         user_id=current_user.id,
         email=current_user.email,
-        nome=current_user.nome_completo,
         perfil=current_user.perfil.value,
         data_acesso=current_user.criado_em
     )

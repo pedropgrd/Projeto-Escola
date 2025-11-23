@@ -37,8 +37,9 @@ async def admin_only_route(
     
     **Autorização:** Requer role ADMIN.
     """
+    nome_exibicao = current_user.cpf if current_user.cpf else current_user.email
     return {
-        "message": f"Bem-vindo, {current_user.nome_completo}!",
+        "message": f"Bem-vindo, {nome_exibicao}!",
         "detail": "Você tem acesso total ao sistema como ADMIN",
         "admin_permissions": [
             "Gerenciar usuários",

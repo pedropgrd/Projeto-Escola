@@ -10,8 +10,6 @@ from pydantic import BaseModel, Field
 class DisciplinaBase(BaseModel):
     """Schema base para Disciplina"""
     nome: str = Field(min_length=3, max_length=100)
-    serie: str = Field(min_length=1, max_length=10, description="Ex: 5º, 6º, 7º")
-    turno: str = Field(min_length=3, max_length=20, description="Ex: Manhã, Tarde, Noite")
 
 
 class DisciplinaCreate(DisciplinaBase):
@@ -20,9 +18,7 @@ class DisciplinaCreate(DisciplinaBase):
     class Config:
         json_schema_extra = {
             "example": {
-                "nome": "Matemática",
-                "serie": "5º",
-                "turno": "Manhã"
+                "nome": "Matemática"
             }
         }
 
@@ -30,8 +26,6 @@ class DisciplinaCreate(DisciplinaBase):
 class DisciplinaUpdate(BaseModel):
     """Schema para atualização de Disciplina"""
     nome: Optional[str] = Field(None, min_length=3, max_length=100)
-    serie: Optional[str] = Field(None, min_length=1, max_length=10)
-    turno: Optional[str] = Field(None, min_length=3, max_length=20)
 
 
 class DisciplinaResponse(DisciplinaBase):
@@ -46,8 +40,6 @@ class DisciplinaResponse(DisciplinaBase):
             "example": {
                 "id_disciplina": 1,
                 "nome": "Matemática",
-                "serie": "5º",
-                "turno": "Manhã",
                 "criado_em": "2025-01-01T10:00:00",
                 "atualizado_em": None
             }

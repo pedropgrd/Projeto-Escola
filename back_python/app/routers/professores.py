@@ -10,9 +10,11 @@ from app.schemas.professor import (
     ProfessorCreate,
     ProfessorUpdate,
     ProfessorResponse,
-    ProfessorListResponse
+    ProfessorListResponse,
+    VincularUsuarioCreate,
+    VincularUsuarioExistente
 )
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_password_hash
 
 router = APIRouter(prefix="/professores", tags=["Professores"])
 
@@ -31,6 +33,10 @@ async def create_professor(
     """
     Criar novo professor no sistema.
     
+    **Mudança Arquitetural**: Agora cria apenas o registro do professor,
+    SEM vincular usuário automaticamente. Para criar acesso de login,
+    use o endpoint POST /professores/{professor_id}/vincular-usuario
+    
     **Permissão**: Apenas ADMIN
     """
     # Verificar permissão
@@ -38,15 +44,6 @@ async def create_professor(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Apenas administradores podem criar professores"
-        )
-    
-    # Verificar se o usuário existe
-    result = await session.execute(select(User).where(User.id == professor_data.id_usuario))
-    usuario = result.scalar_one_or_none()
-    if not usuario:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Usuário não encontrado"
         )
     
     # Verificar se já existe professor com este CPF
@@ -62,26 +59,19 @@ async def create_professor(
             detail="Já existe um professor com este CPF"
         )
     
-    # Verificar se já existe professor para este usuário
-    result = await session.execute(
-        select(Professor).where(
-            Professor.id_usuario == professor_data.id_usuario,
-            Professor.is_deleted == False
-        )
-    )
-    if result.scalar_one_or_none():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Já existe um professor cadastrado para este usuário"
-        )
-    
-    # Criar o professor
+    # Criar o professor (sem usuário vinculado)
     professor = Professor(**professor_data.model_dump())
     session.add(professor)
     await session.commit()
     await session.refresh(professor)
     
-    return professor
+    # Preparar resposta com email_usuario como None
+    professor_response = ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=None
+    )
+    
+    return professor_response
 
 
 @router.get(
@@ -122,8 +112,27 @@ async def list_professores(
     result = await session.execute(query)
     professores = result.scalars().all()
     
+    # Enriquecer com email do usuário quando existir
+    professores_response = []
+    for professor in professores:
+        email_usuario = None
+        if professor.id_usuario:
+            user_result = await session.execute(
+                select(User).where(User.id == professor.id_usuario)
+            )
+            usuario = user_result.scalar_one_or_none()
+            if usuario:
+                email_usuario = usuario.email
+        
+        professores_response.append(
+            ProfessorResponse(
+                **professor.model_dump(),
+                email_usuario=email_usuario
+            )
+        )
+    
     return ProfessorListResponse(
-        items=professores,
+        items=professores_response,
         total=total,
         offset=offset,
         limit=limit
@@ -167,7 +176,20 @@ async def get_professor(
             detail="Professor não encontrado"
         )
     
-    return professor
+    # Buscar email do usuário se existir vinculação
+    email_usuario = None
+    if professor.id_usuario:
+        user_result = await session.execute(
+            select(User).where(User.id == professor.id_usuario)
+        )
+        usuario = user_result.scalar_one_or_none()
+        if usuario:
+            email_usuario = usuario.email
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=email_usuario
+    )
 
 
 @router.put(
@@ -233,7 +255,20 @@ async def update_professor(
     await session.commit()
     await session.refresh(professor)
     
-    return professor
+    # Buscar email do usuário se existir vinculação
+    email_usuario = None
+    if professor.id_usuario:
+        user_result = await session.execute(
+            select(User).where(User.id == professor.id_usuario)
+        )
+        usuario = user_result.scalar_one_or_none()
+        if usuario:
+            email_usuario = usuario.email
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=email_usuario
+    )
 
 
 @router.delete(
@@ -284,3 +319,242 @@ async def delete_professor(
     await session.commit()
     
     return None
+
+
+# ============================================
+# ENDPOINTS DE VINCULAÇÃO DE USUÁRIO
+# ============================================
+
+@router.post(
+    "/{professor_id}/vincular-usuario",
+    response_model=ProfessorResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Criar e vincular usuário para professor"
+)
+async def vincular_usuario_professor(
+    professor_id: int,
+    usuario_data: VincularUsuarioCreate,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Criar um novo usuário e vincular a um professor existente.
+    
+    Permite que um professor (cadastrado como pessoa) receba acesso ao sistema.
+    
+    **Permissão**: Apenas ADMIN
+    """
+    # Verificar permissão
+    if current_user.perfil != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas administradores podem vincular usuários"
+        )
+    
+    # Buscar professor
+    result = await session.execute(
+        select(Professor).where(
+            Professor.id_professor == professor_id,
+            Professor.is_deleted == False
+        )
+    )
+    professor = result.scalar_one_or_none()
+    
+    if not professor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Professor não encontrado"
+        )
+    
+    # Verificar se professor já tem usuário vinculado
+    if professor.id_usuario is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este professor já possui um usuário vinculado"
+        )
+    
+    # Verificar se email já está em uso
+    result = await session.execute(
+        select(User).where(User.email == usuario_data.email)
+    )
+    if result.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este email já está em uso"
+        )
+    
+    # Criar novo usuário
+    novo_usuario = User(
+        email=usuario_data.email,
+        senha_hash=get_password_hash(usuario_data.senha),
+        perfil=UserRole.PROFESSOR,
+        ativo=True
+    )
+    session.add(novo_usuario)
+    await session.flush()  # Gerar ID do usuário
+    
+    # Vincular usuário ao professor
+    professor.id_usuario = novo_usuario.id
+    professor.atualizado_em = datetime.utcnow()
+    
+    await session.commit()
+    await session.refresh(professor)
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=novo_usuario.email
+    )
+
+
+@router.put(
+    "/{professor_id}/vincular-usuario-existente",
+    response_model=ProfessorResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Vincular usuário existente a professor"
+)
+async def vincular_usuario_existente_professor(
+    professor_id: int,
+    vinculacao_data: VincularUsuarioExistente,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Vincular um usuário já existente a um professor.
+    
+    Útil quando o usuário já foi criado mas não estava associado ao professor.
+    
+    **Permissão**: Apenas ADMIN
+    """
+    # Verificar permissão
+    if current_user.perfil != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas administradores podem vincular usuários"
+        )
+    
+    # Buscar professor
+    result = await session.execute(
+        select(Professor).where(
+            Professor.id_professor == professor_id,
+            Professor.is_deleted == False
+        )
+    )
+    professor = result.scalar_one_or_none()
+    
+    if not professor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Professor não encontrado"
+        )
+    
+    # Verificar se professor já tem usuário vinculado
+    if professor.id_usuario is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este professor já possui um usuário vinculado"
+        )
+    
+    # Buscar usuário
+    result = await session.execute(
+        select(User).where(User.id == vinculacao_data.id_usuario)
+    )
+    usuario = result.scalar_one_or_none()
+    
+    if not usuario:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Usuário não encontrado"
+        )
+    
+    # Verificar se usuário já está vinculado a outro professor
+    result = await session.execute(
+        select(Professor).where(
+            Professor.id_usuario == vinculacao_data.id_usuario,
+            Professor.is_deleted == False
+        )
+    )
+    if result.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este usuário já está vinculado a outro professor"
+        )
+    
+    # Verificar se perfil do usuário é PROFESSOR
+    if usuario.perfil != UserRole.PROFESSOR:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="O usuário deve ter perfil PROFESSOR para ser vinculado a um professor"
+        )
+    
+    # Vincular usuário ao professor
+    professor.id_usuario = usuario.id
+    professor.atualizado_em = datetime.utcnow()
+    
+    await session.commit()
+    await session.refresh(professor)
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=usuario.email
+    )
+
+
+@router.delete(
+    "/{professor_id}/desvincular-usuario",
+    response_model=ProfessorResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Desvincular usuário de professor"
+)
+async def desvincular_usuario_professor(
+    professor_id: int,
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Remover vinculação entre professor e usuário.
+    
+    O professor permanece cadastrado mas perde acesso ao sistema.
+    O usuário não é deletado, apenas desvinculado.
+    
+    **Permissão**: Apenas ADMIN
+    """
+    # Verificar permissão
+    if current_user.perfil != UserRole.ADMIN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Apenas administradores podem desvincular usuários"
+        )
+    
+    # Buscar professor
+    result = await session.execute(
+        select(Professor).where(
+            Professor.id_professor == professor_id,
+            Professor.is_deleted == False
+        )
+    )
+    professor = result.scalar_one_or_none()
+    
+    if not professor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Professor não encontrado"
+        )
+    
+    # Verificar se professor tem usuário vinculado
+    if professor.id_usuario is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Este professor não possui usuário vinculado"
+        )
+    
+    # Desvincular usuário
+    professor.id_usuario = None
+    professor.atualizado_em = datetime.utcnow()
+    
+    await session.commit()
+    await session.refresh(professor)
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=None
+    )

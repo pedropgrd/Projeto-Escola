@@ -17,17 +17,19 @@ class ProfessorBase(BaseModel):
 
 
 class ProfessorCreate(ProfessorBase):
-    """Schema para criação de Professor - Apenas ADMIN pode criar"""
-    id_usuario: int = Field(gt=0, description="ID do usuário associado")
+    """Schema para criação de Professor - Apenas ADMIN pode criar
+    
+    Agora cria apenas o registro do professor, sem vincular usuário automaticamente.
+    Para vincular um usuário posteriormente, use o endpoint de vinculação.
+    """
     
     class Config:
         json_schema_extra = {
             "example": {
-                "id_usuario": 3,
                 "nome": "Maria Oliveira Costa",
                 "cpf": "98765432100",
                 "endereco": "Av. Principal, 456",
-                "telefone": "(11) 91234-5678",
+                "telefone": "11912345678",
                 "email": "maria.oliveira@escola.com"
             }
         }
@@ -43,9 +45,13 @@ class ProfessorUpdate(BaseModel):
 
 
 class ProfessorResponse(ProfessorBase):
-    """Schema de resposta de Professor"""
+    """Schema de resposta de Professor
+    
+    Inclui dados do professor e email do usuário vinculado (se houver).
+    """
     id_professor: int
-    id_usuario: int
+    id_usuario: Optional[int] = None
+    email_usuario: Optional[str] = None
     criado_em: datetime
     atualizado_em: Optional[datetime] = None
     
@@ -55,10 +61,11 @@ class ProfessorResponse(ProfessorBase):
             "example": {
                 "id_professor": 1,
                 "id_usuario": 3,
+                "email_usuario": "maria.oliveira@login.escola.com",
                 "nome": "Maria Oliveira Costa",
                 "cpf": "98765432100",
                 "endereco": "Av. Principal, 456",
-                "telefone": "(11) 91234-5678",
+                "telefone": "11912345678",
                 "email": "maria.oliveira@escola.com",
                 "criado_em": "2025-01-05T10:00:00",
                 "atualizado_em": None
@@ -72,3 +79,33 @@ class ProfessorListResponse(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+# ============================================
+# SCHEMAS PARA VINCULAÇÃO DE USUÁRIO
+# ============================================
+
+class VincularUsuarioCreate(BaseModel):
+    """Schema para criar e vincular um usuário a um professor existente"""
+    email: str = Field(description="Email para login do professor")
+    senha: str = Field(min_length=6, max_length=72, description="Senha para login")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "email": "maria.oliveira@login.escola.com",
+                "senha": "senha123"
+            }
+        }
+
+
+class VincularUsuarioExistente(BaseModel):
+    """Schema para vincular um usuário já existente a um professor"""
+    id_usuario: int = Field(gt=0, description="ID do usuário a ser vinculado")
+    
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "id_usuario": 15
+            }
+        }

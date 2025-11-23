@@ -12,8 +12,6 @@ class Disciplina(SQLModel, table=True):
     
     id_disciplina: Optional[int] = Field(default=None, primary_key=True)
     nome: str = Field(nullable=False, max_length=100)
-    serie: str = Field(nullable=False, max_length=10)  # Ex: 5º, 6º, 7º
-    turno: str = Field(nullable=False, max_length=20)  # Ex: Manhã, Tarde, Noite
     
     # Soft delete
     is_deleted: bool = Field(default=False)
@@ -29,8 +27,6 @@ class Disciplina(SQLModel, table=True):
     class Config:
         json_schema_extra = {
             "example": {
-                "nome": "Matemática",
-                "serie": "5º",
-                "turno": "Manhã"
+                "nome": "Matemática"
             }
         }
