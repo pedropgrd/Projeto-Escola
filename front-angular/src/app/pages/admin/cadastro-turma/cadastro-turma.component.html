@@ -1,1 +1,147 @@
-<p>cadastro-turma works!</p>
+<app-header></app-header>
+
+<div class="hero_area">
+    <section class="hero_section">
+        <div class="container">
+            <div class="hero_detail-box">
+                <h1>
+                    Gestão de <br>
+                    <span>Turmas</span>
+                </h1>
+                <p>Cadastre e gerencie as turmas da instituição.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="cadastro_section">
+    <div class="container">
+        <div class="row justify-content-center">
+
+            <div class="col-md-10 col-lg-8">
+                <div class="cadastro-form">
+
+                    <div class="alert alert-success" role="alert" *ngIf="successMessage()">
+                        <mat-icon>check_circle</mat-icon> {{ successMessage() }}
+                    </div>
+                    <div class="alert alert-danger" role="alert" *ngIf="errorMessage()">
+                        <mat-icon>error</mat-icon> {{ errorMessage() }}
+                    </div>
+
+                    <form [formGroup]="turmaForm" (ngSubmit)="onSubmit()">
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="nome">Nome da Turma <span class="text-danger">*</span></label>
+                                    <input type="text" id="nome" formControlName="nome" placeholder="Ex: 5º A"
+                                        [disabled]="isSaving()" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="serie">Série <span class="text-danger">*</span></label>
+                                    <input type="text" id="serie" formControlName="serie" placeholder="Ex: 5º Ano"
+                                        [disabled]="isSaving()" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="turno">Turno <span class="text-danger">*</span></label>
+                                    <mat-select id="turno" formControlName="turno" placeholder="Selecione o turno"
+                                        [disabled]="isSaving()" class="form-control">
+                                        <mat-option *ngFor="let turno of turnosOptions" [value]="turno.value">
+                                            {{ turno.label }}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label for="ano_letivo">Ano Letivo <span class="text-danger">*</span></label>
+                                    <input type="number" id="ano_letivo" formControlName="ano_letivo"
+                                        [disabled]="isSaving()" class="form-control" min="2000" max="2100">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Professor Responsável</mat-label>
+                                    <input type="text" matInput formControlName="professorSearch"
+                                        placeholder="Busque por nome" [matAutocomplete]="autoProfessor">
+
+                                    <mat-icon matSuffix *ngIf="isLoadingProfessor()">hourglass_empty</mat-icon>
+
+                                    <mat-autocomplete #autoProfessor="matAutocomplete" [displayWith]="displayProfessor"
+                                        (optionSelected)="onProfessorSelected($event)">
+                                        <mat-option *ngFor="let professor of filteredProfessores | async"
+                                            [value]="professor">
+                                            <span class="autocomplete-option">
+                                                <!-- Mostra CPF apenas se existir, senão mostra apenas o Nome -->
+                                                <strong *ngIf="professor.cpf">{{ maskCpf(professor.cpf) }} - </strong>
+                                                {{ professor.nome }}
+                                            </span>
+                                        </mat-option>
+
+                                        <mat-option
+                                            *ngIf="(filteredProfessores | async)?.length === 0 && turmaForm.get('professorSearch')?.value?.length > 2"
+                                            disabled>
+                                            Nenhum professor encontrado
+                                        </mat-option>
+                                    </mat-autocomplete>
+
+                                    <mat-error *ngIf="turmaForm.get('id_professor')?.hasError('required')">
+                                        Selecione um professor da lista
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <!-- AUTOCOMPLETE DISCIPLINA -->
+                            <div class="col-12 col-md-6">
+                                <mat-form-field appearance="outline" class="w-100">
+                                    <mat-label>Disciplina</mat-label>
+                                    <input type="text" matInput formControlName="disciplinaSearch"
+                                        placeholder="Busque a disciplina" [matAutocomplete]="autoDisciplina">
+
+                                    <mat-icon matSuffix *ngIf="isLoadingDisciplina()">hourglass_empty</mat-icon>
+
+                                    <mat-autocomplete #autoDisciplina="matAutocomplete"
+                                        [displayWith]="displayDisciplina"
+                                        (optionSelected)="onDisciplinaSelected($event)">
+                                        <mat-option *ngFor="let disciplina of filteredDisciplinas | async"
+                                            [value]="disciplina">
+                                            {{ disciplina.nome }}
+                                        </mat-option>
+                                    </mat-autocomplete>
+
+                                    <mat-error *ngIf="turmaForm.get('id_disciplina')?.hasError('required')">
+                                        Selecione uma disciplina da lista
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-center w-100 mt-4">
+                                    <button type="submit" class="btn_on-hover"
+                                        [disabled]="turmaForm.invalid || isSaving()">
+                                        <mat-spinner diameter="20" *ngIf="isSaving()"></mat-spinner>
+                                        <span *ngIf="!isSaving()">
+                                            CADASTRAR TURMA
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

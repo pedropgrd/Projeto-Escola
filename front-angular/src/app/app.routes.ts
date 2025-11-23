@@ -61,6 +61,14 @@ export const routes: Routes = [
     },
 
 
+// Turmas - Usuários autenticados
+    {
+        path: 'turmas',
+        loadComponent: () => import('./pages/turmas/turmas.component')
+            .then(m => m.TurmasComponent),
+        canActivate: [authGuard]
+    },
+
     // ==================== ROTA WILDCARD ====================
     {
         path: '**',

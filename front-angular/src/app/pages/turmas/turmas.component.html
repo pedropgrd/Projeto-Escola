@@ -1,0 +1,96 @@
+<app-header></app-header>
+
+<div class="hero_area">
+    <section class="hero_section">
+        <div class="container">
+            <div class="hero_detail-box">
+                <h1>
+                    Gestão de <br>
+                    <span>Turmas</span>
+                </h1>
+                <p>Cadastre e gerencie as turmas da instituição.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="cadastro_section">
+    <div class="container">
+
+        <div class="content-grid">
+            <!-- COLUNA LISTAGEM -->
+            <div class="list-column">
+                <div class="lista-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="lista-title mb-0">Turmas Cadastradas</h3>
+                        <span class="badge-total">{{ totalTurmas() }} Total</span>
+                    </div>
+
+                    <div *ngIf="isLoading()" class="loading-state">
+                        <mat-spinner diameter="40"></mat-spinner>
+                        <p>Carregando lista...</p>
+                    </div>
+
+                    <div class="table-responsive" *ngIf="!isLoading()">
+                        <table class="table custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Série</th>
+                                    <th>Turno</th>
+                                    <th>Disciplina</th>
+                                    <th>Professor</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let turma of turmas()">
+                                    <td class="align-middle">
+                                        <strong>{{ turma.nome }}</strong>
+                                        <br><small class="text-muted">{{ turma.ano_letivo }}</small>
+                                    </td>
+                                    <td class="align-middle">{{ turma.serie }}</td>
+                                    <td class="align-middle">
+                                        <span class="badge-turno badge-{{ turma.turno.toLowerCase() }}">
+                                            {{ getTurnoLabel(turma.turno) }}
+                                        </span>
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ turma.disciplina?.nome || 'N/A' }}
+                                    </td>
+                                    <td class="align-middle">
+                                        {{ turma.professor?.nome || 'N/A' }}
+                                    </td>
+                                    <td class="text-end">
+                                        <button mat-icon-button color="primary" (click)="editarTurma(turma)"
+                                            [disabled]="isSaving()" matTooltip="Editar">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-icon-button color="warn" (click)="removerTurma(turma)"
+                                            [disabled]="isSaving()" matTooltip="Excluir">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="turmas().length === 0">
+                                    <td colspan="6" class="empty-state">
+                                        <mat-icon>school</mat-icon>
+                                        <p>Nenhuma turma cadastrada.</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <mat-paginator [length]="totalTurmas()" [pageSize]="pageSize()" [pageIndex]="pageIndex()"
+                            [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons
+                            class="mt-3">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

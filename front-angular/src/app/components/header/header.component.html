@@ -44,6 +44,9 @@
                                 Professores
                             </a>
                         </li>
+                        }
+
+                        @if(authService.isAuthenticated()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/turmas" (click)="toggleNavbar()">
                                 Turmas
@@ -65,7 +68,7 @@
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                                 {{ authService.user()?.nomeCompleto }}
                             </a>
-                            
+
                         </li>
                         } @else {
                         <!-- Menu para usuário não autenticado -->
@@ -83,7 +86,7 @@
                             </a>
                         </li>
                         }
-                    </ul>                  
+                    </ul>
                 </div>
             </div>
         </nav>

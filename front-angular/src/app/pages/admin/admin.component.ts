@@ -64,8 +64,7 @@ interface ProfessorListResponse {
     MatIconModule,
     MatButtonModule,
     SharedModule,
-    HeaderComponent,
-    FooterComponent
+    HeaderComponent
 ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
