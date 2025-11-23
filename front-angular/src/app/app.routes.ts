@@ -47,6 +47,18 @@ export const routes: Routes = [
             .then(m => m.CadastroProfessorComponent),
         canActivate: [adminGuard]
     },
+    {
+        path: 'cadastro-disciplina',
+        loadComponent: () => import('./pages/admin/cadastro-disciplina/cadastro-disciplina.component')
+            .then(m => m.CadastroDisciplinaComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'cadastro-turma',
+        loadComponent: () => import('./pages/admin/cadastro-turma/cadastro-turma.component')
+            .then(m => m.CadastroTurmaComponent),
+        canActivate: [adminGuard]
+    },
 
 
     // ==================== ROTA WILDCARD ====================

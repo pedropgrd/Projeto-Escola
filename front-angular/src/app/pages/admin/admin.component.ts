@@ -11,6 +11,7 @@ import { ApiService } from '../../core/services/api.service';
 import { HttpParams } from '@angular/common/http';
 import { EditAlunoDialogComponent } from './edit-aluno-dialog/edit-aluno-dialog.component';
 import { EditProfessorDialogComponent } from './edit-professor-dialog/edit-professor-dialog.component';
+import { FooterComponent } from "../../components/footer/footer.component";
 
 interface Aluno {
   id_aluno: number;
@@ -23,6 +24,7 @@ interface Aluno {
   telefone: string;
   criado_em: string;
   atualizado_em: string | null;
+  nome_responsavel: string;
 }
 
 interface Professor {
@@ -62,8 +64,9 @@ interface ProfessorListResponse {
     MatIconModule,
     MatButtonModule,
     SharedModule,
-    HeaderComponent
-  ],
+    HeaderComponent,
+    FooterComponent
+],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })

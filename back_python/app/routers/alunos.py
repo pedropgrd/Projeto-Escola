@@ -156,17 +156,92 @@ async def list_alunos(
 
 
 @router.get(
-    "/{aluno_id}",
+    "/buscar",
     response_model=AlunoResponse,
-    summary="Buscar aluno por ID"
+    summary="Buscar aluno por ID, CPF ou nome"
 )
 async def get_aluno(
+    aluno_id: int = Query(None, description="ID do aluno"),
+    cpf: str = Query(None, description="CPF do aluno"),
+    nome: str = Query(None, description="Nome do aluno (busca parcial)"),
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Buscar aluno por ID, CPF ou nome.
+    
+    **Parâmetros de busca** (forneça pelo menos um):
+    - **aluno_id**: Busca exata por ID
+    - **cpf**: Busca exata por CPF
+    - **nome**: Busca parcial por nome (LIKE)
+    
+    **Permissão**: ADMIN, PROFESSOR e ALUNO
+    
+    - ALUNO pode ver apenas seus próprios dados
+    """
+    # Validar que pelo menos um parâmetro foi fornecido
+    if not aluno_id and not cpf and not nome:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Forneça pelo menos um parâmetro: aluno_id, cpf ou nome"
+        )
+    
+    # Construir query base
+    query = select(Aluno).where(Aluno.is_deleted == False)
+    
+    # Aplicar filtros conforme parâmetros fornecidos
+    if aluno_id:
+        query = query.where(Aluno.id_aluno == aluno_id)
+    if cpf:
+        query = query.where(Aluno.cpf == cpf)
+    if nome:
+        query = query.where(Aluno.nome.ilike(f"%{nome}%"))
+    
+    # Executar busca
+    result = await session.execute(query)
+    aluno = result.scalar_one_or_none()
+    
+    if not aluno:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Aluno não encontrado"
+        )
+    
+    # Verificar permissão (ALUNO só vê seus próprios dados)
+    if current_user.perfil == UserRole.ALUNO and aluno.id_usuario != current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para acessar este recurso"
+        )
+    
+    # Buscar email do usuário se existir vinculação
+    email_usuario = None
+    if aluno.id_usuario:
+        user_result = await session.execute(
+            select(User).where(User.id == aluno.id_usuario)
+        )
+        usuario = user_result.scalar_one_or_none()
+        if usuario:
+            email_usuario = usuario.email
+    
+    return AlunoResponse(
+        **aluno.model_dump(),
+        email_usuario=email_usuario
+    )
+
+
+@router.get(
+    "/{aluno_id}",
+    response_model=AlunoResponse,
+    summary="Buscar aluno por ID (compatibilidade)"
+)
+async def get_aluno_by_id(
     aluno_id: int,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Buscar aluno por ID.
+    Buscar aluno por ID (endpoint de compatibilidade).
     
     **Permissão**: ADMIN, PROFESSOR e ALUNO
     

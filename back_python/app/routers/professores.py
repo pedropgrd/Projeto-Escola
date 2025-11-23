@@ -140,17 +140,90 @@ async def list_professores(
 
 
 @router.get(
-    "/{professor_id}",
+    "/buscar",
     response_model=ProfessorResponse,
-    summary="Buscar professor por ID"
+    summary="Buscar professor por ID, CPF ou nome"
 )
 async def get_professor(
+    professor_id: int = Query(None, description="ID do professor"),
+    cpf: str = Query(None, description="CPF do professor"),
+    nome: str = Query(None, description="Nome do professor (busca parcial)"),
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Buscar professor por ID, CPF ou nome.
+    
+    **Parâmetros de busca** (forneça pelo menos um):
+    - **professor_id**: Busca exata por ID
+    - **cpf**: Busca exata por CPF
+    - **nome**: Busca parcial por nome (LIKE)
+    
+    **Permissão**: ADMIN e PROFESSOR
+    """
+    # Verificar permissão
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Você não tem permissão para acessar este recurso"
+        )
+    
+    # Validar que pelo menos um parâmetro foi fornecido
+    if not professor_id and not cpf and not nome:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Forneça pelo menos um parâmetro: professor_id, cpf ou nome"
+        )
+    
+    # Construir query base
+    query = select(Professor).where(Professor.is_deleted == False)
+    
+    # Aplicar filtros conforme parâmetros fornecidos
+    if professor_id:
+        query = query.where(Professor.id_professor == professor_id)
+    if cpf:
+        query = query.where(Professor.cpf == cpf)
+    if nome:
+        query = query.where(Professor.nome.ilike(f"%{nome}%"))
+    
+    # Executar busca
+    result = await session.execute(query)
+    professor = result.scalar_one_or_none()
+    
+    if not professor:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Professor não encontrado"
+        )
+    
+    # Buscar email do usuário se existir vinculação
+    email_usuario = None
+    if professor.id_usuario:
+        user_result = await session.execute(
+            select(User).where(User.id == professor.id_usuario)
+        )
+        usuario = user_result.scalar_one_or_none()
+        if usuario:
+            email_usuario = usuario.email
+    
+    return ProfessorResponse(
+        **professor.model_dump(),
+        email_usuario=email_usuario
+    )
+
+
+@router.get(
+    "/{professor_id}",
+    response_model=ProfessorResponse,
+    summary="Buscar professor por ID (compatibilidade)"
+)
+async def get_professor_by_id(
     professor_id: int,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Buscar professor por ID.
+    Buscar professor por ID (endpoint de compatibilidade).
     
     **Permissão**: ADMIN e PROFESSOR
     """

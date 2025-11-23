@@ -45,13 +45,13 @@
                     }
 
                     <form (ngSubmit)="onSubmit()" #cadastroForm="ngForm">
-                        <!-- Nome Completo -->
+                        <!-- CPF -->
                         <div class="form-group">
-                            <label for="nome_completo">Nome Completo <span class="text-danger">*</span></label>
-                            <input type="text" id="nome_completo" [(ngModel)]="formData.nome_completo"
-                                name="nome_completo" placeholder="Digite o nome completo" required minlength="3"
-                                [disabled]="isLoading()" class="form-control">
-                            <small class="form-text text-muted">Mínimo 3 caracteres</small>
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" [(ngModel)]="formData.cpf" (input)="onCpfInput($event)"
+                                name="cpf" placeholder="000.000.000-00" maxlength="14" [disabled]="isLoading()"
+                                class="form-control">
+                            <small class="form-text text-muted">Campo opcional. Formato: 000.000.000-00</small>
                         </div>
 
                         <!-- E-mail -->
@@ -107,7 +107,7 @@
                         </div>
 
                         <!-- Botões -->
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-flex justify-content-center mt-4">
 
                             <button type="submit" class="btn_on-hover" [disabled]="!cadastroForm.valid || isLoading()">
                                 @if (isLoading()) {

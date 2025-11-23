@@ -103,17 +103,66 @@ async def list_disciplinas(
 
 
 @router.get(
-    "/{disciplina_id}",
+    "/buscar",
     response_model=DisciplinaResponse,
-    summary="Buscar disciplina por ID"
+    summary="Buscar disciplina por ID ou nome"
 )
 async def get_disciplina(
+    disciplina_id: int = Query(None, description="ID da disciplina"),
+    nome: str = Query(None, description="Nome da disciplina (busca parcial)"),
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Buscar disciplina por ID ou nome.
+    
+    **Parâmetros de busca** (forneça pelo menos um):
+    - **disciplina_id**: Busca exata por ID
+    - **nome**: Busca parcial por nome (LIKE)
+    
+    **Permissão**: ADMIN, PROFESSOR e ALUNO
+    """
+    # Validar que pelo menos um parâmetro foi fornecido
+    if not disciplina_id and not nome:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Forneça pelo menos um parâmetro: disciplina_id ou nome"
+        )
+    
+    # Construir query base
+    query = select(Disciplina).where(Disciplina.is_deleted == False)
+    
+    # Aplicar filtros conforme parâmetros fornecidos
+    if disciplina_id:
+        query = query.where(Disciplina.id_disciplina == disciplina_id)
+    if nome:
+        query = query.where(Disciplina.nome.ilike(f"%{nome}%"))
+    
+    # Executar busca
+    result = await session.execute(query)
+    disciplina = result.scalar_one_or_none()
+    
+    if not disciplina:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Disciplina não encontrada"
+        )
+    
+    return disciplina
+
+
+@router.get(
+    "/{disciplina_id}",
+    response_model=DisciplinaResponse,
+    summary="Buscar disciplina por ID (compatibilidade)"
+)
+async def get_disciplina_by_id(
     disciplina_id: int,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Buscar disciplina por ID.
+    Buscar disciplina por ID (endpoint de compatibilidade).
     
     **Permissão**: ADMIN, PROFESSOR e ALUNO
     """
