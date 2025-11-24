@@ -67,9 +67,44 @@ class TurmaResponse(TurmaBase):
         }
 
 
+class TurmaResponseEnriched(TurmaBase):
+    """Schema de resposta de Turma com dados enriquecidos"""
+    id_turma: int
+    nome_professor: Optional[str] = None
+    nome_disciplina: Optional[str] = None
+    criado_em: datetime
+    atualizado_em: Optional[datetime] = None
+    
+    class Config:
+        from_attributes = True
+        json_schema_extra = {
+            "example": {
+                "id_turma": 1,
+                "nome": "5º A",
+                "serie": "5º Ano",
+                "turno": "MANHA",
+                "ano_letivo": 2025,
+                "id_professor": 1,
+                "id_disciplina": 1,
+                "nome_professor": "João Silva",
+                "nome_disciplina": "Matemática",
+                "criado_em": "2025-01-01T10:00:00",
+                "atualizado_em": None
+            }
+        }
+
+
 class TurmaListResponse(BaseModel):
     """Schema para listagem paginada de Turmas"""
     items: list[TurmaResponse]
+    total: int
+    offset: int
+    limit: int
+
+
+class TurmaListResponseEnriched(BaseModel):
+    """Schema para listagem paginada de Turmas com dados enriquecidos"""
+    items: list[TurmaResponseEnriched]
     total: int
     offset: int
     limit: int
