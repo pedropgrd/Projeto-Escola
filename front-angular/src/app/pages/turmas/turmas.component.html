@@ -89,7 +89,7 @@
                     <tbody>
                         <tr *ngFor="let turma of turmas()">
                             <!-- Turma e Ano -->
-                            <td>
+                            <td type="button" class="clickable-cell" (click)="openListAlunoTurmaDialog(turma)">
                                 <div class="cell-content">
                                     <span class="primary-text">{{ turma.nome }}</span>
                                     <span class="secondary-text"><mat-icon class="tiny-icon">calendar_today</mat-icon>

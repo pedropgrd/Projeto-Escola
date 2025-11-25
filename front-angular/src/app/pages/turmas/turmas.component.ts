@@ -13,6 +13,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Alunos } from '../../interfaces/Alunos';
 import { CadastroAlunoTurmaDialogComponent } from '../admin/cadastro-aluno-turma-dialog/cadastro-aluno-turma-dialog.component';
+import { ListAlunosTurmaDialogComponent } from '../admin/list-alunos-turma-dialog/list-alunos-turma-dialog.component';
 
 interface TurmasResponse {
   items: Turma[];
@@ -341,6 +342,29 @@ openCadAlunoTurmaDialog(turma: Turma): void {
       }, 3000);
     }
   });
+}
+
+openListAlunoTurmaDialog(turma: Turma): void {
+  const dialogRef = this.dialog.open(ListAlunosTurmaDialogComponent, {
+    width: 'auto',
+    data: {
+      id_turma: turma.id_turma,
+      nome_turma: turma.nome
+    },
+    disableClose: false,
+    autoFocus: true
+  });
+
+  // dialogRef.afterClosed().subscribe(result => {
+  //   if (result === true) {
+  //     // Sucesso - recarregar a lista
+  //     this.successMessage.set('Aluno atualizado com sucesso!');
+  //     this.carregarTurmas();
+  //     setTimeout(() => {
+  //       this.successMessage.set('');
+  //     }, 3000);
+  //   }
+  // });
 }
 
 }

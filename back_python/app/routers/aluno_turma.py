@@ -7,11 +7,14 @@ from app.database.session import get_session
 from app.models.aluno_turma import AlunoTurma
 from app.models.aluno import Aluno
 from app.models.turma import Turma
+from app.models.professor import Professor
+from app.models.disciplina import Disciplina
 from app.models.user import User, UserRole
 from app.schemas.aluno_turma import (
     AlunoTurmaCreate,
     AlunoTurmaResponse,
-    AlunoTurmaListResponse
+    AlunoTurmaListResponse,
+    AlunoTurmaSimpleResponse
 )
 from app.core.security import get_current_user
 
@@ -337,9 +340,106 @@ async def get_alunos_da_turma(
     result = await session.execute(query)
     matriculas = result.scalars().all()
     
-    return AlunoTurmaListResponse(
-        items=matriculas,
-        total=total,
-        offset=offset,
-        limit=limit
+@router.get(
+    "/turma/{turma_id}/alunos-detalhado",
+    response_model=List[AlunoTurmaSimpleResponse],
+    summary="Listar alunos da turma com detalhes (Dados Otimizados)"
+)
+async def get_alunos_da_turma_detalhado(
+    turma_id: int,
+    # offset: int = Query(0, ge=0),
+    # limit: int = Query(10, ge=1, le=100),
+    nome_aluno: str = Query(None, description="Filtrar por nome dentro da turma"),
+    session: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    """
+    Lista alunos de uma turma específica com dados unificados + Disciplina.
+    """
+    
+    # Verificar se turma existe
+    result = await session.execute(
+        select(Turma).where(
+            Turma.id_turma == turma_id,
+            Turma.is_deleted == False
+        )
     )
+    if not result.scalar_one_or_none():
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Turma não encontrada"
+        )
+    
+    # Construção da Query Otimizada
+    # ATENÇÃO: A ordem aqui deve ser a mesma do desempacotamento no loop for abaixo
+    query = (
+        select(
+            Aluno.id_aluno,
+            Aluno.nome.label("nome_aluno"),
+            Aluno.matricula,
+            Turma.id_turma,
+            Turma.nome.label("turma_nome"),
+            Turma.serie.label("turma_serie"),
+            Disciplina.nome.label("disciplina_nome"), # Adicionado aqui
+            Professor.id_professor,
+            Professor.nome.label("nome_professor"),
+            Professor.email.label("email_professor")
+        )
+        .select_from(AlunoTurma)
+        .join(Aluno, AlunoTurma.id_aluno == Aluno.id_aluno)
+        .join(Turma, AlunoTurma.id_turma == Turma.id_turma)
+        # Join com Disciplina (usamos outerjoin para garantir que traga a turma mesmo se a disciplina for nula, por segurança)
+        .outerjoin(Disciplina, Turma.id_disciplina == Disciplina.id_disciplina)
+        .outerjoin(Professor, Turma.id_professor == Professor.id_professor)
+        .outerjoin(User, Professor.id_usuario == User.id)
+        .where(
+            AlunoTurma.id_turma == turma_id,
+            AlunoTurma.is_deleted == False,
+            Aluno.is_deleted == False,
+            Turma.is_deleted == False
+        )
+    )
+
+    # Filtro Opcional por nome do aluno
+    if nome_aluno:
+        query = query.where(Aluno.nome.ilike(f"%{nome_aluno}%"))
+
+    # Ordenação
+    query = query.order_by(Aluno.nome.asc()) 
+    # .offset(offset).limit(limit)
+
+    # Execução
+    result = await session.execute(query)
+    rows = result.all()
+
+    # Montagem da Resposta
+    lista_retorno = []
+    for row in rows:
+        # O Python desempacota na ordem exata do SELECT lá em cima
+        (
+            id_aluno, 
+            n_aluno, 
+            mat, 
+            id_turma, 
+            t_nome, 
+            t_serie, 
+            disc_nome,   # Disciplina entra aqui na ordem
+            id_prof, 
+            n_prof, 
+            email_prof
+        ) = row
+        
+        lista_retorno.append(AlunoTurmaSimpleResponse(
+            id_aluno=id_aluno,
+            nome_aluno=n_aluno,
+            matricula=mat,
+            id_turma=id_turma,
+            turma_nome=t_nome,
+            turma_serie=t_serie,
+            disciplina_nome=disc_nome, # Mapeando
+            id_professor=id_prof,
+            nome_professor=n_prof,
+            email_professor=email_prof
+        ))
+
+    return lista_retorno

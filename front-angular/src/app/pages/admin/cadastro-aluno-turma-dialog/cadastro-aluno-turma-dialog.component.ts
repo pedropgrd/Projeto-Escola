@@ -53,9 +53,7 @@ interface TurmaDialogData {
     MatPaginatorModule,
     MatSelectModule,
     MatListModule,
-    MatSnackBarModule,
-    HeaderComponent,
-    FooterComponent
+    MatSnackBarModule
   ],
   templateUrl: './cadastro-aluno-turma-dialog.component.html',
   styleUrls: ['./cadastro-aluno-turma-dialog.component.scss']

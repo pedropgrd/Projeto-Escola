@@ -50,3 +50,27 @@ class AlunoTurmaListResponse(BaseModel):
     total: int
     offset: int
     limit: int
+
+
+class AlunoTurmaSimpleResponse(BaseModel):
+    """Schema simplificado para listagem de alunos em turma com dados enriquecidos"""
+    # Dados do Aluno
+    id_aluno: int
+    nome_aluno: str
+    matricula: str
+    
+    # Dados da Turma
+    id_turma: int
+    turma_nome: str
+    turma_serie: str
+    
+    # Dados do Professor
+    id_professor: Optional[int] = None
+    nome_professor: Optional[str] = None
+    email_professor: Optional[str] = None
+    disciplina_nome: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
+    
+
