@@ -79,7 +79,11 @@
                             <th style="width: 20%;">Série</th>
                             <th style="width: 15%;">Turno</th>
                             <th style="width: 25%;">Detalhes (Disc. / Prof.)</th>
-                            <th style="width: 15%;" class="text-end">Ações</th>
+                            @if(auth.isAdmin()){
+                                <th style="width: 15%;" class="text-end">Ações</th>
+                                <th style="width: 15%;" class="text-end">+ Aluno</th>
+                            }
+
                         </tr>
                     </thead>
                     <tbody>
@@ -119,20 +123,29 @@
                                 </div>
                             </td>
 
-                            <!-- Ações -->
-                            <!-- <td class="text-end">
-                                <div class="actions-wrapper">
-                                    <button mat-icon-button class="action-btn edit" (click)="editarTurma(turma)"
-                                        matTooltip="Editar Turma">
-                                        <mat-icon>edit</mat-icon>
+                            @if(auth.isAdmin()){
+                                <!-- Ações -->
+                                 <td class="text-end">
+                                    <div class="actions-wrapper">
+                                        <button mat-icon-button class="action-btn edit" (click)="editarTurma(turma)"
+                                            matTooltip="Editar Turma">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button mat-icon-button class="action-btn delete" (click)="removerTurma(turma)"
+                                            matTooltip="Excluir Turma">
+                                            <mat-icon>delete_outline</mat-icon>
+                                        </button>
+                                    </div>
+                                </td>
+
+                                <td class="text-end">
+                                    <button mat-icon-button class="action-btn add-student"
+                                        (click)="openCadAlunoTurmaDialog(turma)" matTooltip="Adicionar Aluno à Turma">
+                                        <mat-icon>person_add</mat-icon>
                                     </button>
-                                    <button mat-icon-button class="action-btn delete" (click)="removerTurma(turma)"
-                                        matTooltip="Excluir Turma">
-                                        <mat-icon>delete_outline</mat-icon>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr> -->
+                                </td>
+                            }
+                        </tr>
 
                         <!-- Empty State -->
                         <tr *ngIf="turmas().length === 0">

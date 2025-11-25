@@ -157,77 +157,72 @@ async def list_alunos(
 
 @router.get(
     "/buscar",
-    response_model=AlunoResponse,
+    response_model=List[AlunoResponse],  # 1. Mudança para Lista
     summary="Buscar aluno por ID, CPF ou nome"
 )
-async def get_aluno(
+async def get_alunos(  # Renomeado para plural
     aluno_id: int = Query(None, description="ID do aluno"),
     cpf: str = Query(None, description="CPF do aluno"),
     nome: str = Query(None, description="Nome do aluno (busca parcial)"),
+    matricula: str = Query(None, description="Matrícula do aluno"),
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
     """
-    Buscar aluno por ID, CPF ou nome.
-    
-    **Parâmetros de busca** (forneça pelo menos um):
-    - **aluno_id**: Busca exata por ID
-    - **cpf**: Busca exata por CPF
-    - **nome**: Busca parcial por nome (LIKE)
-    
-    **Permissão**: ADMIN, PROFESSOR e ALUNO
-    
-    - ALUNO pode ver apenas seus próprios dados
+    Retorna uma lista de alunos.
     """
-    # Validar que pelo menos um parâmetro foi fornecido
-    if not aluno_id and not cpf and not nome:
+    # Validar parâmetros
+    if not any([aluno_id, cpf, nome, matricula]):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Forneça pelo menos um parâmetro: aluno_id, cpf ou nome"
         )
     
-    # Construir query base
-    query = select(Aluno).where(Aluno.is_deleted == False)
+    # 2. Otimização: JOIN direto para pegar o email (evita queries dentro do loop)
+    query = (
+        select(Aluno, User.email.label("email_usuario"))
+        .outerjoin(User, Aluno.id_usuario == User.id)
+        .where(Aluno.is_deleted == False)
+    )
     
-    # Aplicar filtros conforme parâmetros fornecidos
+    # Aplicar filtros
     if aluno_id:
         query = query.where(Aluno.id_aluno == aluno_id)
     if cpf:
         query = query.where(Aluno.cpf == cpf)
     if nome:
         query = query.where(Aluno.nome.ilike(f"%{nome}%"))
+    if matricula:
+        query = query.where(Aluno.matricula == matricula)
+    
+    # 3. Segurança: Filtro direto na Query para ALUNO
+    # Em vez de buscar tudo e dar erro 403 depois, nós filtramos a busca na fonte.
+    # Se o aluno buscar "Robert", ele só verá o registro dele mesmo, se houver.
+    if current_user.perfil == UserRole.ALUNO:
+        query = query.where(Aluno.id_usuario == current_user.id)
     
     # Executar busca
     result = await session.execute(query)
-    aluno = result.scalar_one_or_none()
     
-    if not aluno:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Aluno não encontrado"
+    # 4. Método correto para listas: .all()
+    rows = result.all()
+    
+    # Montar lista de resposta
+    lista_alunos = []
+    for row in rows:
+        aluno, email = row
+        
+        # No caso de ADMIN/PROFESSOR, eles veem todos.
+        # A lógica de segurança do ALUNO já foi resolvida no filtro da query acima.
+        
+        lista_alunos.append(
+            AlunoResponse(
+                **aluno.model_dump(),
+                email_usuario=email
+            )
         )
     
-    # Verificar permissão (ALUNO só vê seus próprios dados)
-    if current_user.perfil == UserRole.ALUNO and aluno.id_usuario != current_user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Você não tem permissão para acessar este recurso"
-        )
-    
-    # Buscar email do usuário se existir vinculação
-    email_usuario = None
-    if aluno.id_usuario:
-        user_result = await session.execute(
-            select(User).where(User.id == aluno.id_usuario)
-        )
-        usuario = user_result.scalar_one_or_none()
-        if usuario:
-            email_usuario = usuario.email
-    
-    return AlunoResponse(
-        **aluno.model_dump(),
-        email_usuario=email_usuario
-    )
+    return lista_alunos
 
 
 @router.get(

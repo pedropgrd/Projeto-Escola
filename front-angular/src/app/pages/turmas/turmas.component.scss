@@ -40,8 +40,7 @@ $white: #ffffff;
 
 /* --- MAIN CONTENT --- */
 .main-content {
-    background-color: $bg-light;
-    min-height: 60vh;
+    min-height: 73vh;
     padding-bottom: 60px;
     margin-top: -30px;
     position: relative;
@@ -58,7 +57,7 @@ $white: #ffffff;
     padding: 0;
 }
 
-/* --- LIST HEADER & SEARCH --- */
+/* --- LIST HEADER --- */
 .list-header {
     padding: 15px 25px;
     border-bottom: 1px solid $border-light;
@@ -68,14 +67,12 @@ $white: #ffffff;
     background-color: $white;
     gap: 20px;
     flex-wrap: wrap;
-    /* Permite quebrar linha no mobile */
 
     .title-wrapper {
         display: flex;
         align-items: center;
         gap: 12px;
         min-width: 200px;
-        /* Garante espaço pro título */
 
         .title-icon {
             color: $primary-blue;
@@ -92,156 +89,132 @@ $white: #ffffff;
         }
     }
 
-    /* ESTILO DO SEARCH BAR AVANÇADO */
-    .search-wrapper {
-        flex: 1;
-        max-width: 600px;
+    .header-actions {
         display: flex;
         align-items: center;
         gap: 12px;
-        background-color: #f8f9fa;
-        padding: 8px 12px;
-        border-radius: 50px;
-        border: 1px solid #e0e0e0;
-        transition: all 0.3s ease;
 
-        &:focus-within {
-            background-color: $white;
-            border-color: $primary-blue;
-            box-shadow: 0 0 0 3px rgba($primary-blue, 0.1);
+        .badge-count {
+            background: #eef2f7;
+            color: $primary-blue;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
         }
-        
-        ::ng-deep {
-            /* SELECT DE FILTRO */
-            .mat-mdc-form-field {
-                flex: 0 0 auto;
-                width: 160px;
+    }
+}
 
+/* --- BARRA DE BUSCA AVANÇADA --- */
+.advanced-search-bar {
+    padding: 20px 25px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-bottom: 1px solid $border-light;
+
+    .search-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        max-width: 1000px;
+        margin: 0 auto;
+
+        /* Campo de Tipo de Filtro */
+        .filter-type-field {
+            min-width: 180px;
+            flex: 0 0 auto;
+
+            ::ng-deep {
                 .mat-mdc-text-field-wrapper {
-                    padding: 0;
-                    background-color: transparent !important;
-
-                    .mat-mdc-form-field-flex {
-                        padding: 0;
-                        height: auto;
-                    }
-
-                    .mat-mdc-form-field-infix {
-                        padding: 6px 0;
-                        border: none;
-                        min-height: auto;
-                    }
+                    background-color: $white;
+                    border-radius: 8px;
                 }
 
-                .mdc-text-field--filled::before {
-                    display: none;
-                }
-
-                .mat-mdc-form-field-underline {
-                    display: none;
+                .mat-mdc-form-field-infix {
+                    padding: 14px 16px;
                 }
 
                 .mat-mdc-select {
-                    font-size: 0.9rem;
-                    font-weight: 600;
                     color: $primary-blue;
-                }
-
-                .mat-mdc-select-arrow {
-                    color: $primary-blue;
+                    font-weight: 500;
                 }
             }
+        }
 
-            /* BARRA VERTICAL SEPARADORA */
-            .divider {
-                height: 32px;
-                width: 1px;
-                background-color: #dee2e6;
-            }
+        /* Campo de Input de Busca */
+        .search-input-field {
+            flex: 1;
 
-            /* INPUT DE BUSCA */
-            .search-input-field {
-                flex: 1;
-
+            ::ng-deep {
                 .mat-mdc-text-field-wrapper {
-                    padding: 0;
-                    background-color: transparent !important;
-
-                    .mat-mdc-form-field-flex {
-                        padding: 0;
-                        height: auto;
-                        align-items: center;
-                    }
-
-                    .mat-mdc-form-field-infix {
-                        padding: 8px 0;
-                        border: none;
-                        min-height: auto;
-                    }
+                    background-color: $white;
+                    border-radius: 8px;
                 }
 
-                .mdc-text-field--filled::before {
-                    display: none;
-                }
-
-                .mat-mdc-form-field-underline {
-                    display: none;
+                .mat-mdc-form-field-infix {
+                    padding: 14px 16px;
                 }
 
                 input {
                     font-size: 0.95rem;
                     color: $text-dark;
-                    background-color: transparent;
-                    border: none;
-                    outline: none;
 
                     &::placeholder {
-                        color: #adb5bd;
+                        color: #9ca3af;
                     }
                 }
 
                 .mat-mdc-form-field-icon-prefix {
-                    padding-right: 8px;
+                    padding-right: 12px;
 
                     mat-icon {
                         color: $text-muted;
                         font-size: 20px;
                     }
                 }
+
+                .mat-mdc-form-field-icon-suffix {
+                    padding-left: 8px;
+
+                    .mat-mdc-icon-button {
+                        width: 32px;
+                        height: 32px;
+
+                        mat-icon {
+                            font-size: 18px;
+                        }
+                    }
+                }
             }
         }
 
-        /* BOTÃO LIMPAR FILTROS */
-        .clear-btn {
-            flex: 0 0 auto;
-            width: 36px;
-            height: 36px;
-            min-width: 36px;
-            padding: 0;
-            border-radius: 50%;
-            background-color: transparent;
-            transition: background-color 0.3s ease;
+        /* Botão Limpar Filtros */
+        .clear-filters-btn {
+            padding: 12px 11px;
+            height: 56px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
 
-            &:hover {
-                background-color: rgba($primary-blue, 0.1);
+            &:hover:not(:disabled) {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                transform: translateY(-1px);
+            }
+
+            &:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
             }
 
             mat-icon {
-                font-size: 20px;
-                color: $text-muted;
+                margin-right: 8px;
+                font-size: 18px;
             }
         }
-    }
-
-    .badge-count {
-        background: #eef2f7;
-        color: $primary-blue;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        letter-spacing: 0.5px;
-        white-space: nowrap;
     }
 }
 
@@ -388,6 +361,14 @@ $white: #ffffff;
             background-color: rgba(220, 53, 69, 0.08);
         }
     }
+
+    &.add-student {
+        color: #28a745;
+
+        &:hover {
+            background-color: rgba(40, 167, 69, 0.08);
+        }
+    }
 }
 
 /* --- STATES --- */
@@ -449,16 +430,8 @@ $white: #ffffff;
     .list-header {
         flex-direction: column;
         align-items: stretch;
-        /* Estica o search */
         gap: 15px;
         padding: 20px;
-
-        .search-wrapper {
-            max-width: 100%;
-            /* Search full width no mobile */
-            order: 2;
-            /* Search vem depois do título */
-        }
 
         .title-wrapper {
             justify-content: space-between;
@@ -466,10 +439,32 @@ $white: #ffffff;
         }
 
         .header-actions {
-            display: none;
+            order: 2;
+            justify-content: center;
         }
+    }
 
-        /* Opcional: esconder contador no mobile se preferir */
+    /* BARRA DE BUSCA MOBILE */
+    .advanced-search-bar {
+        padding: 15px 20px;
+
+        .search-row {
+            flex-direction: column;
+            gap: 12px;
+
+            .filter-type-field {
+                min-width: 100%;
+            }
+
+            .search-input-field {
+                width: 100%;
+            }
+
+            .clear-filters-btn {
+                align-self: stretch;
+                height: 48px;
+            }
+        }
     }
 
     .modern-table {

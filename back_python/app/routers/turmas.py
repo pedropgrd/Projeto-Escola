@@ -105,13 +105,12 @@ async def list_turmas(
     
     return TurmaListResponseEnriched(items=turmas_enriquecidas, total=total, offset=offset, limit=limit)
 
-
 @router.get(
     "/buscar",
-    response_model=TurmaResponseEnriched,
-    summary="Buscar turma por ID, nome, série, turno ou professor"
+    response_model=List[TurmaResponseEnriched], # 1. Retorna uma Lista
+    summary="Buscar turmas por ID, nome, série, turno ou professor"
 )
-async def get_turma(
+async def get_turmas( # Renomeei para plural para semântica correta
     turma_id: int = Query(None, description="ID da turma"),
     nome: str = Query(None, description="Nome da turma (busca parcial)"),
     serie: str = Query(None, description="Série da turma"),
@@ -122,20 +121,10 @@ async def get_turma(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Buscar turma com dados enriquecidos (nome do professor e disciplina).
-    
-    **Parâmetros de busca** (forneça pelo menos um):
-    - **turma_id**: Busca exata por ID
-    - **nome**: Busca parcial por nome da turma (LIKE)
-    - **serie**: Busca exata por série
-    - **turno**: Busca exata por turno (MANHA, TARDE, NOITE)
-    - **nome_professor**: Busca parcial por nome do professor (LIKE)
-    - **nome_disciplina**: Busca parcial por nome da disciplina (LIKE)
-    
-    **Permissão**: Todos os usuários autenticados
+    Buscar turmas com dados enriquecidos. Retorna uma lista vazia se nada for encontrado.
     """
     # Validar que pelo menos um parâmetro foi fornecido
-    if not turma_id and not nome and not serie and not turno and not nome_professor and not nome_disciplina:
+    if not any([turma_id, nome, serie, turno, nome_professor, nome_disciplina]):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Forneça pelo menos um parâmetro: turma_id, nome, serie, turno ou nome_professor"
@@ -150,7 +139,7 @@ async def get_turma(
         .order_by(Turma.serie.desc())
     )
     
-    # Aplicar filtros conforme parâmetros fornecidos
+    # Aplicar filtros
     if turma_id:
         query = query.where(Turma.id_turma == turma_id)
     if nome:
@@ -164,24 +153,28 @@ async def get_turma(
     if nome_disciplina:
         query = query.where(Disciplina.nome.ilike(f"%{nome_disciplina}%"))
         
-    # Executar busca
+    # 2. Executar busca
     result = await session.execute(query)
-    row = result.first()
     
-    if not row:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Turma não encontrada"
+    # 3. Buscar TODOS os registros em vez de apenas o primeiro
+    rows = result.all()
+    
+    # 4. Processamento e Montagem da Lista
+    # Não levantamos 404 aqui. Se rows for vazio, o loop não roda e retornamos [] (Status 200)
+    lista_resposta = []
+    
+    for row in rows:
+        turma, prof_nome, disc_nome = row
+        
+        # Cria o objeto enriquecido para cada linha encontrada
+        item = TurmaResponseEnriched(
+            **turma.model_dump(),
+            nome_professor=prof_nome,
+            nome_disciplina=disc_nome
         )
+        lista_resposta.append(item)
     
-    turma, prof_nome, disc_nome = row
-    
-    return TurmaResponseEnriched(
-        **turma.model_dump(),
-        nome_professor=prof_nome,
-        nome_disciplina=disc_nome
-    )
-
+    return lista_resposta
 
 @router.get(
     "/{turma_id}",

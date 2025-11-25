@@ -84,7 +84,7 @@ export class CadastroAlunoComponent {
     // Preparar dados para envio (remover formatação de CPF e telefone)
     const alunoData: AlunoCreateDTO = {
       nome: this.alunoForm.nome.trim().toLocaleUpperCase(),
-      cpf: this.util.removeFormatting(this.alunoForm.cpf),
+      cpf: this.util.removeFormatting(this.alunoForm.cpf.trim()),
       data_nascimento: this.alunoForm.data_nascimento,
       endereco: this.alunoForm.endereco.trim(),
       telefone: this.util.removeFormatting(this.alunoForm.telefone),

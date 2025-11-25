@@ -69,8 +69,8 @@ export class CadastroProfessorComponent {
     this.isLoading.set(true);
 
     const professorData: ProfessorCreateDTO = {
-      nome: this.professorForm.nome.trim(),
-      cpf: this.util.removeFormatting(this.professorForm.cpf),
+      nome: this.professorForm.nome.trim().toUpperCase(),
+      cpf: this.util.removeFormatting(this.professorForm.cpf.trim()),
       email: this.professorForm.email.trim(),
       endereco: this.professorForm.endereco.trim(),
       telefone: this.util.removeFormatting(this.professorForm.telefone)

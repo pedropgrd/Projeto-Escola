@@ -9,6 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { ApiService } from '../../../core/services/api.service';
+import { UtilService } from '../../../services/util/util.service';
 
 export interface AlunoDialogData {
     id_aluno: number;
@@ -46,7 +47,8 @@ export class EditAlunoDialogComponent implements OnInit {
         private fb: FormBuilder,
         private apiService: ApiService,
         public dialogRef: MatDialogRef<EditAlunoDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: AlunoDialogData
+        @Inject(MAT_DIALOG_DATA) public data: AlunoDialogData,
+        private util: UtilService
     ) { }
 
     ngOnInit(): void {
@@ -90,8 +92,8 @@ export class EditAlunoDialogComponent implements OnInit {
             : formValue.data_nascimento;
 
         const alunoData = {
-            nome: formValue.nome,
-            cpf: formValue.cpf,
+            nome: formValue.nome.trim().toUpperCase(),
+            cpf: this.util.removeFormatting(formValue.cpf.trim()),
             data_nascimento: dataNascimento,
             endereco: formValue.endereco,
             telefone: formValue.telefone
