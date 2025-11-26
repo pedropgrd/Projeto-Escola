@@ -33,6 +33,11 @@
     max-width: 800px;
 }
 
+.form-row{
+    padding-left: 17px;
+    gap: 10px;
+}
+
 .custom-card {
     padding: 30px;
     border-radius: 12px;
@@ -72,7 +77,7 @@
 
 .actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-top: 20px;
 
     .btn-publish {

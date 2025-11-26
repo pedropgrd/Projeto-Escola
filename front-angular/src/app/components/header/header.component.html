@@ -26,6 +26,12 @@
                                 Notícias
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/biblioteca" (click)="toggleNavbar()">
+                                Biblioteca
+                            </a>
+                        </li>
                         <!-- Menu para usuário autenticado -->
 
                         <!-- Menu ADMIN -->
@@ -64,13 +70,6 @@
                         </li>
                         } -->
 
-                        <!-- Dropdown do usuário -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                {{ authService.user()?.nomeCompleto }}
-                            </a>
-
-                        </li>
                         } @else {
                         <!-- Menu para usuário não autenticado -->
                         <li class="nav-item">

@@ -86,6 +86,12 @@ export const routes: Routes = [
             .then(m => m.NoticiasComponent),
         canActivate: [authGuard]
     },
+    {
+        path:'biblioteca',
+        loadComponent: () => import('./pages/biblioteca/biblioteca.component')
+            .then(m => m.BibliotecaComponent),
+        canActivate: [authGuard]
+    },
     // ==================== ROTA WILDCARD ====================
     {
         path: '**',
