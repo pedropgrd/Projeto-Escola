@@ -42,8 +42,8 @@ export class BibliotecaComponent {
     },
     {
       titulo: 'Ensino Híbrido na Prática',
-      subtitulo: 'Metodologias Ativas',
-      categoria: 'Tecnologia',
+      subtitulo: 'Material Educacional',
+      categoria: 'Pedagogia',
       imagem: 'assets/images/biblioteca/ensino_hibrido.png',
       link: 'https://drive.google.com/file/d/1bfoMCAcUbTf5WOO3PicEgSerrCHGQP0g/view'
     },
