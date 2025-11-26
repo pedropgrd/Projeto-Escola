@@ -48,6 +48,35 @@ class UserUpdate(BaseModel):
     """Schema para atualização de usuário"""
     email: Optional[EmailStr] = None
     cpf: Optional[str] = Field(None, min_length=11, max_length=11, pattern="^[0-9]{11}$")
+
+
+class UserPasswordUpdate(BaseModel):
+    """Schema para atualização de senha do usuário"""
+    senha_atual: str = Field(min_length=6, max_length=72, description="Senha atual do usuário")
+    senha_nova: str = Field(min_length=6, max_length=72, description="Nova senha")
+    
+    @field_validator('senha_nova')
+    @classmethod
+    def validate_new_password(cls, v: str) -> str:
+        """Valida a força da nova senha"""
+        if len(v) < 6:
+            raise ValueError('Senha deve ter no mínimo 6 caracteres')
+        if len(v) > 72:
+            raise ValueError('Senha deve ter no máximo 72 caracteres (limite do bcrypt)')
+        if not any(char.isdigit() for char in v):
+            raise ValueError('Senha deve conter pelo menos um número')
+        if not any(char.isalpha() for char in v):
+            raise ValueError('Senha deve conter pelo menos uma letra')
+        return v
+    
+    model_config = ConfigDict(
+        json_schema_extra={
+            "example": {
+                "senha_atual": "senha123",
+                "senha_nova": "novaSenha456"
+            }
+        }
+    )
     senha: Optional[str] = Field(None, min_length=6, max_length=72)
     ativo: Optional[bool] = None
 

@@ -12,6 +12,7 @@ import { HttpParams } from '@angular/common/http';
 import { EditAlunoDialogComponent } from './edit-aluno-dialog/edit-aluno-dialog.component';
 import { EditProfessorDialogComponent } from './edit-professor-dialog/edit-professor-dialog.component';
 import { FooterComponent } from "../../components/footer/footer.component";
+import { CadLoginUsuarioDialogComponent } from './cad-login-usuario-dialog/cad-login-usuario-dialog.component';
 
 interface Aluno {
   id_aluno: number;
@@ -25,6 +26,7 @@ interface Aluno {
   criado_em: string;
   atualizado_em: string | null;
   nome_responsavel: string;
+  email_usuario: string | null;
 }
 
 interface Professor {
@@ -37,6 +39,7 @@ interface Professor {
   telefone: string;
   criado_em: string;
   atualizado_em: string | null;
+  email_usuario: string | null;
 }
 
 interface AlunoListResponse {
@@ -65,7 +68,7 @@ interface ProfessorListResponse {
     MatButtonModule,
     SharedModule,
     HeaderComponent
-],
+  ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss'
 })
@@ -119,9 +122,9 @@ export class AdminComponent implements OnInit {
    */
   loadData(): void {
     // if (this.viewMode() === 'alunos') {
-      this.loadAlunos();
+    this.loadAlunos();
     // } else {
-      this.loadProfessores();
+    this.loadProfessores();
     // }
   }
 
@@ -476,5 +479,55 @@ export class AdminComponent implements OnInit {
     }
 
     return pages;
+  }
+
+  openCadAlunoLogin(aluno: Aluno): void {
+    const dialogRef = this.dialog.open(CadLoginUsuarioDialogComponent, {
+      width: 'auto',
+      data: {
+        id_aluno: aluno.id_aluno,
+        cpf: aluno.cpf,
+        nome: aluno.nome,
+        vincularPara: 'ALUNO'
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Usuário vinculado com sucesso!');
+        this.loadAlunos();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
+  }
+
+  // Exemplo para Professor
+  openCadLoginProfessor(prof: Professor): void {
+    const dialogRef = this.dialog.open(CadLoginUsuarioDialogComponent, {
+      width: 'auto', // Ajuste a largura se preferir
+      data: {
+        id_professor: prof.id_professor, // ID Específico
+        cpf: prof.cpf,
+        nome: prof.nome, // Mudamos a prop da interface para 'nome' genérico
+        vincularPara: 'PROFESSOR' // Flag Importante
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Usuário vinculado com sucesso!');
+        this.loadAlunos();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
   }
 }

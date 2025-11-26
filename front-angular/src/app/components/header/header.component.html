@@ -18,14 +18,14 @@
                                 Home <span class="sr-only">(current)</span>
                             </a>
                         </li>
+
+                        <!-- Menu condicional baseado em autenticação -->
+                        @if (authService.isAuthenticated()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/noticias" (click)="toggleNavbar()">
                                 Notícias
                             </a>
                         </li>
-
-                        <!-- Menu condicional baseado em autenticação -->
-                        @if (authService.isAuthenticated()) {
                         <!-- Menu para usuário autenticado -->
 
                         <!-- Menu ADMIN -->
@@ -38,13 +38,14 @@
                         }
 
                         <!-- Menu PROFESSOR (ADMIN também vê) -->
-                        @if (authService.isProfessor() || authService.isAdmin()) {
+                        <!-- @if (authService.isProfessor() || authService.isAdmin()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/professores" (click)="toggleNavbar()">
                                 Professores
                             </a>
                         </li>
-                        }
+                        } -->
+
 
                         @if(authService.isAuthenticated()) {
                         <li class="nav-item">
@@ -55,13 +56,13 @@
                         }
 
                         <!-- Menu ALUNO -->
-                        @if (authService.isAluno() || authService.isAdmin()) {
+                        <!-- @if (authService.isAluno() || authService.isAdmin()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/alunos" (click)="toggleNavbar()">
                                 Alunos
                             </a>
                         </li>
-                        }
+                        } -->
 
                         <!-- Dropdown do usuário -->
                         <li class="nav-item dropdown">

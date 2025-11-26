@@ -1,0 +1,153 @@
+.hero_area {
+    background-color: #062348;
+    color: white;
+    padding: 40px 0;
+    margin-bottom: 30px;
+
+    .hero_content {
+        h1 {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 2rem;
+
+            span {
+                color: #fec913;
+            }
+        }
+
+        p {
+            opacity: 0.8;
+            margin: 0;
+        }
+    }
+}
+
+.main-container {
+    padding-bottom: 60px;
+    min-height: 60vh;
+}
+
+.card-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
+}
+
+.table-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+
+    h3 {
+        margin: 0;
+        color: #062348;
+        font-weight: 700;
+        font-size: 1.2rem;
+    }
+}
+
+.loading-shade {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-table {
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+
+    th.mat-header-cell {
+        background: #f9fafb;
+        color: #666;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 1em;
+        padding: 16px;
+    }
+
+    td.mat-cell {
+        padding: 12px 16px;
+        color: #333;
+        border-bottom: 1px solid #f0f0f0;
+        font-family: 'Poppins', sans-serif !important;
+    }
+
+    .monospace {
+        font-family: monospace;
+        color: #555;
+    }
+}
+
+/* --- BADGES --- */
+.badge-perfil {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    &.ADMIN {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    &.PROFESSOR {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    &.ALUNO {
+        background: #f1f8e9;
+        color: #33691e;
+    }
+}
+
+.status-indicator {
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+
+    &.active {
+        color: #2e7d32;
+    }
+
+    &.active::before {
+        content: '●';
+        margin-right: 4px;
+        font-size: 10px;
+    }
+
+    &.inactive {
+        color: #c62828;
+    }
+
+    &.inactive::before {
+        content: '○';
+        margin-right: 4px;
+        font-size: 10px;
+    }
+}
+
+.empty-cell {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.warn-item {
+    .text-danger {
+        color: #c62828;
+    }
+}

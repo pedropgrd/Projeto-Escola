@@ -55,6 +55,7 @@ class AlunoTurmaListResponse(BaseModel):
 class AlunoTurmaSimpleResponse(BaseModel):
     """Schema simplificado para listagem de alunos em turma com dados enriquecidos"""
     # Dados do Aluno
+    id_alunoTurma: int
     id_aluno: int
     nome_aluno: str
     matricula: str

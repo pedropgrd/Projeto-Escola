@@ -55,10 +55,15 @@ export class CadastroLoginComponent {
   // Opções de perfil para o select
   perfis = [
     { value: UserRole.ADMIN, label: 'Administrador' },
-    { value: UserRole.PROFESSOR, label: 'Professor' },
-    { value: UserRole.ALUNO, label: 'Aluno' }
+    // { value: UserRole.PROFESSOR, label: 'Professor' },
+    // { value: UserRole.ALUNO, label: 'Aluno' }
   ];
 
+  ngOnInit(): void {
+    if (this.perfis && this.perfis.length === 1) {
+      this.formData.perfil = this.perfis[0].value;
+    }
+  }
   onSubmit(): void {
     // Limpar mensagens anteriores
     this.errorMessage.set('');

@@ -185,12 +185,12 @@ async def get_matricula(
 
 
 @router.delete(
-    "/{matricula_id}",
+    "/{id_alunoTurma}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Remover aluno da turma (soft delete)"
 )
 async def remover_aluno_turma(
-    matricula_id: int,
+    id_alunoTurma: int,
     session: AsyncSession = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
@@ -212,22 +212,22 @@ async def remover_aluno_turma(
     # Buscar matrícula
     result = await session.execute(
         select(AlunoTurma).where(
-            AlunoTurma.id == matricula_id,
+            AlunoTurma.id == id_alunoTurma,
             AlunoTurma.is_deleted == False
         )
     )
-    matricula = result.scalar_one_or_none()
+    alunoTurma = result.scalar_one_or_none()
     
-    if not matricula:
+    if not alunoTurma:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Matrícula não encontrada"
         )
     
     # Soft delete
-    matricula.is_deleted = True
-    matricula.deleted_at = datetime.utcnow()
-    matricula.atualizado_em = datetime.utcnow()
+    alunoTurma.is_deleted = True
+    alunoTurma.deleted_at = datetime.utcnow()
+    alunoTurma.atualizado_em = datetime.utcnow()
     
     await session.commit()
     
@@ -374,6 +374,7 @@ async def get_alunos_da_turma_detalhado(
     # ATENÇÃO: A ordem aqui deve ser a mesma do desempacotamento no loop for abaixo
     query = (
         select(
+            AlunoTurma.id.label("id_alunoTurma"),
             Aluno.id_aluno,
             Aluno.nome.label("nome_aluno"),
             Aluno.matricula,
@@ -417,6 +418,7 @@ async def get_alunos_da_turma_detalhado(
     for row in rows:
         # O Python desempacota na ordem exata do SELECT lá em cima
         (
+            id_alunoTurma,
             id_aluno, 
             n_aluno, 
             mat, 
@@ -430,6 +432,7 @@ async def get_alunos_da_turma_detalhado(
         ) = row
         
         lista_retorno.append(AlunoTurmaSimpleResponse(
+            id_alunoTurma=id_alunoTurma,
             id_aluno=id_aluno,
             nome_aluno=n_aluno,
             matricula=mat,

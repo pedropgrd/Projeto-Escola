@@ -8,11 +8,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.component')
             .then(m => m.HomeComponent)
     },
-    {
-        path: 'noticias',
-        loadComponent: () => import('./pages/noticias/noticias.component')
-            .then(m => m.NoticiasComponent)
-    },
+    // {
+    //     path: 'noticias',
+    //     loadComponent: () => import('./pages/noticias/noticias.component')
+    //         .then(m => m.NoticiasComponent)
+    // },
     {
         path: 'login',
         loadComponent: () => import('./pages/login/login.component')
@@ -59,6 +59,18 @@ export const routes: Routes = [
             .then(m => m.CadastroTurmaComponent),
         canActivate: [adminGuard]
     },
+    {
+        path: 'gerenciar-usuarios',
+        loadComponent: () => import('./pages/admin/gerenciar-usuarios/gerenciar-usuarios.component')
+            .then(m => m.GerenciarUsuariosComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'nova-noticia',
+        loadComponent: () => import('./pages/admin/nova-noticia/nova-noticia.component')
+            .then(m => m.NovaNoticiaComponent),
+        canActivate: [adminGuard]
+    },
 
 
 // Turmas - Usuários autenticados
@@ -68,7 +80,12 @@ export const routes: Routes = [
             .then(m => m.TurmasComponent),
         canActivate: [authGuard]
     },
-
+    {
+        path:'noticias',
+        loadComponent: () => import('./pages/noticias/noticias.component')
+            .then(m => m.NoticiasComponent),
+        canActivate: [authGuard]
+    },
     // ==================== ROTA WILDCARD ====================
     {
         path: '**',

@@ -56,6 +56,7 @@ class AlunoResponse(AlunoBase):
     """
     id_aluno: int
     id_usuario: Optional[int] = None
+    cpf: Optional[str] = None
     email_usuario: Optional[str] = None
     criado_em: datetime
     atualizado_em: Optional[datetime] = None
@@ -94,12 +95,14 @@ class AlunoListResponse(BaseModel):
 
 class VincularUsuarioCreate(BaseModel):
     """Schema para criar e vincular um usuário a um aluno existente"""
+    cpf: str = Field(description="CPF do aluno")
     email: str = Field(description="Email para login do aluno")
     senha: str = Field(min_length=6, max_length=72, description="Senha para login")
     
     class Config:
         json_schema_extra = {
             "example": {
+                "cpf": "12345678900",
                 "email": "joao.santos@escola.com",
                 "senha": "senha123"
             }

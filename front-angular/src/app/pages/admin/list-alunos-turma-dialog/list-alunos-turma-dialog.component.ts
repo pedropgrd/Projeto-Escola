@@ -14,16 +14,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ApiService } from '../../../core/services/api.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 // Interface baseada no JSON de exemplo
 export interface AlunoDetalhado {
   id_aluno: number;
+  id_turma: number;
+  id_professor: number;
+  id_alunoTurma: number;
   nome_aluno: string;
   matricula: string;
-  id_turma: number;
   turma_nome: string;
   turma_serie: string;
-  id_professor: number;
   nome_professor: string;
   email_professor: string;
   disciplina_nome: string;
@@ -55,6 +57,7 @@ interface TurmaDialogData {
 export class ListAlunosTurmaDialogComponent implements OnInit {
 
   private apiService = inject(ApiService);
+  auth = inject(AuthService);
 
   // Controle de Busca
   searchControl = new FormControl('');
@@ -66,12 +69,20 @@ export class ListAlunosTurmaDialogComponent implements OnInit {
   // Dados Agrupados (Professor e Turma)
   turmaInfo = signal<{ professor: string; email: string; serie: string, disciplina_nome: string } | null>(null);
 
-  displayedColumns: string[] = ['avatar', 'matricula', 'nome'];
+  displayedColumns: string[] = [];
 
+  id_alunoTurma: number | null = null;
+  
   constructor(
     public dialogRef: MatDialogRef<ListAlunosTurmaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: TurmaDialogData
-  ) { }
+  ) {
+    // Define colunas dinamicamente baseado no perfil do usuário
+    this.displayedColumns = ['avatar', 'matricula', 'nome'];
+    if (this.auth.isAdmin()) {
+      this.displayedColumns.push('acoes');
+    }
+  }
 
   ngOnInit(): void {
     this.carregarAlunos();
@@ -98,7 +109,7 @@ export class ListAlunosTurmaDialogComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.alunos.set(response);
-
+          console.log('Alunos carregados:', response);
           // Lógica de Agrupamento:
           // Pegamos os dados do primeiro aluno para preencher o cabeçalho da turma/professor
           if (response.length > 0 && !this.turmaInfo()) {
@@ -107,7 +118,7 @@ export class ListAlunosTurmaDialogComponent implements OnInit {
               professor: info.nome_professor,
               email: info.email_professor,
               serie: info.turma_serie,
-              disciplina_nome: info.disciplina_nome
+              disciplina_nome: info.disciplina_nome,
             });
           }
         },
@@ -135,5 +146,28 @@ export class ListAlunosTurmaDialogComponent implements OnInit {
     }
     const index = Math.abs(hash % colors.length);
     return colors[index];
+  }
+
+
+  desvicularAluno(alunoTurma: AlunoDetalhado): void {
+    if (!confirm(`Tem certeza que deseja desvincular o aluno ${alunoTurma.nome_aluno} da turma ${this.data.nome_turma}?`)) {
+      return;
+    }
+
+    this.isLoading.set(true);
+
+    this.apiService.delete(`/api/v1/aluno-turma/${alunoTurma.id_alunoTurma}`)
+      .pipe(finalize(() => this.isLoading.set(false)))
+      .subscribe({
+        next: () => {
+          // Remover aluno da lista localmente
+          const alunosAtualizados = this.alunos().filter(a => a.id_alunoTurma !== alunoTurma.id_alunoTurma);
+          this.alunos.set(alunosAtualizados);
+        },
+        error: (error) => {
+          console.error('Erro ao desvincular aluno:', error);
+          alert('Erro ao desvincular aluno. Tente novamente.');
+        }
+      });
   }
 }

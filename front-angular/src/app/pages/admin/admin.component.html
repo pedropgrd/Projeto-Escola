@@ -10,9 +10,11 @@
                 <a routerLink="/cadastro-professor">Cadastro Professor</a>
                 <a routerLink="/cadastro-disciplina">Cadastro Disciplina</a>
                 <a routerLink="/cadastro-turma">Cadastro Turma</a>
-                <a href="#">Alunos</a>
-                <a href="#">Professores</a>
-                <a href="#">Turmas</a>
+                <a routerLink="/gerenciar-usuarios">Gerenciar Usuários</a>
+                <!-- <a href="#">Alunos</a>
+                <a href="#">Professores</a> -->
+                <a href="/turmas">Turmas</a>
+                <a href="/nova-noticia">Nova Noticia/Evento</a>
             </nav>
             <div style="margin-top:auto;font-size:13px;opacity:0.95">
                 Versão v.2
@@ -77,7 +79,7 @@
                     <div style="display:flex; gap:12px; align-items:center">
                         <div class="search-container">
                             <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()"
-                                placeholder="🔍 Buscar aluno por nome, matrícula ou CPF..." class="search-input">
+                                placeholder="🔍 Nome, CPF, Matrícula..." class="search-input">
                         </div>
                     </div>
 
@@ -118,7 +120,9 @@
                                     <th>Nome Responsável</th>
                                     <th>Telefone</th>
                                     <th>Endereço</th>
+                                    <th>E-mail Portal</th>
                                     <th>Ações</th>
+                                    <th>Acesso Portal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,6 +135,7 @@
                                     <td>{{ aluno.nome_responsavel }}</td>
                                     <td>{{ formatTelefone(aluno.telefone) }}</td>
                                     <td>{{ aluno.endereco }}</td>
+                                    <td>{{ aluno.email_usuario || 'SEM ACESSO' }}</td>
                                     <td class="actions">
                                         <button class="btn-edit-small" (click)="openEditAlunoDialog(aluno)"
                                             title="Editar aluno">
@@ -139,6 +144,18 @@
                                         <button class="btn-danger-small" (click)="deleteAluno(aluno)"
                                             title="Excluir aluno">
                                             <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn-primary-small btnCadUser" (click)="openCadAlunoLogin(aluno)"
+                                            [disabled]="aluno.email_usuario"
+                                            title="Vincular usuário de acesso">
+                                            <div class="cadUser d-flex align-items-center gap-1">
+                                                <mat-icon>link</mat-icon>
+                                                <p>
+                                                    {{ aluno.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
+                                                </p>
+                                            </div>
                                         </button>
                                     </td>
                                 </tr>
@@ -153,10 +170,12 @@
                                 <tr>
                                     <th>Nome</th>
                                     <th>CPF</th>
-                                    <th>E-mail</th>
+                                    <th>E-mail pessoal</th>
                                     <th>Telefone</th>
                                     <th>Endereço</th>
+                                    <th>E-mail Portal</th>
                                     <th>Ações</th>
+                                    <th>Acesso Portal</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,6 +185,7 @@
                                     <td>{{ professor.email }}</td>
                                     <td>{{ formatTelefone(professor.telefone) }}</td>
                                     <td>{{ professor.endereco }}</td>
+                                    <td>{{ professor.email_usuario || 'SEM ACESSO' }}</td>
                                     <td class="actions">
                                         <button class="btn-edit-small" (click)="openEditProfessorDialog(professor)"
                                             title="Editar professor">
@@ -174,6 +194,17 @@
                                         <button class="btn-danger-small" (click)="deleteProfessor(professor)"
                                             title="Excluir professor">
                                             <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn-primary-small btnCadUser" (click)="openCadLoginProfessor(professor)" [disabled]="professor.email_usuario"
+                                            title="Vincular usuário de acesso">
+                                            <div class="cadUser d-flex align-items-center gap-1">
+                                                <mat-icon>link</mat-icon>
+                                                <p>
+                                                    {{ professor.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
+                                                </p>
+                                            </div>
                                         </button>
                                     </td>
                                 </tr>

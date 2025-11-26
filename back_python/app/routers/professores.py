@@ -445,7 +445,35 @@ async def vincular_usuario_professor(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Este professor já possui um usuário vinculado"
         )
+        
+    if not usuario_data.cpf:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="CPF é obrigatório para criar o usuário do aluno"
+        )
     
+     # Validar nova senha
+    if len(usuario_data.senha) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha deve ter no mínimo 6 caracteres"
+        )
+    if len(usuario_data.senha) > 72:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha deve ter no máximo 72 caracteres (limite do bcrypt)"
+        )
+    if not any(char.isdigit() for char in usuario_data.senha):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha deve conter pelo menos um número"
+        )
+    if not any(char.isalpha() for char in usuario_data.senha):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Senha deve conter pelo menos uma letra"
+        )
+        
     # Verificar se email já está em uso
     result = await session.execute(
         select(User).where(User.email == usuario_data.email)
@@ -458,6 +486,7 @@ async def vincular_usuario_professor(
     
     # Criar novo usuário
     novo_usuario = User(
+        cpf=usuario_data.cpf,
         email=usuario_data.email,
         senha_hash=get_password_hash(usuario_data.senha),
         perfil=UserRole.PROFESSOR,
@@ -558,6 +587,8 @@ async def vincular_usuario_existente_professor(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="O usuário deve ter perfil PROFESSOR para ser vinculado a um professor"
         )
+    
+    
     
     # Vincular usuário ao professor
     professor.id_usuario = usuario.id

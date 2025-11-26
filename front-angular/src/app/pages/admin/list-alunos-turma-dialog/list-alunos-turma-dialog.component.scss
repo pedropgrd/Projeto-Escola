@@ -232,3 +232,20 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #bbb;
 }
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    line-height: 36px;
+
+    mat-icon {
+        font-size: 24px;
+    }
+    &.delete {
+        color: #dc3545;
+
+        &:hover {
+            background-color: rgba(220, 53, 69, 0.08);
+        }
+    }
+}

@@ -64,20 +64,75 @@ async def list_turmas(
     current_user: User = Depends(get_current_user)
 ):
     """
-    Listar turmas do sistema com paginação e dados enriquecidos (nome do professor e disciplina).
+    Listar turmas do sistema com paginação e dados enriquecidos.
     
-    **Permissão**: Todos os usuários autenticados
+    **Permissões:**
+    - ADMIN: Visualiza todas as turmas
+    - PROFESSOR: Visualiza apenas turmas em que está vinculado
+    - ALUNO: Visualiza apenas turmas em que está vinculado
     """
-    # Query com LEFT JOIN para trazer nome do professor e disciplina
+    # Query base com LEFT JOIN para trazer nome do professor e disciplina
     query = (
         select(Turma, Professor.nome.label("nome_professor"), Disciplina.nome.label("nome_disciplina"))
         .outerjoin(Professor, Turma.id_professor == Professor.id_professor)
         .outerjoin(Disciplina, Turma.id_disciplina == Disciplina.id_disciplina)
         .where(Turma.is_deleted == False)
-        .order_by(Turma.nome.asc())
     )
     
     count_query = select(func.count()).select_from(Turma).where(Turma.is_deleted == False)
+    
+    # Aplicar filtros baseado no perfil do usuário
+    if current_user.perfil == UserRole.PROFESSOR:
+        # Buscar o id_professor vinculado ao usuário
+        prof_result = await session.execute(
+            select(Professor.id_professor).where(Professor.id_usuario == current_user.id)
+        )
+        id_professor = prof_result.scalar_one_or_none()
+        
+        if not id_professor:
+            # Professor não está vinculado a nenhuma turma
+            return TurmaListResponseEnriched(
+                items=[],
+                total=0,
+                offset=offset,
+                limit=limit,
+                message="Você não está vinculado a nenhuma turma como professor"
+            )
+        
+        query = query.where(Turma.id_professor == id_professor)
+        count_query = count_query.where(Turma.id_professor == id_professor)
+    
+    elif current_user.perfil == UserRole.ALUNO:
+        # Buscar o id_aluno vinculado ao usuário
+        from app.models.aluno import Aluno
+        from app.models.aluno_turma import AlunoTurma
+        
+        aluno_result = await session.execute(
+            select(Aluno.id_aluno).where(Aluno.id_usuario == current_user.id)
+        )
+        id_aluno = aluno_result.scalar_one_or_none()
+        
+        if not id_aluno:
+            # Aluno não está vinculado a nenhuma turma
+            return TurmaListResponseEnriched(
+                items=[],
+                total=0,
+                offset=offset,
+                limit=limit,
+                message="Você não está vinculado a nenhuma turma como aluno"
+            )
+        
+        # Filtrar apenas turmas em que o aluno está matriculado
+        query = query.join(AlunoTurma, Turma.id_turma == AlunoTurma.id_turma).where(
+            AlunoTurma.id_aluno == id_aluno,
+            AlunoTurma.is_deleted == False
+        )
+        count_query = (
+            count_query.join(AlunoTurma, Turma.id_turma == AlunoTurma.id_turma)
+            .where(AlunoTurma.id_aluno == id_aluno, AlunoTurma.is_deleted == False)
+        )
+    
+    # ADMIN vê todas as turmas (sem filtro adicional)
     
     # Filtrar por ano letivo se especificado
     if ano_letivo:

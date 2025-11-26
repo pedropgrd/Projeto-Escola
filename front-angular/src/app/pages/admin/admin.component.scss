@@ -538,6 +538,20 @@
      }
  }
 
+ .btnCadUser{
+    background: #234f8a;
+    color: white;
+    border-radius: 15px;
+    padding: 8px 12px;
+    font-size: 0.8em;
+    font-family: 'poppins', sans-serif;
+    .cadUser{
+        p{
+            padding-left: 8px;
+        }
+    }
+ }
+
  @media (max-width:720px) {
      aside {
          display: none

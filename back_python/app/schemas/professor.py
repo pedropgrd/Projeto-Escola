@@ -87,12 +87,14 @@ class ProfessorListResponse(BaseModel):
 
 class VincularUsuarioCreate(BaseModel):
     """Schema para criar e vincular um usuário a um professor existente"""
+    cpf: str = Field(description="CPF do professor")
     email: str = Field(description="Email para login do professor")
     senha: str = Field(min_length=6, max_length=72, description="Senha para login")
     
     class Config:
         json_schema_extra = {
             "example": {
+                "cpf": "98765432100",
                 "email": "maria.oliveira@login.escola.com",
                 "senha": "senha123"
             }

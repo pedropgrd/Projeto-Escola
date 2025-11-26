@@ -108,3 +108,4 @@ class TurmaListResponseEnriched(BaseModel):
     total: int
     offset: int
     limit: int
+    message: Optional[str] = None

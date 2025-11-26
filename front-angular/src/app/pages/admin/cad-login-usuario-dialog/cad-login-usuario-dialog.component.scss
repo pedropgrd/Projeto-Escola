@@ -1,0 +1,127 @@
+.dialog-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 400px;
+    max-width: 500px;
+    background: #fff;
+    /* Remove bordas arredondadas extras se o dialog container já tiver */
+}
+
+/* --- HEADER --- */
+.dialog-header {
+    background: #062348;
+    /* Azul Navy padrão do sistema */
+    color: white;
+    padding: 15px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        .header-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+            color: #fec913;
+            /* Amarelo de destaque */
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-weight: 400;
+            display: block;
+        }
+    }
+}
+
+.dialog-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- INFO DO ALVO (ALUNO/PROFESSOR) --- */
+.target-info {
+    background: #f8f9fa;
+    border-left: 4px solid #fec913;
+    padding: 12px 16px;
+    border-radius: 4px;
+
+    .info-label {
+        font-size: 0.7rem;
+        color: #666;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .info-name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #062348;
+    }
+}
+
+/* --- FORMULÁRIO --- */
+.form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+.alert-info {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 0.85rem;
+    color: #555;
+    background: #e3f2fd;
+    padding: 10px;
+    border-radius: 6px;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #1976d2;
+    }
+
+    p {
+        margin: 0;
+        line-height: 1.4;
+    }
+}
+
+/* --- RODAPÉ DE AÇÕES --- */
+.dialog-actions {
+    padding: 15px 24px;
+    background: #f4f6f9;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .btn-save {
+        background-color: #fec913 !important;
+        color: #062348 !important;
+        font-weight: 700;
+        padding: 0 24px;
+    }
+}
