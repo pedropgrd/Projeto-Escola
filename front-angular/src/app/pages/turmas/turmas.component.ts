@@ -92,7 +92,7 @@ export class TurmasComponent implements OnInit, OnDestroy {
     ];
 
     // 2. Se for Admin ou Professor, adiciona estes itens no COMEÇO da lista (unshift)
-    if (this.auth.isAdmin() || this.auth.isProfessor()) {
+    if (this.auth.isAdmin() || this.auth.isProfessor() || this.auth.isServidor()) {
       this.filterOptions.unshift(
         { value: 'nome', label: 'Nome da Turma', placeholder: 'Digite o nome da turma...', param: 'nome' },
         { value: 'serie', label: 'Série', placeholder: 'Digite a série (Ex: 5º Ano)...', param: 'serie' }

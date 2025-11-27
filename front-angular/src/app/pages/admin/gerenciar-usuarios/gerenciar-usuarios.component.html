@@ -1,109 +1,134 @@
 <app-header></app-header>
 
-<div class="hero_area">
-    <div class="container">
-        <div class="hero_content">
-            <h1>Gerenciar <span>Usuários</span></h1>
-            <p>Controle de acesso, troca de senhas e status de contas.</p>
+<div class="page-container container">
+
+    <!-- CABEÇALHO SIMPLES -->
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Usuários</h1>
+            <p>Gerencie o acesso e permissões do sistema.</p>
+        </div>
+        <button mat-flat-button class="btn-refresh" (click)="carregarUsuarios()" [disabled]="isLoading()">
+            <mat-icon [class.spin]="isLoading()">sync</mat-icon>
+            <span>Atualizar</span>
+        </button>
+    </header>
+
+    <!-- BARRA DE AÇÕES E PESQUISA -->
+    <div class="actions-bar">
+        <div class="search-box">
+            <mat-icon>search</mat-icon>
+            <input type="text" placeholder="Buscar por Nome, Email ou CPF..." disabled>
+        </div>
+
+        <div class="stats-mini">
+            <span class="stat-item">
+                <strong>{{ totalUsers() }}</strong> Total
+            </span>
         </div>
     </div>
-</div>
 
-<div class="main-container container">
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="content-card">
 
-    <div class="card-table">
-        <div class="table-header">
-            <h3>Lista de Usuários Cadastrados</h3>
-            <button mat-icon-button color="primary" (click)="carregarUsuarios()" matTooltip="Atualizar Lista">
-                <mat-icon>refresh</mat-icon>
-            </button>
-        </div>
-
-        <div class="loading-shade" *ngIf="isLoading()">
+        <!-- LOADING -->
+        <div class="loading-overlay" *ngIf="isLoading()">
             <mat-spinner diameter="40"></mat-spinner>
         </div>
 
-        <div class="table-responsive">
-            <table mat-table [dataSource]="usuarios()" class="user-table">
+        <!-- TABELA (Vira Cards no Mobile via CSS) -->
+        <table mat-table [dataSource]="usuarios()" class="responsive-table">
 
-                <!-- ID Column -->
-                <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef> ID </th>
-                    <td mat-cell *matCellDef="let row"> #{{row.id}} </td>
-                </ng-container>
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef> ID </th>
+                <td mat-cell *matCellDef="let row" data-label="ID">
+                    <span class="text-muted">#{{row.id}}</span>
+                </td>
+            </ng-container>
 
-                <!-- CPF Column -->
-                <ng-container matColumnDef="cpf">
-                    <th mat-header-cell *matHeaderCellDef> CPF </th>
-                    <td mat-cell *matCellDef="let row" class="monospace"> {{formatCpf(row.cpf)}} </td>
-                </ng-container>
+            <!-- CPF Column -->
+            <ng-container matColumnDef="cpf">
+                <th mat-header-cell *matHeaderCellDef> CPF </th>
+                <td mat-cell *matCellDef="let row" data-label="CPF">
+                    <span class="mono-font">{{ formatCpf(row.cpf) }}</span>
+                </td>
+            </ng-container>
 
-                <!-- Email Column -->
-                <ng-container matColumnDef="email">
-                    <th mat-header-cell *matHeaderCellDef> E-mail </th>
-                    <td mat-cell *matCellDef="let row"> {{row.email}} </td>
-                </ng-container>
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef> Usuário </th>
+                <td mat-cell *matCellDef="let row" data-label="Usuário">
+                    <div class="user-cell">
+                        <div class="avatar" [ngClass]="row.perfil">{{ row.email.charAt(0) | uppercase }}</div>
+                        <div class="user-details">
+                            <span class="email">{{ row.email }}</span>
+                            <span class="mobile-role-label">{{ row.perfil }}</span>
+                        </div>
+                    </div>
+                </td>
+            </ng-container>
 
-                <!-- Perfil Column -->
-                <ng-container matColumnDef="perfil">
-                    <th mat-header-cell *matHeaderCellDef> Perfil </th>
-                    <td mat-cell *matCellDef="let row">
-                        <span class="badge-perfil" [ngClass]="row.perfil">
-                            {{row.perfil}}
-                        </span>
-                    </td>
-                </ng-container>
+            <!-- Perfil Column (Esconde no mobile pois já mostramos no user-cell) -->
+            <ng-container matColumnDef="perfil">
+                <th mat-header-cell *matHeaderCellDef class="hide-mobile"> Perfil </th>
+                <td mat-cell *matCellDef="let row" class="hide-mobile" data-label="Perfil">
+                    <span class="badge" [ngClass]="row.perfil">{{ row.perfil }}</span>
+                </td>
+            </ng-container>
 
-                <!-- Status Column -->
-                <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef> Status </th>
-                    <td mat-cell *matCellDef="let row">
-                        <span class="status-indicator" [class.active]="row.ativo" [class.inactive]="!row.ativo">
-                            {{ row.ativo ? 'ATIVO' : 'INATIVO' }}
-                        </span>
-                    </td>
-                </ng-container>
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef> Status </th>
+                <td mat-cell *matCellDef="let row" data-label="Status">
+                    <span class="status-pill" [class.active]="row.ativo" [class.inactive]="!row.ativo">
+                        {{ row.ativo ? 'Ativo' : 'Inativo' }}
+                    </span>
+                </td>
+            </ng-container>
 
-                <!-- Ações Column -->
-                <ng-container matColumnDef="acoes">
-                    <th mat-header-cell *matHeaderCellDef class="text-end"> Ações </th>
-                    <td mat-cell *matCellDef="let row" class="text-end">
+            <!-- Ações Column -->
+            <ng-container matColumnDef="acoes">
+                <th mat-header-cell *matHeaderCellDef class="text-end"> </th>
+                <td mat-cell *matCellDef="let row" class="text-end" data-label="Ações">
 
-                        <button mat-icon-button [matMenuTriggerFor]="menu">
-                            <mat-icon>more_vert</mat-icon>
+                    <button mat-icon-button [matMenuTriggerFor]="menu" class="action-btn">
+                        <mat-icon>more_horiz</mat-icon>
+                    </button>
+
+                    <mat-menu #menu="matMenu" xPosition="before">
+                        <button mat-menu-item (click)="abrirTrocaSenha(row)">
+                            <mat-icon>vpn_key</mat-icon>
+                            <span>Alterar Senha</span>
                         </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item (click)="desativarUsuario(row)" [disabled]="!row.ativo">
+                            <mat-icon color="warn">block</mat-icon>
+                            <span class="text-danger">Bloquear Acesso</span>
+                        </button>
+                    </mat-menu>
+                </td>
+            </ng-container>
 
-                        <mat-menu #menu="matMenu">
-                            <button mat-menu-item (click)="abrirTrocaSenha(row)">
-                                <mat-icon>lock_reset</mat-icon>
-                                <span>Trocar Senha</span>
-                            </button>
-                            <button mat-menu-item (click)="desativarUsuario(row)" [disabled]="!row.ativo"
-                                class="warn-item">
-                                <mat-icon color="warn">block</mat-icon>
-                                <span class="text-danger">Desativar Conta</span>
-                            </button>
-                        </mat-menu>
-                    </td>
-                </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <!-- Empty State -->
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell empty-cell" colspan="6">
+                    <div class="empty-state">
+                        <mat-icon>search_off</mat-icon>
+                        <p>Nenhum registro encontrado.</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-                <!-- Row shown when there is no matching data. -->
-                <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell empty-cell" colspan="6">
-                        Nenhum usuário encontrado.
-                    </td>
-                </tr>
-            </table>
-        </div>
-
+        <!-- PAGINAÇÃO -->
         <mat-paginator [length]="totalUsers()" [pageSize]="pageSize()" [pageSizeOptions]="pageSizeOptions"
             (page)="onPageChange($event)" showFirstLastButtons>
         </mat-paginator>
     </div>
-
 </div>
 
 <app-footer></app-footer>

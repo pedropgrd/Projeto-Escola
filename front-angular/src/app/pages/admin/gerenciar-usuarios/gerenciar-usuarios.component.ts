@@ -17,6 +17,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { UpdateSenhaUserDialogComponent } from '../update-senha-user-dialog/update-senha-user-dialog.component';
+import { MatDivider } from "@angular/material/divider";
 
 
 export interface Usuario {
@@ -48,8 +49,9 @@ interface UserResponse {
     MatDialogModule,
     MatSnackBarModule,
     HeaderComponent,
-    FooterComponent
-  ],
+    FooterComponent,
+    MatDivider
+],
   templateUrl: './gerenciar-usuarios.component.html',
   styleUrls: ['./gerenciar-usuarios.component.scss']
 })

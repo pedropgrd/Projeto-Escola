@@ -88,10 +88,10 @@ async def list_professores(
     """
     Listar professores do sistema com paginação.
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN, PROFESSOR e SERVIDOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Você não tem permissão para acessar este recurso"
@@ -159,10 +159,10 @@ async def get_professor(
     - **cpf**: Busca exata por CPF
     - **nome**: Busca parcial por nome (LIKE)
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN, PROFESSOR e SERVIDOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Você não tem permissão para acessar este recurso"
@@ -225,10 +225,10 @@ async def get_professor_by_id(
     """
     Buscar professor por ID (endpoint de compatibilidade).
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN, PROFESSOR e SERVIDOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Você não tem permissão para acessar este recurso"

@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -12,6 +12,7 @@ import { UserRole } from '../../core/models/auth.models';
     styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
+    @Input() sumirTitulo: boolean = false;
     authService = inject(AuthService);
     private router = inject(Router);
 

@@ -1,328 +1,349 @@
-<app-header></app-header>
+<app-header [sumirTitulo]="true"></app-header>
 
-<body>
-    <div class="app">
-        <aside>
-            <div class="brand">MENU</div>
-            <nav>
-                <a routerLink="/cadastro-login">Cadastro Login</a>
-                <a routerLink="/cadastro-aluno">Cadastro Aluno</a>
-                <a routerLink="/cadastro-professor">Cadastro Professor</a>
-                <a routerLink="/cadastro-disciplina">Cadastro Disciplina</a>
-                <a routerLink="/cadastro-turma">Cadastro Turma</a>
-                <a routerLink="/cadastro-servidor">Cadastro Servidor</a>
-                <a routerLink="/gerenciar-usuarios">Gerenciar Usuários</a>
-                <!-- <a href="#">Alunos</a>
-                <a href="#">Professores</a> -->
-                <a href="/turmas">Turmas</a>
-                <a href="/nova-noticia">Nova Noticia/Evento</a>
-            </nav>
-            <div style="margin-top:auto;font-size:13px;opacity:0.95">
-                Versão v.2
+<div class="layout-wrapper">
+
+    <!-- OVERLAY (Fundo escuro no mobile quando menu abre) -->
+    <div class="sidebar-overlay" [class.active]="isSidebarOpen()" (click)="toggleSidebar()">
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" [class.open]="isSidebarOpen()">
+        <div class="sidebar-header">
+            <div class="brand-logo">
+                <mat-icon>school</mat-icon>
+                <span>GESTOR</span>
             </div>
-        </aside>
+            <button class="close-btn" (click)="toggleSidebar()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
 
-        <main>
-            <header>
-                <div>
-                    <h2 style="margin:0 0 6px 0">Painel</h2>
-                    <div style="color:var(--muted);font-size:14px">Visão geral dos últimos registros</div>
+        <nav class="sidebar-nav">
+            @if(auth.isAdmin()){
+
+           
+            <p class="nav-label">CADASTROS</p>
+
+            <a routerLink="/cadastro-login" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>person</mat-icon> Administrador
+            </a>
+
+            <a routerLink="/cadastro-aluno" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>person_add</mat-icon> Aluno
+            </a>
+
+            <a routerLink="/cadastro-professor" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>work</mat-icon> Professor
+            </a>
+            <a routerLink="/cadastro-servidor" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>badge</mat-icon> Servidor
+            </a>
+            <a routerLink="/cadastro-disciplina" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>book</mat-icon> Disciplina
+            </a>
+            
+            <a routerLink="/cadastro-turma" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>class</mat-icon> Turma
+            </a>
+            
+        }
+
+            <p class="nav-label">GESTÃO</p>
+            @if(auth.isAdmin()){
+                <a routerLink="/gerenciar-usuarios" routerLinkActive="active" (click)="closeSidebar()">
+                    <mat-icon>manage_accounts</mat-icon> Usuários
+                </a>
+            }
+            <a routerLink="/turmas" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>view_list</mat-icon> Lista de Turmas
+            </a>
+            <a routerLink="/nova-noticia" routerLinkActive="active" (click)="closeSidebar()">
+                <mat-icon>campaign</mat-icon> Notícias/Eventos
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="version">Versão 2.0</span>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="main-content">
+
+        <!-- HEADER DO PAINEL -->
+        <header class="panel-header">
+            <div class="header-left">
+                <button class="hamburger-btn" (click)="toggleSidebar()">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <div class="page-title">
+                    <h2>Painel de Controle</h2>
+                    <span>Visão geral do sistema</span>
                 </div>
-            </header>
+            </div>
 
-            <section class="stats-grid">
-                <div class="stat-card alunos-card">
-                    <div class="stat-icon">
-                        <mat-icon>school</mat-icon>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-label">Total de Alunos</div>
-                        <div class="stat-number">{{ totalAlunos() }}</div>
-                    </div>
+            <!-- Botão de Novo Rápido (Responsivo) -->
+            <div class="header-actions">
+                <button class="btn-novo-rapido"
+                    [routerLink]="viewMode() === 'alunos' ? '/cadastro-aluno' : viewMode() === 'professores' ? '/cadastro-professor' : '/cadastro-servidor'">
+                    <mat-icon>add</mat-icon>
+                    <span class="btn-text">Novo {{ viewMode() === 'alunos' ? 'Aluno' : viewMode() === 'professores' ?
+                        'Professor' : 'Servidor' }}</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- CARDS DE ESTATÍSTICA -->
+        <section class="stats-grid">
+            <div class="stat-card blue-card" (click)="toggleView('alunos')" [class.selected]="viewMode() === 'alunos'">
+                <div class="icon-box">
+                    <mat-icon>school</mat-icon>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Total de Alunos</span>
+                    <span class="number">{{ totalAlunos() }}</span>
+                </div>
+                <div class="indicator" *ngIf="viewMode() === 'alunos'"></div>
+            </div>
+
+            <div class="stat-card yellow-card" (click)="toggleView('professores')"
+                [class.selected]="viewMode() === 'professores'">
+                <div class="icon-box">
+                    <mat-icon>person</mat-icon>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Professores</span>
+                    <span class="number">{{ totalProfessores() }}</span>
+                </div>
+                <div class="indicator" *ngIf="viewMode() === 'professores'"></div>
+            </div>
+
+            <div class="stat-card navy-card" (click)="toggleView('servidores')"
+                [class.selected]="viewMode() === 'servidores'">
+                <div class="icon-box">
+                    <mat-icon>badge</mat-icon>
+                </div>
+                <div class="stat-info">
+                    <span class="label">Servidores</span>
+                    <span class="number">{{ totalServidores() }}</span>
+                </div>
+                <div class="indicator" *ngIf="viewMode() === 'servidores'"></div>
+            </div>
+        </section>
+
+        <!-- ÁREA DE DADOS (TABELA) -->
+        <section class="data-card">
+
+            <!-- BARRA DE FERRAMENTAS -->
+            <div class="toolbar">
+                <div class="search-box">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()"
+                        placeholder="Buscar por Nome, CPF ou Matrícula...">
                 </div>
 
-                <div class="stat-card professores-card">
-                    <div class="stat-icon">
-                        <mat-icon>person</mat-icon>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-label">Total de Professores</div>
-                        <div class="stat-number">{{ totalProfessores() }}</div>
-                    </div>
+                <div class="filter-box">
+                    <select [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()">
+                        <option *ngFor="let opt of itemsPerPageOptions" [value]="opt">{{ opt }} itens</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- MENSAGENS -->
+            <div *ngIf="successMessage()" class="alert-box success">
+                <mat-icon>check_circle</mat-icon> {{ successMessage() }}
+            </div>
+            <div *ngIf="errorMessage()" class="alert-box error">
+                <mat-icon>error</mat-icon> {{ errorMessage() }}
+            </div>
+
+            <!-- LOADING -->
+            <div *ngIf="isLoading()" class="loading-state">
+                <div class="spinner"></div>
+                <p>Carregando dados...</p>
+            </div>
+
+            <!-- TABELA RESPONSIVA -->
+            <div class="table-responsive" *ngIf="!isLoading()">
+
+                <!-- TABELA ALUNOS -->
+                <table class="custom-table" *ngIf="viewMode() === 'alunos' && filteredAlunos.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Matrícula</th>
+                            <th>Nome Completo</th>
+                            <th>CPF</th>
+                            <th class="hide-mobile">Idade</th>
+                            <th class="hide-mobile">Responsável</th>
+
+                            @if(auth.isAdmin()){
+                            <th>Acesso</th>
+                            <th class="text-end">Ações</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let aluno of filteredAlunos">
+                            <td><span class="badge-id">{{ aluno.matricula }}</span></td>
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar-circle">{{ aluno.nome.charAt(0) }}</div>
+                                    <span>{{ aluno.nome }}</span>
+                                </div>
+                            </td>
+                            <td>{{ formatCpfMasked(aluno.cpf) }}</td>
+                            <td class="hide-mobile">{{ calcularIdade(aluno.data_nascimento) }} anos</td>
+                            <td class="hide-mobile">{{ aluno.nome_responsavel }}</td>
+
+                            @if(auth.isAdmin()){
+
+
+                            <!-- Coluna Acesso -->
+                            <td>
+                                <button class="btn-link-access" [class.linked]="aluno.email_usuario"
+                                    (click)="openCadAlunoLogin(aluno)" [disabled]="aluno.email_usuario">
+                                    <mat-icon>{{ aluno.email_usuario ? 'check_circle' : 'add_link' }}</mat-icon>
+                                    {{ aluno.email_usuario ? 'Ativo' : 'Criar' }}
+                                </button>
+                            </td>
+
+                            <!-- Ações -->
+                            <td class="text-end">
+                                <button class="btn-icon edit" (click)="openEditAlunoDialog(aluno)" matTooltip="Editar">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button class="btn-icon delete" (click)="deleteAluno(aluno)" matTooltip="Excluir">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- TABELA PROFESSORES -->
+                <table class="custom-table" *ngIf="viewMode() === 'professores' && filteredProfessores.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th class="hide-mobile">Email</th>
+                            <th class="hide-mobile">Telefone</th>
+                            @if(auth.isAdmin()){
+                            <th>Acesso</th>
+                            <th class="text-end">Ações</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let prof of filteredProfessores">
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar-circle prof">{{ prof.nome.charAt(0) }}</div>
+                                    <span>{{ prof.nome }}</span>
+                                </div>
+                            </td>
+                            <td>{{ formatCpfMasked(prof.cpf) }}</td>
+                            <td class="hide-mobile">{{ prof.email }}</td>
+                            <td class="hide-mobile">{{ formatTelefone(prof.telefone) }}</td>
+
+                            @if(auth.isAdmin()){
+
+                            <td>
+                                <button class="btn-link-access" [class.linked]="prof.email_usuario"
+                                    (click)="openCadLoginProfessor(prof)" [disabled]="prof.email_usuario">
+                                    <mat-icon>{{ prof.email_usuario ? 'check_circle' : 'add_link' }}</mat-icon>
+                                    {{ prof.email_usuario ? 'Ativo' : 'Criar' }}
+                                </button>
+                            </td>
+
+                            <td class="text-end">
+                                <button class="btn-icon edit" (click)="openEditProfessorDialog(prof)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button class="btn-icon delete" (click)="deleteProfessor(prof)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- TABELA SERVIDORES -->
+                <table class="custom-table" *ngIf="viewMode() === 'servidores' && filteredServidores.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Função</th>
+                            <th class="hide-mobile">Email</th>
+
+                            @if(auth.isAdmin()){
+                            <th>Acesso</th>
+                            <th class="text-end">Ações</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let serv of filteredServidores">
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar-circle serv">{{ serv.nome.charAt(0) }}</div>
+                                    <span>{{ serv.nome }}</span>
+                                </div>
+                            </td>
+                            <td><span class="badge-funcao">{{ serv.funcao }}</span></td>
+                            <td class="hide-mobile">{{ serv.email }}</td>
+                            @if(auth.isAdmin()){
+                            <td>
+                                <button class="btn-link-access" [class.linked]="serv.email_usuario"
+                                    (click)="openCadLoginServidores(serv)" [disabled]="serv.email_usuario">
+                                    <mat-icon>{{ serv.email_usuario ? 'check_circle' : 'add_link' }}</mat-icon>
+                                    {{ serv.email_usuario ? 'Ativo' : 'Criar' }}
+                                </button>
+                            </td>
+
+                            <td class="text-end">
+                                <button class="btn-icon edit" (click)="openEditServidorDialog(serv)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button class="btn-icon delete" (click)="deleteServidor(serv)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- EMPTY STATE -->
+                <div *ngIf="(viewMode() === 'alunos' && filteredAlunos.length === 0) || 
+                            (viewMode() === 'professores' && filteredProfessores.length === 0) ||
+                            (viewMode() === 'servidores' && filteredServidores.length === 0)" class="empty-state">
+                    <mat-icon>search_off</mat-icon>
+                    <p>Nenhum registro encontrado.</p>
                 </div>
 
-                <div class="stat-card servidores-card">
-                    <div class="stat-icon">
-                        <mat-icon>badge</mat-icon>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-label">Total de Servidores</div>
-                        <div class="stat-number">{{ totalServidores() }}</div>
-                    </div>
-                </div>
-            </section>
+            </div>
 
+            <!-- PAGINAÇÃO -->
+            <div class="pagination-footer" *ngIf="currentTotal > 0">
+                <span class="page-info">
+                    Total: <strong>{{ currentTotal }}</strong> registros
+                </span>
 
-            <section class="card">
-                <!-- Toggle e controles -->
-                <div class="controls-header">
-                    <div class="toggle-container">
-                        <button class="toggle-btn" [class.active]="viewMode() === 'alunos'"
-                            (click)="toggleView('alunos')">
-                            👨‍🎓 Alunos
-                        </button>
-                        <button class="toggle-btn" [class.active]="viewMode() === 'professores'"
-                            (click)="toggleView('professores')">
-                            👨‍🏫 Professores
-                        </button>
-                        <button class="toggle-btn" [class.active]="viewMode() === 'servidores'"
-                            (click)="toggleView('servidores')">
-                            👔 Servidores
-                        </button>
-                    </div>
-
-                    <div class="items-per-page">
-                        <label for="itemsPerPage">Itens por página:</label>
-                        <select id="itemsPerPage" [(ngModel)]="itemsPerPage" (change)="onItemsPerPageChange()"
-                            class="form-select">
-                            <option *ngFor="let option of itemsPerPageOptions" [value]="option">
-                                {{ option }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div style="display:flex; gap:12px; align-items:center">
-                        <div class="search-container">
-                            <input type="text" [(ngModel)]="searchQuery" (input)="onSearch()"
-                                placeholder="🔍 Nome, CPF, Matrícula..." class="search-input">
-                        </div>
-                    </div>
-
-                    <button class="novo-cadastro"
-                        [routerLink]="viewMode() === 'alunos' ? '/cadastro-aluno' : viewMode() === 'professores' ? '/cadastro-professor' : '/cadastro-servidor'">
-                        + Novo {{ viewMode() === 'alunos' ? 'Aluno' : viewMode() === 'professores' ? 'Professor' :
-                        'Servidor' }}
+                <div class="page-actions">
+                    <button class="page-btn" (click)="previousPage()" [disabled]="currentPage() === 1">
+                        <mat-icon>chevron_left</mat-icon>
+                    </button>
+                    <span class="current-page">Pág {{ currentPage() }}</span>
+                    <button class="page-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
+                        <mat-icon>chevron_right</mat-icon>
                     </button>
                 </div>
+            </div>
 
-                <h3 style="margin-top:16px">Total: {{ currentTotal }}</h3>
+        </section>
 
-                <!-- Mensagens de sucesso/erro -->
-                <div *ngIf="successMessage()" class="alert alert-success">
-                    {{ successMessage() }}
-                </div>
-                <div *ngIf="errorMessage()" class="alert alert-danger">
-                    {{ errorMessage() }}
-                </div>
-
-                <!-- Loading -->
-                <div *ngIf="isLoading()" class="loading-container">
-                    <div class="spinner"></div>
-                    <p>Carregando {{ viewMode() === 'alunos' ? 'alunos' : 'professores' }}...</p>
-                </div>
-
-                <!-- Tabelas -->
-                <div *ngIf="!isLoading()">
-                    <!-- Tabela de Alunos -->
-                    <div *ngIf="viewMode() === 'alunos'">
-                        <table *ngIf="filteredAlunos.length > 0">
-                            <thead>
-                                <tr>
-                                    <th>Matrícula</th>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>Data Nasc.</th>
-                                    <th>Idade</th>
-                                    <th>Nome Responsável</th>
-                                    <th>Telefone</th>
-                                    <th>Endereço</th>
-                                    <th>E-mail Portal</th>
-                                    <th>Ações</th>
-                                    <th>Acesso Portal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let aluno of filteredAlunos">
-                                    <td><strong>{{ aluno.matricula }}</strong></td>
-                                    <td>{{ aluno.nome }}</td>
-                                    <td>{{ formatCpfMasked(aluno.cpf) }}</td>
-                                    <td>{{ aluno.data_nascimento | date: 'dd/MM/yyyy' }}</td>
-                                    <td>{{ calcularIdade(aluno.data_nascimento) }} anos</td>
-                                    <td>{{ aluno.nome_responsavel }}</td>
-                                    <td>{{ formatTelefone(aluno.telefone) }}</td>
-                                    <td>{{ aluno.endereco }}</td>
-                                    <td>{{ aluno.email_usuario || 'SEM ACESSO' }}</td>
-                                    <td class="actions">
-                                        <button class="btn-edit-small" (click)="openEditAlunoDialog(aluno)"
-                                            title="Editar aluno">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                        <button class="btn-danger-small" (click)="deleteAluno(aluno)"
-                                            title="Excluir aluno">
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button class="btn-primary-small btnCadUser" (click)="openCadAlunoLogin(aluno)"
-                                            [disabled]="aluno.email_usuario" title="Vincular usuário de acesso">
-                                            <div class="cadUser d-flex align-items-center gap-1">
-                                                <mat-icon>link</mat-icon>
-                                                <p>
-                                                    {{ aluno.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
-                                                </p>
-                                            </div>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Tabela de Professores -->
-                    <div *ngIf="viewMode() === 'professores'">
-                        <table *ngIf="filteredProfessores.length > 0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>E-mail pessoal</th>
-                                    <th>Telefone</th>
-                                    <th>Endereço</th>
-                                    <th>E-mail Portal</th>
-                                    <th>Ações</th>
-                                    <th>Acesso Portal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let professor of filteredProfessores">
-                                    <td><strong>{{ professor.nome }}</strong></td>
-                                    <td>{{ formatCpfMasked(professor.cpf) }}</td>
-                                    <td>{{ professor.email }}</td>
-                                    <td>{{ formatTelefone(professor.telefone) }}</td>
-                                    <td>{{ professor.endereco }}</td>
-                                    <td>{{ professor.email_usuario || 'SEM ACESSO' }}</td>
-                                    <td class="actions">
-                                        <button class="btn-edit-small" (click)="openEditProfessorDialog(professor)"
-                                            title="Editar professor">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                        <button class="btn-danger-small" (click)="deleteProfessor(professor)"
-                                            title="Excluir professor">
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button class="btn-primary-small btnCadUser"
-                                            (click)="openCadLoginProfessor(professor)"
-                                            [disabled]="professor.email_usuario" title="Vincular usuário de acesso">
-                                            <div class="cadUser d-flex align-items-center gap-1">
-                                                <mat-icon>link</mat-icon>
-                                                <p>
-                                                    {{ professor.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
-                                                </p>
-                                            </div>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Tabela de Servidores -->
-                    <div *ngIf="viewMode() === 'servidores'">
-                        <table *ngIf="filteredServidores.length > 0">
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>CPF</th>
-                                    <th>E-mail</th>
-                                    <th>Telefone</th>
-                                    <th>Endereço</th>
-                                    <th>Função</th>
-                                    <th>E-mail Portal</th>
-                                    <th>Ações</th>
-                                    <th>Acesso Portal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let servidor of filteredServidores">
-                                    <td><strong>{{ servidor.nome }}</strong></td>
-                                    <td>{{ formatCpfMasked(servidor.cpf) }}</td>
-                                    <td>{{ servidor.email }}</td>
-                                    <td>{{ formatTelefone(servidor.telefone) }}</td>
-                                    <td>{{ servidor.endereco }}</td>
-                                    <td>{{ servidor.funcao }}</td>
-                                    <td>{{ servidor.email_usuario || 'SEM ACESSO' }}</td>
-                                    <td class="actions">
-                                        <button class="btn-edit-small" (click)="openEditServidorDialog(servidor)"
-                                            title="Editar servidor">
-                                            <mat-icon>edit</mat-icon>
-                                        </button>
-                                        <button class="btn-danger-small" (click)="deleteServidor(servidor)"
-                                            title="Excluir servidor">
-                                            <mat-icon>delete</mat-icon>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        <button class="btn-primary-small btnCadUser"
-                                            (click)="openCadLoginServidores(servidor)"
-                                            [disabled]="servidor.email_usuario" title="Vincular usuário de acesso">
-                                            <div class="cadUser d-flex align-items-center gap-1">
-                                                <mat-icon>link</mat-icon>
-                                                <p>
-                                                    {{ servidor.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
-                                                </p>
-                                            </div>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Mensagem quando não há resultados -->
-                    <div *ngIf="viewMode() === 'alunos' && filteredAlunos.length === 0" class="no-results">
-                        <p>Nenhum aluno encontrado.</p>
-                        <button class="btn-primary" routerLink="/cadastro-aluno">Cadastrar Primeiro Aluno</button>
-                    </div>
-
-                    <div *ngIf="viewMode() === 'professores' && filteredProfessores.length === 0" class="no-results">
-                        <p>Nenhum professor encontrado.</p>
-                        <button class="btn-primary" routerLink="/cadastro-professor">Cadastrar Primeiro
-                            Professor</button>
-                    </div>
-
-                    <div *ngIf="viewMode() === 'servidores' && filteredServidores.length === 0" class="no-results">
-                        <p>Nenhum servidor encontrado.</p>
-                        <button class="btn-primary" routerLink="/cadastro-servidor">Cadastrar Primeiro Servidor</button>
-                    </div>
-
-                    <!-- Paginação -->
-                    <div *ngIf="currentTotal > 0 && totalPages() > 1" class="pagination">
-                        <button class="pagination-btn" (click)="previousPage()" [disabled]="currentPage() === 1">
-                            ← Anterior
-                        </button>
-
-                        <div class="pagination-pages">
-                            <button *ngFor="let page of pageNumbers" class="pagination-page"
-                                [class.active]="page === currentPage()" (click)="goToPage(page)">
-                                {{ page }}
-                            </button>
-                        </div>
-
-                        <button class="pagination-btn" (click)="nextPage()" [disabled]="currentPage() === totalPages()">
-                            Próxima →
-                        </button>
-                    </div>
-
-                    <div class="pagination-info" *ngIf="currentTotal > 0">
-                        Mostrando {{ (currentPage() - 1) * itemsPerPage() + 1 }} -
-                        {{ Math.min(currentPage() * itemsPerPage(), currentTotal) }}
-                        de {{ currentTotal }} {{ viewMode() === 'alunos' ? 'alunos' : 'professores' }}
-                    </div>
-                </div>
-            </section>
-
-        </main>
-    </div>
-</body>
+    </main>
+</div>

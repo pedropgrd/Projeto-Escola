@@ -34,7 +34,7 @@ async def create_noticia(
     **Permissão**: ADMIN e PROFESSOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Apenas administradores e professores podem criar notícias"
@@ -137,7 +137,7 @@ async def update_noticia(
     **Permissão**: ADMIN e PROFESSOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Apenas administradores e professores podem atualizar notícias"
@@ -190,7 +190,7 @@ async def delete_noticia(
     **Permissão**: ADMIN e PROFESSOR
     """
     # Verificar permissão
-    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR]:
+    if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Apenas administradores e professores podem deletar notícias"

@@ -1,7 +1,7 @@
 <header class="header_section">
     <div class="container">
-        <nav class="navbar navbar-expand-lg custom_nav-container">
-            <a class="navbar-brand" routerLink="/">
+        <nav class="navbar navbar-expand-lg custom_nav-container" >
+            <a class="navbar-brand" routerLink="/" *ngIf="!sumirTitulo">
                 <img src="assets/images/logo.png" alt="">
                 <span>TRAJANO DE ALMEIDA</span>
             </a>
@@ -35,10 +35,10 @@
                         <!-- Menu para usuário autenticado -->
 
                         <!-- Menu ADMIN -->
-                        @if (authService.isAdmin()) {
+                        @if (authService.isAdmin() || authService.isServidor()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/admin" (click)="toggleNavbar()">
-                                Painel Admin
+                                Painel De Controle
                             </a>
                         </li>
                         }

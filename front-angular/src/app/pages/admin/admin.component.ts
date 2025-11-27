@@ -14,6 +14,7 @@ import { EditProfessorDialogComponent } from './edit-professor-dialog/edit-profe
 import { FooterComponent } from "../../components/footer/footer.component";
 import { CadLoginUsuarioDialogComponent } from './cad-login-usuario-dialog/cad-login-usuario-dialog.component';
 import { EditServidorDialogComponent } from './edit-servidor-dialog/edit-servidor-dialog.component';
+import { AuthService } from '../../core/services/auth.service';
 
 interface Aluno {
   id_aluno: number;
@@ -104,6 +105,7 @@ interface ServidorListResponse {
 export class AdminComponent implements OnInit {
   private apiService = inject(ApiService);
   private dialog = inject(MatDialog);
+  auth = inject(AuthService);
 
   // Signals para gerenciamento de estado
   alunos = signal<Aluno[]>([]);
@@ -112,6 +114,9 @@ export class AdminComponent implements OnInit {
   isLoading = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
+
+  // Controle do Menu Lateral
+  isSidebarOpen = signal(false);
 
   // Toggle entre alunos, professores e servidores
   viewMode = signal<'alunos' | 'professores' | 'servidores'>('alunos');
@@ -137,6 +142,18 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+  }
+
+  // Lógica de Toggle do Menu
+  toggleSidebar() {
+    this.isSidebarOpen.update(val => !val);
+  }
+
+  // Fecha o menu ao clicar num link (UX Mobile)
+  closeSidebar() {
+    if (window.innerWidth < 992) {
+      this.isSidebarOpen.set(false);
+    }
   }
 
   /**
