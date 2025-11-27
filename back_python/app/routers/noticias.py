@@ -31,7 +31,7 @@ async def create_noticia(
     """
     Criar nova notícia no sistema.
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN ,PROFESSOR e SERVIDOR
     """
     # Verificar permissão
     if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
@@ -134,7 +134,7 @@ async def update_noticia(
     """
     Atualizar dados da notícia.
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN ,PROFESSOR e SERVIDOR
     """
     # Verificar permissão
     if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
@@ -187,7 +187,7 @@ async def delete_noticia(
     **Atenção**: Esta operação NÃO remove o registro do banco de dados,
     apenas marca como deletado (is_deleted = True).
     
-    **Permissão**: ADMIN e PROFESSOR
+    **Permissão**: ADMIN ,PROFESSOR e SERVIDOR
     """
     # Verificar permissão
     if current_user.perfil not in [UserRole.ADMIN, UserRole.PROFESSOR, UserRole.SERVIDOR]:
