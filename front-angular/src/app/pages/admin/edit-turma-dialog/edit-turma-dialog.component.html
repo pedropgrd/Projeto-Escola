@@ -1,0 +1,109 @@
+<h2 mat-dialog-title>Editar Turma</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="turmaForm" class="turma-form">
+
+        <!-- Nome da Turma -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Nome da Turma</mat-label>
+            <input matInput formControlName="nome" placeholder="Ex: TURMA A" required>
+            <mat-icon matPrefix>class</mat-icon>
+            <mat-error *ngIf="turmaForm.get('nome')?.hasError('required')">
+                Nome é obrigatório
+            </mat-error>
+            <mat-error *ngIf="turmaForm.get('nome')?.hasError('minlength')">
+                Nome deve ter no mínimo 2 caracteres
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Série -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Série</mat-label>
+            <input matInput formControlName="serie" placeholder="Ex: 5º Ano" required>
+            <mat-icon matPrefix>school</mat-icon>
+            <mat-error *ngIf="turmaForm.get('serie')?.hasError('required')">
+                Série é obrigatória
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Turno -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Turno</mat-label>
+            <mat-select formControlName="turno" required>
+                <mat-option *ngFor="let turno of turnosOptions" [value]="turno.value">
+                    {{ turno.label }}
+                </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>wb_sunny</mat-icon>
+            <mat-error *ngIf="turmaForm.get('turno')?.hasError('required')">
+                Turno é obrigatório
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Ano Letivo -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Ano Letivo</mat-label>
+            <input matInput type="number" formControlName="ano_letivo" required>
+            <mat-icon matPrefix>event</mat-icon>
+            <mat-error *ngIf="turmaForm.get('ano_letivo')?.hasError('required')">
+                Ano letivo é obrigatório
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Professor (Autocomplete) -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Professor</mat-label>
+            <input matInput formControlName="professorSearch" placeholder="Digite o nome do professor..."
+                [matAutocomplete]="autoProfessor" required>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-spinner *ngIf="isLoadingProfessor()" matSuffix diameter="20">
+            </mat-spinner>
+            <mat-autocomplete #autoProfessor="matAutocomplete" [displayWith]="displayProfessor"
+                (optionSelected)="onProfessorSelected($event)">
+                <mat-option *ngFor="let professor of filteredProfessores | async" [value]="professor">
+                    {{ professor.nome }}
+                    <span *ngIf="professor.cpf" class="cpf-hint"> - CPF: {{ professor.cpf }}</span>
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="turmaForm.get('professorSearch')?.hasError('required')">
+                Professor é obrigatório
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Disciplina (Autocomplete) -->
+        <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Disciplina</mat-label>
+            <input matInput formControlName="disciplinaSearch" placeholder="Digite o nome da disciplina..."
+                [matAutocomplete]="autoDisciplina" required>
+            <mat-icon matPrefix>menu_book</mat-icon>
+            <mat-spinner *ngIf="isLoadingDisciplina()" matSuffix diameter="20">
+            </mat-spinner>
+            <mat-autocomplete #autoDisciplina="matAutocomplete" [displayWith]="displayDisciplina"
+                (optionSelected)="onDisciplinaSelected($event)">
+                <mat-option *ngFor="let disciplina of filteredDisciplinas | async" [value]="disciplina">
+                    {{ disciplina.nome }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="turmaForm.get('disciplinaSearch')?.hasError('required')">
+                Disciplina é obrigatória
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Mensagem de Erro -->
+        <div *ngIf="errorMessage()" class="error-message">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage() }}</span>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="onCancel()" [disabled]="isSaving()">
+        Cancelar
+    </button>
+    <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isSaving() || turmaForm.invalid">
+        <mat-spinner *ngIf="isSaving()" diameter="20" class="button-spinner"></mat-spinner>
+        <span *ngIf="!isSaving()">Salvar Alterações</span>
+    </button>
+</mat-dialog-actions>

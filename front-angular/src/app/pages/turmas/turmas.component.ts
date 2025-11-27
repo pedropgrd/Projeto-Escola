@@ -14,6 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Alunos } from '../../interfaces/Alunos';
 import { CadastroAlunoTurmaDialogComponent } from '../admin/cadastro-aluno-turma-dialog/cadastro-aluno-turma-dialog.component';
 import { ListAlunosTurmaDialogComponent } from '../admin/list-alunos-turma-dialog/list-alunos-turma-dialog.component';
+import { EditTurmaDialogComponent } from '../admin/edit-turma-dialog/edit-turma-dialog.component';
 
 interface TurmasResponse {
   items: Turma[];
@@ -280,19 +281,21 @@ export class TurmasComponent implements OnInit, OnDestroy {
   * Prepara o formulário para edição
   */
   editarTurma(turma: Turma): void {
-    // this.editingId.set(turma.id_turma);
+    const dialogRef = this.dialog.open(EditTurmaDialogComponent, {
+      width: 'auto',
+      data: turma,
+      disableClose: false,
+      autoFocus: true
+    });
 
-    // this.turmaForm.patchValue({
-    //   nome: turma.nome,
-    //   serie: turma.serie,
-    //   turno: turma.turno,
-    //   ano_letivo: turma.ano_letivo,
-    //   id_professor: turma.id_professor,
-    //   id_disciplina: turma.id_disciplina,
-    // });
-
-    this.errorMessage.set('');
-    this.successMessage.set('');
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Turma atualizada com sucesso!');
+        this.carregarTurmas();
+        this.limparMensagensAposDelay();
+      }
+    });
   }
 
   /**
