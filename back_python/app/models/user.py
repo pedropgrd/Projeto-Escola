@@ -6,6 +6,7 @@ from sqlmodel import SQLModel, Field, Column, Enum as SQLEnum, Relationship
 if TYPE_CHECKING:
     from app.models.aluno import Aluno
     from app.models.professor import Professor
+    from app.models.servidor import Servidor
 
 
 class UserRole(str, Enum):
@@ -13,13 +14,14 @@ class UserRole(str, Enum):
     ADMIN = "ADMIN"
     PROFESSOR = "PROFESSOR"
     ALUNO = "ALUNO"
+    SERVIDOR = "SERVIDOR"
 
 
 class User(SQLModel, table=True):
     """
     Modelo de Usuário do sistema
     
-    Suporta 3 perfis: ADMIN, PROFESSOR e ALUNO
+    Suporta 4 perfis: ADMIN, PROFESSOR, ALUNO e SERVIDOR
     Implementa soft delete através do campo ativo
     """
     __tablename__ = "usuarios"
@@ -45,6 +47,7 @@ class User(SQLModel, table=True):
     # Relacionamentos
     aluno: Optional["Aluno"] = Relationship(back_populates="usuario")
     professor: Optional["Professor"] = Relationship(back_populates="usuario")
+    servidor: Optional["Servidor"] = Relationship(back_populates="usuario")
     
     class Config:
         json_schema_extra = {

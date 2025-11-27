@@ -17,9 +17,10 @@ import { ApiService } from '../../../core/services/api.service';
 export interface DialogData {
   id_aluno?: number;
   id_professor?: number;
-  nome: string;      // Nome da pessoa (Aluno ou Professor)
+  id_servidor?: number;
+  nome: string;      // Nome da pessoa (Aluno, Professor ou Servidor)
   cpf: string;       // CPF já existente no cadastro base
-  vincularPara: 'ALUNO' | 'PROFESSOR';
+  vincularPara: 'ALUNO' | 'PROFESSOR' | 'SERVIDOR';
 }
 
 @Component({
@@ -120,12 +121,14 @@ export class CadLoginUsuarioDialogComponent implements OnInit {
       senha: formValues.senha
     };
 
-    // Define qual endpoint chamar baseado no tipo de usuário (Aluno ou Professor)
+    // Define qual endpoint chamar baseado no tipo de usuário (Aluno, Professor ou Servidor)
     let endpoint = '';
     if (this.data.vincularPara === 'ALUNO') {
       endpoint = `/api/v1/alunos/${this.data.id_aluno}/vincular-usuario`;
-    } else {
+    } else if (this.data.vincularPara === 'PROFESSOR') {
       endpoint = `/api/v1/professores/${this.data.id_professor}/vincular-usuario`;
+    } else if (this.data.vincularPara === 'SERVIDOR') {
+      endpoint = `/api/v1/servidores/${this.data.id_servidor}/vincular-usuario`;
     }
 
     this.apiService.post(endpoint, payload)

@@ -1,0 +1,137 @@
+<app-header></app-header>
+
+<div class="hero_area">
+    <section class="hero_section">
+        <div class="container">
+            <div class="hero_detail-box">
+                <h1>
+                    Cadastro de <br>
+                    <span>Servidor</span>
+                </h1>
+                <p>Preencha os dados abaixo para cadastrar um novo Servidor.</p>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="cadastro_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 col-lg-8 mx-auto">
+                <div class="cadastro-form">
+
+                    <div class="header_form">
+                        <h2 class="main-heading">Dados do Servidor</h2>
+
+                        <div>
+                            <button type="button" class="btn_on_clear" (click)="resetForm()" [disabled]="isLoading()">
+                                Limpar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mensagem de sucesso -->
+                    <div class="alert alert-success" role="alert" *ngIf="successMessage()">
+                        <strong>✓</strong> {{ successMessage() }}
+                    </div>
+
+                    <!-- Mensagem de erro -->
+                    <div class="alert alert-danger" role="alert" *ngIf="errorMessage()">
+                        <strong>⚠</strong> {{ errorMessage() }}
+                    </div>
+
+                    <form (ngSubmit)="onSubmit()" #servidorFormRef="ngForm">
+                        <div class="row">
+                            <!-- Nome Completo -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="nome">Nome Completo <span class="text-danger">*</span></label>
+                                    <input type="text" id="nome" [(ngModel)]="servidorForm.nome" name="nome"
+                                        (input)="onNomeInput($event)" placeholder="Nome completo do Servidor" required
+                                        minlength="3" maxlength="150" [disabled]="isLoading()" class="form-control">
+                                </div>
+                            </div>
+
+                            <!-- CPF -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cpf">CPF 
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="cpf" [(ngModel)]="servidorForm.cpf"
+                                        (input)="onCpfInput($event)" name="cpf" placeholder="000.000.000-00" required
+                                        maxlength="14" [disabled]="isLoading()" class="form-control">
+                                    <small class="form-text text-muted">Apenas números (11 dígitos)</small>
+                                </div>
+                            </div>
+
+                            <!-- E-mail -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="email">E-mail
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" id="email" [(ngModel)]="servidorForm.email" name="email"
+                                        placeholder="email@escola.com" email [disabled]="isLoading()"
+                                        class="form-control">
+                                    <small class="form-text text-muted">E-mail profissional </small>
+                                </div>
+                            </div>
+
+                            <!-- Função -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="funcao">Função
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="funcao" [(ngModel)]="servidorForm.funcao" name="funcao"
+                                        placeholder="Ex: Secretária, Inspetor, Coordenador" maxlength="100"
+                                        [disabled]="isLoading()" class="form-control">
+                                    <small class="form-text text-muted">Cargo do servidor </small>
+                                </div>
+                            </div>
+                
+                            <!-- Telefone -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="telefone">Telefone
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="telefone" [(ngModel)]="servidorForm.telefone"
+                                        (input)="onTelefoneInput($event)" name="telefone" placeholder="(00) 00000-0000"
+                                        maxlength="15" [disabled]="isLoading()" class="form-control">
+                                    <small class="form-text text-muted">Telefone com DDD </small>
+                                </div>
+                            </div>
+
+                            <!-- Endereço -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="endereco">Endereço
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="endereco" [(ngModel)]="servidorForm.endereco" name="endereco"
+                                        placeholder="Rua, número, bairro" maxlength="255" [disabled]="isLoading()"
+                                        class="form-control">
+                                    <small class="form-text text-muted">Endereço completo </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <button type="submit" class="btn_on-hover"
+                                [disabled]="!servidorFormRef.valid || isLoading()">
+                                <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status"
+                                    aria-hidden="true"></span>
+                                {{ isLoading() ? 'Cadastrando...' : 'CADASTRAR SERVIDOR' }}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

@@ -1,6 +1,7 @@
 from app.models.user import User, UserRole
 from app.models.aluno import Aluno
 from app.models.professor import Professor
+from app.models.servidor import Servidor
 from app.models.disciplina import Disciplina
 from app.models.turma import Turma
 from app.models.aluno_turma import AlunoTurma
@@ -14,6 +15,7 @@ __all__ = [
     "UserRole",
     "Aluno",
     "Professor",
+    "Servidor",
     "Disciplina",
     "Turma",
     "AlunoTurma",

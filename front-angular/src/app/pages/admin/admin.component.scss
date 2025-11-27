@@ -398,6 +398,16 @@
              color: #0d4a85;
          }
      }
+
+     &.servidores-card {
+         .stat-icon {
+             background: linear-gradient(135deg, #536888 0%, #0d4a85 100%);
+         }
+
+         .stat-number {
+             color: #536888;
+         }
+     }
  }
 
  .stat-icon {
@@ -449,22 +459,22 @@
      gap: 16px;
  }
 
- .novo-cadastro{
-        background: #234f8a;
-        color: rgb(255, 255, 255);
-        border: none;
-        padding: 10px 20px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    
-        &:hover {
-            background: #296fcae0;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(43, 111, 182, 0.3);
-        }
+ .novo-cadastro {
+     background: #234f8a;
+     color: rgb(255, 255, 255);
+     border: none;
+     padding: 10px 20px;
+     border-radius: 8px;
+     font-size: 14px;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.3s ease;
+
+     &:hover {
+         background: #296fcae0;
+         transform: translateY(-1px);
+         box-shadow: 0 4px 8px rgba(43, 111, 182, 0.3);
+     }
  }
 
  .toggle-container {
@@ -538,18 +548,28 @@
      }
  }
 
- .btnCadUser{
-    background: #234f8a;
-    color: white;
-    border-radius: 15px;
-    padding: 8px 12px;
-    font-size: 0.8em;
-    font-family: 'poppins', sans-serif;
-    .cadUser{
-        p{
-            padding-left: 8px;
-        }
-    }
+ .btnCadUser {
+     background: #234f8a;
+     color: white;
+     border-radius: 15px;
+     padding: 8px 12px;
+     font-size: 0.8em;
+     font-family: 'poppins', sans-serif;
+
+     .cadUser {
+         p {
+             padding-left: 8px;
+         }
+     }
+ }
+
+ .badge-funcao {
+     display: inline-block;
+     padding: 6px 12px;
+     font-size: 12px;
+     text-transform: uppercase;
+     letter-spacing: 0.5px;
+
  }
 
  @media (max-width:720px) {

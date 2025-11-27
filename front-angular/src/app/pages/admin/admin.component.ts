@@ -13,6 +13,7 @@ import { EditAlunoDialogComponent } from './edit-aluno-dialog/edit-aluno-dialog.
 import { EditProfessorDialogComponent } from './edit-professor-dialog/edit-professor-dialog.component';
 import { FooterComponent } from "../../components/footer/footer.component";
 import { CadLoginUsuarioDialogComponent } from './cad-login-usuario-dialog/cad-login-usuario-dialog.component';
+import { EditServidorDialogComponent } from './edit-servidor-dialog/edit-servidor-dialog.component';
 
 interface Aluno {
   id_aluno: number;
@@ -42,6 +43,20 @@ interface Professor {
   email_usuario: string | null;
 }
 
+interface Servidor {
+  id_servidor: number;
+  id_usuario: number;
+  nome: string;
+  cpf: string;
+  email: string;
+  endereco: string;
+  telefone: string;
+  criado_em: string;
+  atualizado_em: string | null;
+  email_usuario: string | null;
+  funcao: string;
+}
+
 interface AlunoListResponse {
   items: Aluno[];
   total: number;
@@ -51,6 +66,20 @@ interface AlunoListResponse {
 
 interface ProfessorListResponse {
   items: Professor[];
+  total: number;
+  offset: number;
+  limit: number;
+}
+
+interface ServidorListResponse {
+  items: Servidor[];
+  total: number;
+  offset: number;
+  limit: number;
+}
+
+interface ServidorListResponse {
+  items: Servidor[];
   total: number;
   offset: number;
   limit: number;
@@ -79,17 +108,19 @@ export class AdminComponent implements OnInit {
   // Signals para gerenciamento de estado
   alunos = signal<Aluno[]>([]);
   professores = signal<Professor[]>([]);
+  servidores = signal<Servidor[]>([]);
   isLoading = signal(false);
   errorMessage = signal('');
   successMessage = signal('');
 
-  // Toggle entre alunos e professores
-  viewMode = signal<'alunos' | 'professores'>('alunos');
+  // Toggle entre alunos, professores e servidores
+  viewMode = signal<'alunos' | 'professores' | 'servidores'>('alunos');
 
   // Paginação
   currentPage = signal(1);
   totalAlunos = signal(0);
   totalProfessores = signal(0);
+  totalServidores = signal(0);
   itemsPerPage = signal(10);
   itemsPerPageOptions = [10, 20, 30, 50, 100];
   totalPages = signal(0);
@@ -99,6 +130,7 @@ export class AdminComponent implements OnInit {
 
   alunosEndPoint = '/api/v1/alunos/';
   professoresEndPoint = '/api/v1/professores/';
+  servidoresEndPoint = '/api/v1/servidores/';
 
   // Expor Math para o template
   Math = Math;
@@ -108,9 +140,9 @@ export class AdminComponent implements OnInit {
   }
 
   /**
-   * Alterna entre visualização de alunos e professores
+   * Alterna entre visualização de alunos, professores e servidores
    */
-  toggleView(mode: 'alunos' | 'professores'): void {
+  toggleView(mode: 'alunos' | 'professores' | 'servidores'): void {
     this.viewMode.set(mode);
     this.currentPage.set(1);
     this.searchQuery = '';
@@ -121,11 +153,9 @@ export class AdminComponent implements OnInit {
    * Carrega dados baseado no modo atual
    */
   loadData(): void {
-    // if (this.viewMode() === 'alunos') {
     this.loadAlunos();
-    // } else {
     this.loadProfessores();
-    // }
+    this.loadServidores();
   }
 
   /**
@@ -199,12 +229,76 @@ export class AdminComponent implements OnInit {
         this.professores.set([]);
       }
     });
-  }  /**
+  }
+
+  /**
+   * Carrega lista de servidores com paginação e busca
+   */
+  loadServidores(): void {
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    const offset = (this.currentPage() - 1) * this.itemsPerPage();
+
+    let params = new HttpParams()
+      .set('offset', offset.toString())
+      .set('limit', this.itemsPerPage().toString());
+
+    // Busca específica para servidores usando o endpoint /buscar
+    let endpoint = this.servidoresEndPoint;
+    if (this.searchQuery.trim() && this.viewMode() === 'servidores') {
+      endpoint = '/api/v1/servidores/buscar';
+      const query = this.searchQuery.trim();
+
+      // Verifica se é CPF (apenas números) ou nome
+      const isNumeric = /^\d+$/.test(query.replace(/\D/g, ''));
+      if (isNumeric) {
+        params = params.set('cpf', query.replace(/\D/g, ''));
+      } else {
+        params = params.set('nome', query);
+      }
+    }
+
+    this.apiService.get<ServidorListResponse | Servidor>(endpoint, params).subscribe({
+      next: (response) => {
+        // Verifica se a resposta é um objeto único ou uma lista
+        if (Array.isArray(response)) {
+          // Caso seja array direto (improvável, mas tratado)
+          this.servidores.set(response);
+          this.totalServidores.set(response.length);
+        } else if ('items' in response) {
+          // Caso seja ServidorListResponse (padrão)
+          this.servidores.set(response.items || []);
+          this.totalServidores.set(response.total || 0);
+        } else {
+          // Caso seja um objeto único Servidor
+          this.servidores.set([response as Servidor]);
+          this.totalServidores.set(1);
+        }
+
+        this.totalPages.set(Math.ceil(this.totalServidores() / this.itemsPerPage()));
+        this.isLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Erro ao carregar servidores:', error);
+        this.errorMessage.set('Erro ao carregar lista de servidores');
+        this.isLoading.set(false);
+        this.servidores.set([]);
+      }
+    });
+  }
+
+  /**
    * Busca alunos por texto (filtra localmente por enquanto)
+   * Para servidores, faz busca server-side
    */
   onSearch(): void {
     this.currentPage.set(1);
-    this.loadData();
+    if (this.viewMode() === 'servidores') {
+      this.loadServidores(); // Busca server-side para servidores
+    } else {
+      this.loadData(); // Busca local para alunos e professores
+    }
   }
 
   /**
@@ -240,10 +334,20 @@ export class AdminComponent implements OnInit {
   }
 
   /**
+   * Filtra servidores localmente baseado na busca
+   * (Desabilitado: busca agora é server-side via /api/v1/servidores/buscar)
+   */
+  get filteredServidores(): Servidor[] {
+    return this.servidores();
+  }
+
+  /**
    * Retorna o total baseado no modo atual
    */
   get currentTotal(): number {
-    return this.viewMode() === 'alunos' ? this.totalAlunos() : this.totalProfessores();
+    if (this.viewMode() === 'alunos') return this.totalAlunos();
+    if (this.viewMode() === 'professores') return this.totalProfessores();
+    return this.totalServidores();
   }
 
   /**
@@ -527,6 +631,87 @@ export class AdminComponent implements OnInit {
         setTimeout(() => {
           this.successMessage.set('');
         }, 3000);
+      }
+    });
+  }
+  openCadLoginServidores(serv: Servidor): void {
+    const dialogRef = this.dialog.open(CadLoginUsuarioDialogComponent, {
+      width: 'auto',
+      data: {
+        id_servidor: serv.id_servidor,
+        cpf: serv.cpf,
+        nome: serv.nome,
+        vincularPara: 'SERVIDOR'
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.successMessage.set('Usuário vinculado com sucesso!');
+        this.loadServidores();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
+  }
+
+  /**
+   * Abre dialog para editar servidor
+   */
+  openEditServidorDialog(servidor: Servidor): void {
+    const dialogRef = this.dialog.open(EditServidorDialogComponent, {
+      width: 'auto',
+      data: {
+        id_servidor: servidor.id_servidor,
+        nome: servidor.nome,
+        cpf: servidor.cpf,
+        email: servidor.email,
+        endereco: servidor.endereco,
+        telefone: servidor.telefone,
+        funcao: servidor.funcao
+      },
+      disableClose: false,
+      autoFocus: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        // Sucesso - recarregar a lista
+        this.successMessage.set('Servidor atualizado com sucesso!');
+        this.loadServidores();
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 3000);
+      }
+    });
+  }
+
+  /**
+   * Confirma e deleta servidor
+   */
+  deleteServidor(servidor: Servidor): void {
+    const confirmacao = confirm(
+      `Tem certeza que deseja excluir o servidor ${servidor.nome}?\n\nEsta ação não pode ser desfeita.`
+    );
+
+    if (!confirmacao) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.apiService.delete(`${this.servidoresEndPoint}${servidor.id_servidor}`).subscribe({
+      next: () => {
+        this.successMessage.set(`Servidor ${servidor.nome} excluído com sucesso!`);
+        this.loadServidores();
+        setTimeout(() => this.successMessage.set(''), 3000);
+      },
+      error: (error) => {
+        console.error('Erro ao excluir servidor:', error);
+        this.errorMessage.set('Erro ao excluir servidor. Tente novamente.');
+        this.isLoading.set(false);
       }
     });
   }

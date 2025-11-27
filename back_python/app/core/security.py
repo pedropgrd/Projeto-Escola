@@ -259,7 +259,7 @@ def require_role(*allowed_roles: str):
             # Apenas ADMIN e PROFESSOR podem acessar
     
     Args:
-        *allowed_roles: Perfis permitidos (ADMIN, PROFESSOR, ALUNO)
+        *allowed_roles: Perfis permitidos (ADMIN, PROFESSOR, ALUNO, SERVIDOR)
     
     Returns:
         Função de dependência do FastAPI

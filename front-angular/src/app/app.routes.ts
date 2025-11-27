@@ -71,6 +71,12 @@ export const routes: Routes = [
             .then(m => m.NovaNoticiaComponent),
         canActivate: [adminGuard]
     },
+    {
+        path: 'cadastro-servidor',
+        loadComponent: () => import('./pages/admin/cadastro-servidor/cadastro-servidor.component')
+            .then(m => m.CadastroServidorComponent),
+        canActivate: [adminGuard]
+    },
 
 
 // Turmas - Usuários autenticados

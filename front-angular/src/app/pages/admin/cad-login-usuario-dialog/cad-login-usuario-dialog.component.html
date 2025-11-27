@@ -30,14 +30,13 @@
         <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
 
             <!-- CAMPO CPF -->
-            <mat-form-field appearance="outline">
-                <mat-label>CPF do Usuário</mat-label>
-                <input matInput formControlName="cpf" placeholder="000.000.000-00" maxlength="14"
-                    (input)="onCpfInput($event)">
-                <mat-icon matSuffix>badge</mat-icon>
-                <mat-error *ngIf="form.get('cpf')?.hasError('required')">CPF é obrigatório</mat-error>
-                <mat-error *ngIf="form.get('cpf')?.hasError('minlength')">CPF incompleto</mat-error>
-            </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>CPF do Usuário</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00" maxlength="14" (input)="onCpfInput($event)"
+                [disabled]="true">
+            <mat-icon matSuffix>badge</mat-icon>
+            <mat-error *ngIf="form.get('cpf')?.hasError('minlength')">CPF incompleto</mat-error>
+        </mat-form-field>
 
             <!-- CAMPO EMAIL -->
             <mat-form-field appearance="outline">

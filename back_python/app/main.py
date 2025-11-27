@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database.init_db import create_db_and_tables
-from app.routers import auth, users, alunos, professores, noticias, galeria, turmas, disciplinas, aluno_turma
+from app.routers import auth, users, alunos, professores, servidores, noticias, galeria, turmas, disciplinas, aluno_turma
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -52,6 +52,7 @@ app.include_router(users.router, prefix="/api/v1", tags=["Usuários"])
 # Módulos de Negócio
 app.include_router(alunos.router, prefix="/api/v1", tags=["Alunos"])
 app.include_router(professores.router, prefix="/api/v1", tags=["Professores"])
+app.include_router(servidores.router, prefix="/api/v1", tags=["Servidores"])
 app.include_router(turmas.router, prefix="/api/v1", tags=["Turmas"])
 app.include_router(disciplinas.router, prefix="/api/v1", tags=["Disciplinas"])
 app.include_router(aluno_turma.router, prefix="/api/v1", tags=["Aluno-Turma"])

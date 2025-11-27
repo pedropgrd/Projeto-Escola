@@ -10,6 +10,7 @@
                 <a routerLink="/cadastro-professor">Cadastro Professor</a>
                 <a routerLink="/cadastro-disciplina">Cadastro Disciplina</a>
                 <a routerLink="/cadastro-turma">Cadastro Turma</a>
+                <a routerLink="/cadastro-servidor">Cadastro Servidor</a>
                 <a routerLink="/gerenciar-usuarios">Gerenciar Usuários</a>
                 <!-- <a href="#">Alunos</a>
                 <a href="#">Professores</a> -->
@@ -49,6 +50,16 @@
                         <div class="stat-number">{{ totalProfessores() }}</div>
                     </div>
                 </div>
+
+                <div class="stat-card servidores-card">
+                    <div class="stat-icon">
+                        <mat-icon>badge</mat-icon>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Total de Servidores</div>
+                        <div class="stat-number">{{ totalServidores() }}</div>
+                    </div>
+                </div>
             </section>
 
 
@@ -63,6 +74,10 @@
                         <button class="toggle-btn" [class.active]="viewMode() === 'professores'"
                             (click)="toggleView('professores')">
                             👨‍🏫 Professores
+                        </button>
+                        <button class="toggle-btn" [class.active]="viewMode() === 'servidores'"
+                            (click)="toggleView('servidores')">
+                            👔 Servidores
                         </button>
                     </div>
 
@@ -84,8 +99,9 @@
                     </div>
 
                     <button class="novo-cadastro"
-                        [routerLink]="viewMode() === 'alunos' ? '/cadastro-aluno' : '/cadastro-professor'">
-                        + Novo {{ viewMode() === 'alunos' ? 'Aluno' : 'Professor' }}
+                        [routerLink]="viewMode() === 'alunos' ? '/cadastro-aluno' : viewMode() === 'professores' ? '/cadastro-professor' : '/cadastro-servidor'">
+                        + Novo {{ viewMode() === 'alunos' ? 'Aluno' : viewMode() === 'professores' ? 'Professor' :
+                        'Servidor' }}
                     </button>
                 </div>
 
@@ -148,8 +164,7 @@
                                     </td>
                                     <td>
                                         <button class="btn-primary-small btnCadUser" (click)="openCadAlunoLogin(aluno)"
-                                            [disabled]="aluno.email_usuario"
-                                            title="Vincular usuário de acesso">
+                                            [disabled]="aluno.email_usuario" title="Vincular usuário de acesso">
                                             <div class="cadUser d-flex align-items-center gap-1">
                                                 <mat-icon>link</mat-icon>
                                                 <p>
@@ -197,12 +212,65 @@
                                         </button>
                                     </td>
                                     <td>
-                                        <button class="btn-primary-small btnCadUser" (click)="openCadLoginProfessor(professor)" [disabled]="professor.email_usuario"
-                                            title="Vincular usuário de acesso">
+                                        <button class="btn-primary-small btnCadUser"
+                                            (click)="openCadLoginProfessor(professor)"
+                                            [disabled]="professor.email_usuario" title="Vincular usuário de acesso">
                                             <div class="cadUser d-flex align-items-center gap-1">
                                                 <mat-icon>link</mat-icon>
                                                 <p>
                                                     {{ professor.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
+                                                </p>
+                                            </div>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Tabela de Servidores -->
+                    <div *ngIf="viewMode() === 'servidores'">
+                        <table *ngIf="filteredServidores.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>CPF</th>
+                                    <th>E-mail</th>
+                                    <th>Telefone</th>
+                                    <th>Endereço</th>
+                                    <th>Função</th>
+                                    <th>E-mail Portal</th>
+                                    <th>Ações</th>
+                                    <th>Acesso Portal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let servidor of filteredServidores">
+                                    <td><strong>{{ servidor.nome }}</strong></td>
+                                    <td>{{ formatCpfMasked(servidor.cpf) }}</td>
+                                    <td>{{ servidor.email }}</td>
+                                    <td>{{ formatTelefone(servidor.telefone) }}</td>
+                                    <td>{{ servidor.endereco }}</td>
+                                    <td>{{ servidor.funcao }}</td>
+                                    <td>{{ servidor.email_usuario || 'SEM ACESSO' }}</td>
+                                    <td class="actions">
+                                        <button class="btn-edit-small" (click)="openEditServidorDialog(servidor)"
+                                            title="Editar servidor">
+                                            <mat-icon>edit</mat-icon>
+                                        </button>
+                                        <button class="btn-danger-small" (click)="deleteServidor(servidor)"
+                                            title="Excluir servidor">
+                                            <mat-icon>delete</mat-icon>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="btn-primary-small btnCadUser"
+                                            (click)="openCadLoginServidores(servidor)"
+                                            [disabled]="servidor.email_usuario" title="Vincular usuário de acesso">
+                                            <div class="cadUser d-flex align-items-center gap-1">
+                                                <mat-icon>link</mat-icon>
+                                                <p>
+                                                    {{ servidor.email_usuario ? 'VINCULADO' : 'CADASTRAR' }}
                                                 </p>
                                             </div>
                                         </button>
@@ -222,6 +290,11 @@
                         <p>Nenhum professor encontrado.</p>
                         <button class="btn-primary" routerLink="/cadastro-professor">Cadastrar Primeiro
                             Professor</button>
+                    </div>
+
+                    <div *ngIf="viewMode() === 'servidores' && filteredServidores.length === 0" class="no-results">
+                        <p>Nenhum servidor encontrado.</p>
+                        <button class="btn-primary" routerLink="/cadastro-servidor">Cadastrar Primeiro Servidor</button>
                     </div>
 
                     <!-- Paginação -->

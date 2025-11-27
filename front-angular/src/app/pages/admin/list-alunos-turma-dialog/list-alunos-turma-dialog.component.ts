@@ -109,7 +109,6 @@ export class ListAlunosTurmaDialogComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.alunos.set(response);
-          console.log('Alunos carregados:', response);
           // Lógica de Agrupamento:
           // Pegamos os dados do primeiro aluno para preencher o cabeçalho da turma/professor
           if (response.length > 0 && !this.turmaInfo()) {

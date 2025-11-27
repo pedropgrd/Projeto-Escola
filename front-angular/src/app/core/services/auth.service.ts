@@ -39,6 +39,7 @@ export class AuthService {
     public isAdmin = computed(() => this.user()?.perfil === UserRole.ADMIN);
     public isProfessor = computed(() => this.user()?.perfil === UserRole.PROFESSOR);
     public isAluno = computed(() => this.user()?.perfil === UserRole.ALUNO);
+    public isServidor = computed(() => this.user()?.perfil === UserRole.SERVIDOR);
 
     constructor(
         private apiService: ApiService,
