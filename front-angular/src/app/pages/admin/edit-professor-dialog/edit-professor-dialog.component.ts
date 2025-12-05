@@ -75,10 +75,10 @@ export class EditProfessorDialogComponent implements OnInit {
         const formValue = this.professorForm.value;
 
         const professorData = {
-            nome: formValue.nome,
+            nome: formValue.nome.toUpperCase(),
             cpf: formValue.cpf,
             email: formValue.email,
-            endereco: formValue.endereco,
+            endereco: formValue.endereco.toUpperCase(),
             telefone: formValue.telefone
         };
 

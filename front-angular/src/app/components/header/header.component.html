@@ -1,7 +1,7 @@
 <header class="header_section">
     <div class="container">
-        <nav class="navbar navbar-expand-lg custom_nav-container">
-            <a class="navbar-brand" routerLink="/">
+        <nav class="navbar navbar-expand-lg custom_nav-container" >
+            <a class="navbar-brand" routerLink="/" *ngIf="!sumirTitulo">
                 <img src="assets/images/logo.png" alt="">
                 <span>TRAJANO DE ALMEIDA</span>
             </a>
@@ -11,39 +11,49 @@
             </button>
 
             <div class="collapse navbar-collapse" [class.show]="!isNavbarCollapsed()" id="navbarSupportedContent">
-                <div class="d-flex ml-auto flex-column flex-lg-row align-items-center">
+                <div class="d-flex ml-auto">
                     <ul class="navbar-nav">
                         <li class="nav-item active">
                             <a class="nav-link" routerLink="/" (click)="toggleNavbar()">
                                 Home <span class="sr-only">(current)</span>
                             </a>
                         </li>
+
+                        <!-- Menu condicional baseado em autenticação -->
+                        @if (authService.isAuthenticated()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/noticias" (click)="toggleNavbar()">
                                 Notícias
                             </a>
                         </li>
 
-                        <!-- Menu condicional baseado em autenticação -->
-                        @if (authService.isAuthenticated()) {
+                        <li class="nav-item">
+                            <a class="nav-link" routerLink="/biblioteca" (click)="toggleNavbar()">
+                                Biblioteca
+                            </a>
+                        </li>
                         <!-- Menu para usuário autenticado -->
 
                         <!-- Menu ADMIN -->
-                        @if (authService.isAdmin()) {
+                        @if (authService.isAdmin() || authService.isServidor()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/admin" (click)="toggleNavbar()">
-                                Painel Admin
+                                Painel De Controle
                             </a>
                         </li>
                         }
 
                         <!-- Menu PROFESSOR (ADMIN também vê) -->
-                        @if (authService.isProfessor() || authService.isAdmin()) {
+                        <!-- @if (authService.isProfessor() || authService.isAdmin()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/professores" (click)="toggleNavbar()">
                                 Professores
                             </a>
                         </li>
+                        } -->
+
+
+                        @if(authService.isAuthenticated()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/turmas" (click)="toggleNavbar()">
                                 Turmas
@@ -52,21 +62,14 @@
                         }
 
                         <!-- Menu ALUNO -->
-                        @if (authService.isAluno() || authService.isAdmin()) {
+                        <!-- @if (authService.isAluno() || authService.isAdmin()) {
                         <li class="nav-item">
                             <a class="nav-link" routerLink="/alunos" (click)="toggleNavbar()">
                                 Alunos
                             </a>
                         </li>
-                        }
+                        } -->
 
-                        <!-- Dropdown do usuário -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                                {{ authService.user()?.nomeCompleto }}
-                            </a>
-                            
-                        </li>
                         } @else {
                         <!-- Menu para usuário não autenticado -->
                         <li class="nav-item">
@@ -83,7 +86,7 @@
                             </a>
                         </li>
                         }
-                    </ul>                  
+                    </ul>
                 </div>
             </div>
         </nav>

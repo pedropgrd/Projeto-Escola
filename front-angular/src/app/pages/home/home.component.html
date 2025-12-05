@@ -78,42 +78,62 @@
             Contato do Colégio e Localização
         </h2>
 
-        <p class="text-center">
+        <p class="text-center contact-subtitle">
             Preencha as informações para entrar em contato com a escola.
         </p>
 
-        <div class="">
-            <div class="contact_section-container">
-                <div class="row">
-                    <div class="col-md-6 mx-auto">
-                        <div class="contact-form">
+        <div class="contact_section-container">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="contact-form-wrapper">
 
-                            <form (ngSubmit)="onSubmit()" #contactFormRef="ngForm">
-                                <div>
-                                    <input type="text" [(ngModel)]="contactForm.nome" name="nome" placeholder="Nome"
-                                        required>
-                                </div>
-                                <div>
-                                    <input type="text" [(ngModel)]="contactForm.telefone" name="telefone"
-                                        placeholder="Telefone" required>
-                                </div>
-                                <div>
-                                    <input type="email" [(ngModel)]="contactForm.email" name="email" placeholder="Email"
-                                        required>
-                                </div>
-                                <div>
-                                    <input type="text" [(ngModel)]="contactForm.mensagem" name="mensagem"
-                                        placeholder="Mensagem" class="input_message" required>
-                                </div>
+                        <form (ngSubmit)="onSubmit()" #contactFormRef="ngForm" class="modern-form">
 
-                                <div class="d-flex justify-content-center">
-                                    <button type="submit" class="btn_on-hover" [disabled]="!contactFormRef.valid">
-                                        Enviar
-                                    </button>
-                                </div>
-                            </form>
+                            <div class="form-group">
+                                <label for="nome">
+                                    <i class="fa-solid fa-user"></i>
+                                    Nome Completo
+                                </label>
+                                <input type="text" id="nome" [(ngModel)]="contactForm.nome" name="nome"
+                                    placeholder="Digite seu nome completo" required>
+                            </div>
 
-                        </div>
+                            <div class="form-group">
+                                <label for="telefone">
+                                    <i class="fa-solid fa-phone"></i>
+                                    Telefone
+                                </label>
+                                <input type="text" id="telefone" [(ngModel)]="contactForm.telefone" name="telefone"
+                                    placeholder="(63) 99999-9999" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">
+                                    <i class="fa-solid fa-envelope"></i>
+                                    E-mail
+                                </label>
+                                <input type="email" id="email" [(ngModel)]="contactForm.email" name="email"
+                                    placeholder="seuemail@exemplo.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mensagem">
+                                    <i class="fa-solid fa-message"></i>
+                                    Mensagem
+                                </label>
+                                <textarea id="mensagem" [(ngModel)]="contactForm.mensagem" name="mensagem"
+                                    placeholder="Digite sua mensagem aqui..." rows="5" required></textarea>
+                            </div>
+
+                            <div class="form-submit">
+                                <button type="submit" class="btn-submit" [disabled]="!contactFormRef.valid">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                    Enviar Mensagem
+                                </button>
+                            </div>
+
+                        </form>
+
                     </div>
                 </div>
             </div>

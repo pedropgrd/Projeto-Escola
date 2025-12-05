@@ -1,0 +1,45 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+        <h2>Alterar Senha</h2>
+        <button mat-icon-button (click)="dialogRef.close()" tabindex="-1">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content">
+        <div class="info-user">
+            <mat-icon>person</mat-icon>
+            <span>Usuário: <strong>{{ data.email }}</strong></span>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Nova Senha</mat-label>
+                <input matInput [type]="hideNew() ? 'password' : 'text'" formControlName="novaSenha">
+                <button mat-icon-button matSuffix type="button" (click)="hideNew.set(!hideNew())">
+                    <mat-icon>{{hideNew() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="form.get('novaSenha')?.hasError('required')">Obrigatório</mat-error>
+                <mat-error *ngIf="form.get('novaSenha')?.hasError('minlength')">Mínimo 6 caracteres</mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Confirmar Senha</mat-label>
+                <input matInput [type]="hideConfirm() ? 'password' : 'text'" formControlName="confirmarSenha">
+                <button mat-icon-button matSuffix type="button" (click)="hideConfirm.set(!hideConfirm())">
+                    <mat-icon>{{hideConfirm() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+                <mat-error *ngIf="form.hasError('passwordMismatch')">As senhas não coincidem</mat-error>
+            </mat-form-field>
+
+            <div class="actions">
+                <button mat-stroked-button type="button" (click)="dialogRef.close()">Cancelar</button>
+                <button mat-raised-button class="btn-save" type="submit" [disabled]="form.invalid || isLoading()">
+                    <mat-spinner diameter="20" *ngIf="isLoading()"></mat-spinner>
+                    <span *ngIf="!isLoading()">SALVAR</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

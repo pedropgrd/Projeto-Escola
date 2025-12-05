@@ -74,8 +74,8 @@
                                 </div>
                             </div>
 
-                            <!-- Campo de seleção de usuário (autocomplete) -->
-                            <div class="col-md-12">
+                            <!-- Campo de seleção de usuário (autocomplete) -->                            
+                            <!-- <div class="col-md-12">
                                 <div class="form-group bg-light p-3 rounded border">
                                     <label for="id_usuario_search" class="mb-2">Vincular Usuário do Sistema <span
                                             class="text-danger">*</span></label>
@@ -88,6 +88,7 @@
                                     <input type="hidden" [(ngModel)]="professorForm.id_usuario" name="id_usuario">
 
                                     <!-- Lista de sugestões -->
+                                    <!--
                                     <ul *ngIf="filteredUsers.length > 0" class="list-group mt-2 shadow-sm">
                                         <li class="list-group-item list-group-item-action"
                                             *ngFor="let u of filteredUsers" (mousedown)="selectUser(u)"
@@ -99,7 +100,7 @@
                                     <small class="form-text text-muted mt-2">O sistema buscará usuários automaticamente
                                         enquanto você digita o nome do professor.</small>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <!-- Telefone -->
                             <div class="col-md-6">
@@ -113,7 +114,7 @@
                             </div>
 
                             <!-- Endereço -->
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="endereco">Endereço <span class="text-danger">*</span></label>
                                     <input type="text" id="endereco" [(ngModel)]="professorForm.endereco"
@@ -124,7 +125,7 @@
                         </div>
 
                         <!-- Botões -->
-                        <div class="d-flex justify-content-end mt-4">
+                        <div class="d-flex justify-content-center mt-4">
                             <button type="submit" class="btn_on-hover"
                                 [disabled]="!professorFormRef.valid || isLoading()">
                                 <span *ngIf="isLoading()" class="spinner-border spinner-border-sm me-2" role="status"

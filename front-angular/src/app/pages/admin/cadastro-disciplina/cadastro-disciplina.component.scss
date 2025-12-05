@@ -1,0 +1,242 @@
+/* --- HERO (Padrão) --- */
+.hero_area {
+    background-color: #062348;
+    padding-top: 10px;
+    padding-bottom: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero_section .hero_detail-box {
+    h1 {
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 2rem;
+        line-height: 1.1;
+        text-transform: uppercase;
+
+        span {
+            color: #fec913;
+        }
+    }
+
+    p {
+        color: #d0d0d0;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+}
+
+/* --- SECTION PRINCIPAL --- */
+.cadastro_section {
+    position: relative;
+    padding-bottom: 60px;
+    min-height: 60vh;
+    z-index: 2;
+}
+
+/* --- GRID LAYOUT (A Mágica acontece aqui) --- */
+.content-grid {
+    display: grid;
+    /* Coluna Form (menor) | Coluna Lista (maior) */
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    align-items: start;
+    /* Impede que o form estique altura desnecessariamente */
+
+    @media (max-width: 992px) {
+        /* No tablet/mobile vira uma coluna só */
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- CARTÃO FORMULÁRIO --- */
+.cadastro-form {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+
+    /* Sticky: O formulário desce junto com o scroll da tabela */
+    &.sticky-card {
+        position: sticky;
+        top: 20px;
+    }
+
+    .header-form {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+
+        .main-heading {
+            color: #2d3e4f;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin: 0;
+            border-left: 4px solid #fec913;
+            padding-left: 10px;
+        }
+
+        .btn-clear {
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            color: #ffffff;
+            transition: all 0.2s;
+            background: #ee7401;
+            font-size: 16px;;
+
+            &:hover {
+                background: #f28722;
+                color: #ffffff;
+            }
+        }
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+
+        label {
+            font-weight: 600;
+            color: #555;
+            font-size:1.2em;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .form-control {
+            width: 100%;
+            height: 45px;
+            border: 1px solid #dde2e5;
+            border-radius: 6px;
+            padding: 0 12px;
+            font-size: 1.1rem;
+            &:focus {
+                border-color: #fec913;
+                outline: 0;
+                box-shadow: 0 0 0 3px rgba(254, 201, 19, 0.15);
+            }
+        }
+    }
+
+    .btn_on-hover {
+        background-color: #fec913;
+        color: #062348;
+        padding: 12px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s;
+
+        &:hover:not(:disabled) {
+            background-color: #e5b412;
+            transform: translateY(-1px);
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+
+    .alert {
+        padding: 10px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        mat-icon {
+            font-size: 18px;
+            height: 18px;
+            width: 18px;
+        }
+    }
+}
+
+/* --- CARTÃO LISTA --- */
+.lista-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+
+    .lista-title {
+        color: #2d3e4f;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .badge-total {
+        background: #eef2f7;
+        color: #062348;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+}
+
+.custom-table {
+    width: 100%;
+
+    thead th {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        padding: 12px;
+        border-bottom: 2px solid #eee;
+    }
+
+    tbody td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f0f0;
+        color: #333;
+        font-size: 0.95rem;
+    }
+
+    /* Angular Material Buttons fix */
+    button[mat-icon-button] {
+        mat-icon {
+            font-size: 20px;
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 0;
+        color: #999;
+
+        mat-icon {
+            font-size: 40px;
+            height: 40px;
+            width: 40px;
+            margin-bottom: 10px;
+            opacity: 0.5;
+        }
+
+        p {
+            margin: 0;
+        }
+    }
+}
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px;
+    color: #666;
+    gap: 15px;
+}

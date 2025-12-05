@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { ApiService } from '../../../core/services/api.service';
+import { UtilService } from '../../../services/util/util.service';
 
 interface ProfessorForm {
   nome: string;
@@ -12,7 +13,6 @@ interface ProfessorForm {
   email: string;
   endereco: string;
   telefone: string;
-  id_usuario: number | null;
 }
 
 interface ProfessorCreateDTO {
@@ -21,7 +21,6 @@ interface ProfessorCreateDTO {
   email: string;
   endereco: string;
   telefone: string;
-  id_usuario: number;
 }
 
 @Component({
@@ -34,15 +33,14 @@ interface ProfessorCreateDTO {
 export class CadastroProfessorComponent {
   private apiService = inject(ApiService);
   private router = inject(Router);
-
+  private util = inject(UtilService);
   // Form model
   professorForm: ProfessorForm = {
     nome: '',
     cpf: '',
     email: '',
     endereco: '',
-    telefone: '',
-    id_usuario: null
+    telefone: ''
   };
 
   // Signals para estados
@@ -58,7 +56,6 @@ export class CadastroProfessorComponent {
   endPoint: string = '/api/v1/professores/';
 
   constructor() {
-    this.loadUsers();
   }
 
   onSubmit(): void {
@@ -72,12 +69,11 @@ export class CadastroProfessorComponent {
     this.isLoading.set(true);
 
     const professorData: ProfessorCreateDTO = {
-      nome: this.professorForm.nome.trim(),
-      cpf: this.removeFormatting(this.professorForm.cpf),
+      nome: this.professorForm.nome.trim().toUpperCase(),
+      cpf: this.util.removeFormatting(this.professorForm.cpf.trim()),
       email: this.professorForm.email.trim(),
       endereco: this.professorForm.endereco.trim(),
-      telefone: this.removeFormatting(this.professorForm.telefone),
-      id_usuario: this.professorForm.id_usuario!
+      telefone: this.util.removeFormatting(this.professorForm.telefone)
     };
 
     console.log('Enviando dados:', professorData);
@@ -123,7 +119,7 @@ export class CadastroProfessorComponent {
       return false;
     }
 
-    const cpfLimpo = this.removeFormatting(this.professorForm.cpf);
+    const cpfLimpo = this.util.removeFormatting(this.professorForm.cpf);
     if (!cpfLimpo || cpfLimpo.length !== 11 || !/^\d+$/.test(cpfLimpo)) {
       this.errorMessage.set('CPF deve conter 11 dígitos numéricos');
       return false;
@@ -134,14 +130,9 @@ export class CadastroProfessorComponent {
       return false;
     }
 
-    const telefoneLimpo = this.removeFormatting(this.professorForm.telefone);
+    const telefoneLimpo = this.util.removeFormatting(this.professorForm.telefone);
     if (!telefoneLimpo || telefoneLimpo.length < 10) {
       this.errorMessage.set('Telefone deve conter no mínimo 10 dígitos');
-      return false;
-    }
-
-    if (!this.professorForm.id_usuario || this.professorForm.id_usuario <= 0) {
-      this.errorMessage.set('ID do usuário é obrigatório');
       return false;
     }
 
@@ -167,7 +158,7 @@ export class CadastroProfessorComponent {
     if (!q) {
       this.filteredUsers = [];
       this.selectedUserEmail = null;
-      this.professorForm.id_usuario = null;
+      this.professorForm.cpf = '';
       return;
     }
 
@@ -185,25 +176,21 @@ export class CadastroProfessorComponent {
       this.filteredUsers = [];
     } else {
       this.selectedUserEmail = null;
-      this.professorForm.id_usuario = null;
+      this.professorForm.cpf = '';
     }
   }
 
   selectUser(user: any): void {
     if (!user) return;
-    this.professorForm.id_usuario = user.id;
+    this.professorForm.cpf = user.cpf;
     this.selectedUserEmail = user.email || null;
     this.filteredUsers = [];
   }
 
-  removeFormatting(value: string): string {
-    if (!value) return '';
-    return value.replace(/\D/g, '');
-  }
 
   onCpfInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = this.removeFormatting(input.value);
+    let value = this.util.removeFormatting(input.value);
 
     if (value.length > 11) {
       value = value.substring(0, 11);
@@ -220,7 +207,7 @@ export class CadastroProfessorComponent {
 
   onTelefoneInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = this.removeFormatting(input.value);
+    let value = this.util.removeFormatting(input.value);
 
     if (value.length > 11) {
       value = value.substring(0, 11);
@@ -250,7 +237,6 @@ export class CadastroProfessorComponent {
       email: '',
       endereco: '',
       telefone: '',
-      id_usuario: null
     };
     this.selectedUserEmail = null;
     this.filteredUsers = [];

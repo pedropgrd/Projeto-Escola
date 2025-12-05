@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../../../components/header/header.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { ApiService } from '../../../core/services/api.service';
+import { UtilService } from '../../../services/util/util.service';
 
 interface AlunoForm {
   nome: string;
@@ -13,7 +14,7 @@ interface AlunoForm {
   endereco: string;
   telefone: string;
   matricula: string;
-  id_usuario: number | null;
+  nome_responsavel: string;
 }
 
 interface AlunoCreateDTO {
@@ -23,7 +24,7 @@ interface AlunoCreateDTO {
   endereco: string;
   telefone: string;
   matricula: string;
-  id_usuario: number;
+  nome_responsavel: string;
 }
 
 @Component({
@@ -36,6 +37,7 @@ interface AlunoCreateDTO {
 export class CadastroAlunoComponent {
   private apiService = inject(ApiService);
   private router = inject(Router);
+  private util = inject(UtilService);
 
   // Form model
   alunoForm: AlunoForm = {
@@ -45,7 +47,7 @@ export class CadastroAlunoComponent {
     endereco: '',
     telefone: '',
     matricula: '',
-    id_usuario: null
+    nome_responsavel: ''
   };
 
   // Signals para estados
@@ -62,6 +64,10 @@ export class CadastroAlunoComponent {
   // Email do usuário selecionado (apenas para exibição)
   selectedUserEmail: string | null = null;
 
+  constructor() {
+  
+  }
+
   onSubmit(): void {
     // Limpar mensagens anteriores
     this.errorMessage.set('');
@@ -77,13 +83,13 @@ export class CadastroAlunoComponent {
 
     // Preparar dados para envio (remover formatação de CPF e telefone)
     const alunoData: AlunoCreateDTO = {
-      nome: this.alunoForm.nome.trim(),
-      cpf: this.removeFormatting(this.alunoForm.cpf),
+      nome: this.alunoForm.nome.trim().toLocaleUpperCase(),
+      cpf: this.util.removeFormatting(this.alunoForm.cpf.trim()),
       data_nascimento: this.alunoForm.data_nascimento,
       endereco: this.alunoForm.endereco.trim(),
-      telefone: this.removeFormatting(this.alunoForm.telefone),
+      telefone: this.util.removeFormatting(this.alunoForm.telefone),
       matricula: this.alunoForm.matricula.trim(),
-      id_usuario: this.alunoForm.id_usuario!
+      nome_responsavel: this.alunoForm.nome_responsavel.trim().toUpperCase()
     };
 
     console.log('Enviando dados:', alunoData);
@@ -122,10 +128,7 @@ export class CadastroAlunoComponent {
     });
   }
 
-  constructor() {
-    // Carregar lista de usuários uma vez
-    this.loadUsers();
-  }
+
 
   validateForm(): boolean {
     // Validar nome
@@ -134,8 +137,13 @@ export class CadastroAlunoComponent {
       return false;
     }
 
+    if (!this.alunoForm.nome_responsavel || this.alunoForm.nome_responsavel.trim().length < 3) {
+      this.errorMessage.set('Nome deve ter no mínimo 3 caracteres');
+      return false;
+    }
+
     // Validar CPF
-    const cpfLimpo = this.removeFormatting(this.alunoForm.cpf);
+    const cpfLimpo = this.util.removeFormatting(this.alunoForm.cpf);
     if (!cpfLimpo || cpfLimpo.length !== 11 || !/^\d+$/.test(cpfLimpo)) {
       this.errorMessage.set('CPF deve conter 11 dígitos numéricos');
       return false;
@@ -148,7 +156,7 @@ export class CadastroAlunoComponent {
     }
 
     // Validar telefone
-    const telefoneLimpo = this.removeFormatting(this.alunoForm.telefone);
+    const telefoneLimpo = this.util.removeFormatting(this.alunoForm.telefone);
     if (!telefoneLimpo || telefoneLimpo.length < 10) {
       this.errorMessage.set('Telefone deve conter no mínimo 10 dígitos');
       return false;
@@ -157,12 +165,6 @@ export class CadastroAlunoComponent {
     // Validar matrícula
     if (!this.alunoForm.matricula || this.alunoForm.matricula.trim().length === 0) {
       this.errorMessage.set('Matrícula é obrigatória');
-      return false;
-    }
-
-    // Validar ID do usuário
-    if (!this.alunoForm.id_usuario || this.alunoForm.id_usuario <= 0) {
-      this.errorMessage.set('ID do usuário é obrigatório');
       return false;
     }
 
@@ -197,7 +199,7 @@ export class CadastroAlunoComponent {
     if (!q) {
       this.filteredUsers = [];
       this.selectedUserEmail = null;
-      this.alunoForm.id_usuario = null;
+      this.alunoForm.cpf = '';
       return;
     }
 
@@ -219,7 +221,7 @@ export class CadastroAlunoComponent {
     } else {
       // não selecionar automaticamente
       this.selectedUserEmail = null;
-      this.alunoForm.id_usuario = null;
+      this.alunoForm.cpf = '';
     }
   }
 
@@ -228,26 +230,19 @@ export class CadastroAlunoComponent {
    */
   selectUser(user: any): void {
     if (!user) return;
-    this.alunoForm.id_usuario = user.id;
+    this.alunoForm.cpf = user.cpf;
     this.selectedUserEmail = user.email || null;
     // esconder sugestões para melhorar UX
     this.filteredUsers = [];
   }
 
-  /**
-   * Remove caracteres especiais, mantendo apenas números
-   */
-  removeFormatting(value: string): string {
-    if (!value) return '';
-    return value.replace(/\D/g, '');
-  }
 
   /**
    * Aplica máscara de CPF enquanto digita
    */
   onCpfInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = this.removeFormatting(input.value);
+    let value = this.util.removeFormatting(input.value);
 
     // Limitar a 11 dígitos
     if (value.length > 11) {
@@ -269,7 +264,7 @@ export class CadastroAlunoComponent {
    */
   onTelefoneInput(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = this.removeFormatting(input.value);
+    let value = this.util.removeFormatting(input.value);
 
     // Limitar a 11 dígitos
     if (value.length > 11) {
@@ -297,7 +292,7 @@ export class CadastroAlunoComponent {
       endereco: '',
       telefone: '',
       matricula: '',
-      id_usuario: null
+      nome_responsavel: ''
     };
   }
 }

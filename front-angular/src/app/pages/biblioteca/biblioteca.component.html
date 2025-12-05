@@ -1,0 +1,63 @@
+<app-header></app-header>
+
+<!-- HERO SECTION -->
+<div class="hero_area">
+    <div class="container">
+        <div class="hero_content">
+            <h1>Biblioteca <span>Digital</span></h1>
+            <p>Acesse nosso acervo de materiais didáticos e livros complementares.</p>
+        </div>
+    </div>
+    <!-- Detalhe decorativo (opcional, pode ser removido se preferir clean) -->
+    <div class="overlay-shape"></div>
+</div>
+
+<div class="library-section">
+    <div class="container">
+        
+        <!-- GRID DE LIVROS -->
+        <div class="books-grid">
+            
+            <div class="book-card" *ngFor="let livro of livros">
+                
+                <!-- Capa do Livro -->
+                <div class="book-cover-wrapper">
+                    <img [src]="livro.imagem" [alt]="livro.titulo" class="book-cover" 
+                         onerror="this.src='assets/images/book-placeholder.png'"> <!-- Fallback se imagem falhar -->
+                    
+                    <div class="category-badge" *ngIf="livro.categoria">
+                        {{ livro.categoria }}
+                    </div>
+                </div>
+
+                <!-- Detalhes -->
+                <div class="book-details">
+                    <h3 class="book-title">{{ livro.titulo }}</h3>
+                    <span class="book-subtitle" *ngIf="livro.subtitulo">{{ livro.subtitulo }}</span>
+                    
+                    <div class="book-actions">
+                        <a [href]="livro.link" target="_blank" mat-stroked-button class="btn-read">
+                            <mat-icon>auto_stories</mat-icon>
+                            LER AGORA
+                        </a>
+                        <!-- Botão secundário opcional -->
+                        <a [href]="livro.link" target="_blank" mat-icon-button class="btn-download" matTooltip="Baixar PDF">
+                            <mat-icon>download</mat-icon>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EMPTY STATE (Caso não tenha livros) -->
+        <div class="empty-state" *ngIf="livros.length === 0">
+            <mat-icon>library_books</mat-icon>
+            <h3>Acervo em atualização</h3>
+            <p>Em breve novos títulos estarão disponíveis.</p>
+        </div>
+
+    </div>
+</div>
+
+<app-footer></app-footer>

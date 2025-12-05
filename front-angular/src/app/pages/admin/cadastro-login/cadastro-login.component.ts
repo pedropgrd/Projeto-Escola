@@ -7,10 +7,11 @@ import { HeaderComponent } from '../../../components/header/header.component';
 import { FooterComponent } from '../../../components/footer/footer.component';
 import { ApiService } from '../../../core/services/api.service';
 import { UserRole } from '../../../core/models/auth.models';
+import { UtilService } from '../../../services/util/util.service';
 
 interface SignupRequest {
   email: string;
-  nome_completo: string;
+  cpf: string | null;
   perfil: UserRole;
   senha: string;
 }
@@ -18,7 +19,7 @@ interface SignupRequest {
 interface SignupResponse {
   id: number;
   email: string;
-  nome_completo: string;
+  cpf: string;
   perfil: string;
   ativo: boolean;
 }
@@ -33,11 +34,11 @@ interface SignupResponse {
 export class CadastroLoginComponent {
   private apiService = inject(ApiService);
   private router = inject(Router);
-
+  private util = inject(UtilService);
   // Form model
   formData = {
     email: '',
-    nome_completo: '',
+    cpf: '',
     perfil: UserRole.ALUNO,
     senha: '',
     confirmarSenha: ''
@@ -54,10 +55,15 @@ export class CadastroLoginComponent {
   // Opções de perfil para o select
   perfis = [
     { value: UserRole.ADMIN, label: 'Administrador' },
-    { value: UserRole.PROFESSOR, label: 'Professor' },
-    { value: UserRole.ALUNO, label: 'Aluno' }
+    // { value: UserRole.PROFESSOR, label: 'Professor' },
+    // { value: UserRole.ALUNO, label: 'Aluno' }
   ];
 
+  ngOnInit(): void {
+    if (this.perfis && this.perfis.length === 1) {
+      this.formData.perfil = this.perfis[0].value;
+    }
+  }
   onSubmit(): void {
     // Limpar mensagens anteriores
     this.errorMessage.set('');
@@ -71,7 +77,7 @@ export class CadastroLoginComponent {
 
     const signupData: SignupRequest = {
       email: this.formData.email,
-      nome_completo: this.formData.nome_completo,
+      cpf: this.formData.cpf || null,
       perfil: this.formData.perfil,
       senha: this.formData.senha
     };
@@ -81,7 +87,7 @@ export class CadastroLoginComponent {
         console.log('Usuário criado com sucesso:', response);
 
         // Mostrar toast de sucesso
-        this.toastMessage.set(`Usuário ${response.nome_completo} criado com sucesso!`);
+        this.toastMessage.set(`Usuário ${response.cpf} criado com sucesso!`);
         this.showToast.set(true);
 
         // Limpar formulário
@@ -100,7 +106,15 @@ export class CadastroLoginComponent {
 
         // Exibir mensagem de erro
         if (error.detail) {
-          this.errorMessage.set(error.detail);
+          // Verifica se detail é um array (erros de validação do Pydantic)
+          if (Array.isArray(error.detail)) {
+            const messages = error.detail.map((err: any) => err.msg).join(', ');
+            this.errorMessage.set(messages);
+          } else if (typeof error.detail === 'string') {
+            this.errorMessage.set(error.detail);
+          } else {
+            this.errorMessage.set('Dados inválidos. Verifique os campos.');
+          }
         } else if (error.status === 400) {
           this.errorMessage.set('Dados inválidos. Verifique os campos.');
         } else if (error.status === 409) {
@@ -116,7 +130,7 @@ export class CadastroLoginComponent {
 
   validateForm(): boolean {
     // Validar campos vazios
-    if (!this.formData.email || !this.formData.nome_completo ||
+    if (!this.formData.email ||
       !this.formData.senha || !this.formData.confirmarSenha) {
       this.errorMessage.set('Por favor, preencha todos os campos');
       return false;
@@ -128,10 +142,12 @@ export class CadastroLoginComponent {
       return false;
     }
 
-    // Validar nome completo (mínimo 3 caracteres)
-    if (this.formData.nome_completo.length < 3) {
-      this.errorMessage.set('Nome completo deve ter no mínimo 3 caracteres');
-      return false;
+    // Validar cpf (se fornecido)
+    if (this.formData.cpf) {
+      if (this.formData.cpf.length < 11) {
+        this.errorMessage.set('CPF deve ter no mínimo 11 caracteres');
+        return false;
+      }
     }
 
     // Validar senha (mínimo 6 caracteres)
@@ -165,7 +181,7 @@ export class CadastroLoginComponent {
   resetForm(): void {
     this.formData = {
       email: '',
-      nome_completo: '',
+      cpf: '',
       perfil: UserRole.ALUNO,
       senha: '',
       confirmarSenha: ''
@@ -174,5 +190,24 @@ export class CadastroLoginComponent {
 
   voltarParaAdmin(): void {
     this.router.navigate(['/admin']);
+  }
+
+  onCpfInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let value = this.util.removeFormatting(input.value);
+
+    // Limitar a 11 dígitos
+    if (value.length > 11) {
+      value = value.substring(0, 11);
+    }
+
+    // Aplicar máscara: 000.000.000-00
+    if (value.length <= 11) {
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d)/, '$1.$2');
+      value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    }
+
+    this.formData.cpf = value;
   }
 }

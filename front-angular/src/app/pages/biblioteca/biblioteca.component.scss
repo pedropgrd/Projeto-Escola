@@ -1,0 +1,191 @@
+// Cores Padrão do Projeto
+$primary-blue: #062348;
+$accent-yellow: #fec913;
+$bg-light: #f4f6f9;
+$text-dark: #333;
+
+.hero_area {
+    background-color: $primary-blue;
+    color: white;
+    padding: 60px 0 80px 0;
+    position: relative;
+    text-align: center;
+    overflow: hidden;
+
+    .hero_content {
+        position: relative;
+        z-index: 2;
+
+        h1 {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+
+            span {
+                color: $accent-yellow;
+            }
+        }
+
+        p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+    }
+}
+
+.library-section {
+    min-height: 73vh;
+    padding: 50px 0;
+    margin-top: -40px; // Efeito sobrepondo o Hero
+}
+
+/* --- GRID DE LIVROS --- */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 40px;
+    padding: 0 15px;
+}
+
+/* --- BOOK CARD --- */
+.book-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(6, 35, 72, 0.15);
+
+        .book-cover {
+            transform: scale(1.05);
+        }
+    }
+}
+
+.book-cover-wrapper {
+    height: 320px; // Altura fixa para a capa
+    background: #eef2f5;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .book-cover {
+        height: 100%;
+        width: 100%;
+        object-fit: cover; // Garante que a imagem preencha sem distorcer
+        transition: transform 0.5s ease;
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: rgba(6, 35, 72, 0.9);
+        color: $accent-yellow;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+}
+
+.book-details {
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+
+    .book-title {
+        color: $primary-blue;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 5px;
+        line-height: 1.4;
+    }
+
+    .book-subtitle {
+        color: #777;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .book-actions {
+        margin-top: auto; // Empurra os botões para o final
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+
+        .btn-read {
+            border-color: $primary-blue;
+            color: $primary-blue;
+            font-weight: 700;
+            width: 100%;
+
+            mat-icon {
+                margin-right: 5px;
+            }
+
+            &:hover {
+                background-color: $primary-blue;
+                color: white;
+            }
+        }
+
+        .btn-download {
+            color: #888;
+
+            &:hover {
+                color: $accent-yellow;
+                background: #fafafa;
+            }
+        }
+    }
+}
+
+/* --- EMPTY STATE --- */
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #999;
+
+    mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 15px;
+        opacity: 0.3;
+        color: $primary-blue;
+    }
+
+    h3 {
+        color: $primary-blue;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .book-cover-wrapper {
+        height: 250px;
+    }
+}

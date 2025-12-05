@@ -1,0 +1,94 @@
+.hero_area {
+    background-color: #062348;
+    color: white;
+    padding: 40px 0;
+
+    .hero_content {
+        h1 {
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 2rem;
+
+            span {
+                color: #fec913;
+            }
+        }
+
+        p {
+            opacity: 0.8;
+            margin: 0;
+        }
+    }
+}
+
+.main-container {
+    padding: 40px 15px;
+    min-height: 60vh;
+    display: flex;
+    justify-content: center;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 800px;
+}
+
+.form-row{
+    padding-left: 17px;
+    gap: 10px;
+}
+
+.custom-card {
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 25px;
+        color: #062348;
+        border-bottom: 2px solid #fec913;
+        padding-bottom: 10px;
+        width: fit-content;
+
+        mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+        }
+
+        h3 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+    }
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+    .btn-publish {
+        background-color: #fec913 !important;
+        color: #062348 !important;
+        font-weight: 700;
+        padding: 8px 30px;
+        font-size: 1rem;
+
+        mat-icon {
+            margin-left: 8px;
+        }
+    }
+}

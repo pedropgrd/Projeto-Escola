@@ -66,7 +66,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(
     user_id: int,
     email: str,
-    nome_completo: str,
     perfil: str
 ) -> str:
     """
@@ -75,7 +74,6 @@ def create_access_token(
     Payload do token:
     - sub: ID do usuário
     - email: E-mail do usuário
-    - nome: Nome completo
     - perfil: Role (ADMIN, PROFESSOR, ALUNO)
     - iat: Data/hora de criação (issued at)
     - exp: Data/hora de expiração
@@ -91,7 +89,6 @@ def create_access_token(
     payload = {
         "sub": str(user_id),           # Subject (ID do usuário)
         "email": email,                 # E-mail
-        "nome": nome_completo,          # Nome completo
         "perfil": perfil,               # Role/Perfil
         "iat": iat,                     # Issued at (unix timestamp)
         "exp": exp,                     # Expiration time (unix timestamp)
@@ -262,7 +259,7 @@ def require_role(*allowed_roles: str):
             # Apenas ADMIN e PROFESSOR podem acessar
     
     Args:
-        *allowed_roles: Perfis permitidos (ADMIN, PROFESSOR, ALUNO)
+        *allowed_roles: Perfis permitidos (ADMIN, PROFESSOR, ALUNO, SERVIDOR)
     
     Returns:
         Função de dependência do FastAPI

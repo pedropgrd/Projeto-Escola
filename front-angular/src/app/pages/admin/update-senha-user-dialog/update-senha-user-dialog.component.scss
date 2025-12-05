@@ -1,0 +1,67 @@
+.dialog-container {
+    min-width: 380px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.dialog-header {
+    background: #062348;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    mat-icon {
+        color: white;
+    }
+}
+
+.dialog-content {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-user {
+    background: #f0f4f8;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #333;
+    font-size: 0.9rem;
+
+    mat-icon {
+        color: #062348;
+        font-size: 20px;
+        height: 20px;
+        width: 20px;
+    }
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+
+    .btn-save {
+        background-color: #fec913 !important;
+        color: #062348 !important;
+        font-weight: 700;
+    }
+}

@@ -1,0 +1,118 @@
+<div class="dialog-container">
+    <div class="dialog-header">
+        <h2>Vincular Alunos</h2>
+        <button mat-icon-button (click)="dialogRef.close()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content content-grid">
+
+        <div class="target-column sticky-card">
+            <h3 class="column-title">
+                <mat-icon>class</mat-icon> Turma Destino
+            </h3>
+
+            <form [formGroup]="turmaForm">
+                <div class="form-group mb-3 d-flex flex-column">
+                    <label>Turma Selecionada</label>
+                    <input class="form-control" formControlName="nome_turma" readonly>
+                </div>
+            </form>
+
+            <div class="selection-summary">
+                <div class="summary-header">
+                    <span>Alunos Selecionados</span>
+                    <span class="badge-count">{{ selection.selected.length }}</span>
+                </div>
+
+                <div class="selected-list">
+                    <div class="selected-item" *ngFor="let aluno of selection.selected">
+                        <div class="item-info">
+                            <span class="item-name">{{ aluno.nome }}</span>
+                            <span class="item-cpf">{{ maskCpfHidden(aluno.cpf) }}</span>
+                        </div>
+                        <button mat-icon-button color="warn" (click)="selection.deselect(aluno)">
+                            <mat-icon>remove_circle_outline</mat-icon>
+                        </button>
+                    </div>
+
+                    <div class="empty-selection" *ngIf="selection.selected.length === 0">
+                        <p>Nenhum aluno selecionado.</p>
+                        <small>Marque os alunos na tabela ao lado.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-footer">
+                <button mat-raised-button color="primary" class="btn-confirm w-100"
+                    [disabled]="selection.selected.length === 0 || isSaving()" (click)="onSubmit()">
+                    <mat-spinner diameter="20" *ngIf="isSaving()"></mat-spinner>
+                    <span *ngIf="!isSaving()">CONFIRMAR MATRÍCULAS</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="source-column">
+
+            <div class="search-box" [formGroup]="searchForm">
+                <mat-icon>search</mat-icon>
+                <input type="text" formControlName="termo" placeholder="Buscar aluno por Nome, CPF ou Matrícula...">
+            </div>
+
+            <div class="table-container relative-loading">
+
+                <div *ngIf="isLoading()" class="loading-overlay">
+                    <mat-spinner diameter="40"></mat-spinner>
+                </div>
+
+                <table mat-table [dataSource]="alunos()" class="custom-table">
+
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox (change)="$event ? toggleAllRows() : null"
+                                [checked]="selection.hasValue() && isAllSelected()"
+                                [indeterminate]="selection.hasValue() && !isAllSelected()" color="primary">
+                            </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                            <mat-checkbox (click)="$event.stopPropagation()"
+                                (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)"
+                                color="primary">
+                            </mat-checkbox>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="matricula">
+                        <th mat-header-cell *matHeaderCellDef> Matrícula </th>
+                        <td mat-cell *matCellDef="let element">
+                            <strong>{{ element.matricula }}</strong>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="nome">
+                        <th mat-header-cell *matHeaderCellDef> Nome </th>
+                        <td mat-cell *matCellDef="let element">
+                            <strong>{{ element.nome }}</strong>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="cpf">
+                        <th mat-header-cell *matHeaderCellDef> CPF </th>
+                        <td mat-cell *matCellDef="let element" class="text-muted">
+                            {{ maskCpfHidden(element.cpf) }}
+                        </td>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)">
+                    </tr>
+                </table>
+
+                <mat-paginator [length]="totalAlunos()" [pageSize]="pageSize()" [pageSizeOptions]="pageSizeOptions"
+                    (page)="onPageChange($event)">
+                </mat-paginator>
+            </div>
+        </div>
+    </div>
+</div>

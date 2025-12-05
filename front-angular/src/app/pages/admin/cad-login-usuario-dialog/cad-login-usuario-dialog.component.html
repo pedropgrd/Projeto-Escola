@@ -1,0 +1,84 @@
+<div class="dialog-container">
+
+    <!-- CABEÇALHO -->
+    <div class="dialog-header">
+        <div class="header-title">
+            <mat-icon class="header-icon">account_circle</mat-icon>
+            <div>
+                <h2>Criar Acesso (Login)</h2>
+                <span class="subtitle">Vincular usuário ao cadastro existente</span>
+            </div>
+        </div>
+        <button mat-icon-button (click)="dialogRef.close(false)" tabindex="-1">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- CONTEÚDO -->
+    <div class="dialog-content">
+
+        <!-- INFO CARD (CONTEXTO DO VÍNCULO) -->
+        <div class="target-info">
+            <div class="info-label">
+                VINCULANDO ACESSO PARA {{ data.vincularPara }}:
+            </div>
+            <div class="info-name">
+                {{ data.nome | uppercase }}
+            </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-grid">
+
+            <!-- CAMPO CPF -->
+        <mat-form-field appearance="outline">
+            <mat-label>CPF do Usuário</mat-label>
+            <input matInput formControlName="cpf" placeholder="000.000.000-00" maxlength="14" (input)="onCpfInput($event)"
+                [disabled]="true">
+            <mat-icon matSuffix>badge</mat-icon>
+            <mat-error *ngIf="form.get('cpf')?.hasError('minlength')">CPF incompleto</mat-error>
+        </mat-form-field>
+
+            <!-- CAMPO EMAIL -->
+            <mat-form-field appearance="outline">
+                <mat-label>E-mail de Acesso</mat-label>
+                <input matInput formControlName="email" type="email" placeholder="exemplo@escola.com">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="form.get('email')?.hasError('email')">E-mail inválido</mat-error>
+                <mat-error *ngIf="form.get('email')?.hasError('required')">E-mail é obrigatório</mat-error>
+            </mat-form-field>
+
+            <!-- CAMPO SENHA -->
+            <mat-form-field appearance="outline">
+                <mat-label>Senha</mat-label>
+                <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="senha">
+
+                <button mat-icon-button matSuffix type="button" (click)="togglePassword($event)"
+                    [attr.aria-label]="'Ocultar senha'" [attr.aria-pressed]="hidePassword()">
+                    <mat-icon>{{hidePassword() ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+                <mat-error *ngIf="form.get('senha')?.hasError('minlength')">Mínimo de 6 caracteres</mat-error>
+                <mat-error *ngIf="form.get('senha')?.hasError('required')">Senha é obrigatória</mat-error>
+            </mat-form-field>
+
+            <!-- AVISO INFORMATIVO -->
+            <div class="alert-info">
+                <mat-icon>info</mat-icon>
+                <p>Este usuário terá permissão de perfil <strong>{{ data.vincularPara }}</strong>.</p>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- AÇÕES (RODAPÉ) -->
+    <div class="dialog-actions">
+        <button mat-stroked-button (click)="dialogRef.close(false)" [disabled]="isLoading()">
+            CANCELAR
+        </button>
+
+        <button mat-raised-button class="btn-save" (click)="onSubmit()" [disabled]="form.invalid || isLoading()">
+            <mat-spinner diameter="20" *ngIf="isLoading()"></mat-spinner>
+            <span *ngIf="!isLoading()">CRIAR ACESSO</span>
+        </button>
+    </div>
+</div>

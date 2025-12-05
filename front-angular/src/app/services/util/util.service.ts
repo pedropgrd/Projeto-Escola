@@ -442,4 +442,13 @@ export class UtilService {
 
     return cleaned;
   }
+
+  /**
+   * Remove caracteres especiais, mantendo apenas números
+   */
+  removeFormatting(value: string): string {
+    if (!value) return '';
+    return value.replace(/\D/g, '');
+  }
+  
 }

@@ -30,7 +30,7 @@ async def create_admin():
     
     # Dados do admin
     email = input("E-mail do admin [admin.wag@escola.com]: ").strip() or "admin.wag@escola.com"
-    nome_completo = input("Nome completo [Administrador do Sistema]: ").strip() or "Administrador do Sistema"
+    cpf = input("CPF do admin (opcional, 11 dígitos): ").strip() or None
     senha = input("Senha (mínimo 6 caracteres): ").strip()
     
     # Validações
@@ -41,6 +41,10 @@ async def create_admin():
     if len(senha) > 72:
         print("⚠️  Aviso: Senha será truncada para 72 caracteres (limite do bcrypt)")
         senha = senha[:72]
+    
+    if cpf and (len(cpf) != 11 or not cpf.isdigit()):
+        print("❌ Erro: CPF deve conter exatamente 11 dígitos")
+        return
     
     # Conecta ao banco
     async with async_session() as session:
@@ -56,7 +60,7 @@ async def create_admin():
         # Cria o usuário admin
         admin = User(
             email=email,
-            nome_completo=nome_completo,
+            cpf=cpf,
             senha_hash=get_password_hash(senha),
             perfil=UserRole.ADMIN,
             ativo=True
@@ -70,7 +74,8 @@ async def create_admin():
         print("✅ Usuário ADMIN criado com sucesso!")
         print()
         print(f"📧 E-mail: {admin.email}")
-        print(f"👤 Nome: {admin.nome_completo}")
+        if admin.cpf:
+            print(f"🆔 CPF: {admin.cpf}")
         print(f"🔑 Perfil: {admin.perfil}")
         print(f"🆔 ID: {admin.id}")
         print()

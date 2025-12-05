@@ -1,0 +1,191 @@
+<app-header></app-header>
+
+<!-- HERO SECTION (Mais compacto no mobile) -->
+<div class="hero_area">
+    <div class="container">
+        <div class="hero_content">
+            <h1>Gestão de <span class="highlight">Turmas</span></h1>
+            <p>Visualize e gerencie a grade curricular da instituição.</p>
+        </div>
+    </div>
+</div>
+
+<section class="main-content">
+    <div class="container">
+
+        <!-- CARD PRINCIPAL -->
+        <div class="card-box">
+
+            <!-- HEADER DA LISTA -->
+            <div class="list-header">
+                <div class="title-wrapper">
+                    <div class="icon-box">
+                        <mat-icon>class</mat-icon>
+                    </div>
+                    <div class="title-text">
+                        <h3>Turmas Cadastradas</h3>
+                        <span class="subtitle">Ano Letivo Vigente</span>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <span class="badge-count">{{ totalTurmas() }} turmas</span>
+
+                    @if(auth.isAdmin()){
+                    <button mat-raised-button class="btn-new" routerLink="/cadastro-turma">
+                        <mat-icon>add</mat-icon> NOVA TURMA
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- BARRA DE BUSCA AVANÇADA -->
+            <div class="advanced-search-bar">
+
+                <!-- Filtros (Grid Responsivo) -->
+                <div class="search-grid">
+
+                    <!-- 1. Tipo de Filtro -->
+                    <div class="filter-group">
+                        <mat-form-field appearance="outline" class="w-100 dense-field">
+                            <mat-label>Filtrar por</mat-label>
+                            <mat-select [formControl]="filterTypeControl">
+                                <mat-option *ngFor="let option of filterOptions" [value]="option.value">
+                                    {{ option.label }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon matPrefix>filter_list</mat-icon>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- 2. Input de Busca -->
+                    <div class="input-group">
+                        <mat-form-field appearance="outline" class="w-100 dense-field">
+                            <mat-label>Digite para buscar...</mat-label>
+                            <input matInput [formControl]="searchControl" [placeholder]="getPlaceholder()">
+                            <mat-icon matPrefix>search</mat-icon>
+
+                            <button mat-icon-button matSuffix *ngIf="searchControl.value"
+                                (click)="searchControl.setValue('')" matTooltip="Limpar">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- 3. Botão Limpar -->
+                    <div class="action-group">
+                        <button mat-stroked-button class="clear-btn" (click)="limparFiltros()"
+                            [disabled]="!searchControl.value">
+                            Limpar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOADING -->
+            <div *ngIf="isLoading()" class="loading-state">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Carregando dados...</p>
+            </div>
+
+            <!-- TABELA RESPONSIVA (VIRA CARD NO MOBILE) -->
+            <div class="table-container" *ngIf="!isLoading()">
+                <table class="responsive-table">
+                    <thead>
+                        <tr>
+                            <th width="25%">Turma / Ano</th>
+                            <th width="20%">Série</th>
+                            <th width="15%">Turno</th>
+                            <th width="25%">Disciplina / Prof.</th>
+                            @if(auth.isAdmin()){
+                            <th width="15%" class="text-end">Ações</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let turma of turmas()">
+
+                            <!-- COLUNA 1: IDENTIFICAÇÃO -->
+                            <td data-label="Turma">
+                                <div class="cell-primary" (click)="openListAlunoTurmaDialog(turma)">
+                                    <span class="turma-nome">{{ turma.nome }}</span>
+                                    <span class="turma-ano">
+                                        <mat-icon>calendar_today</mat-icon> {{ turma.ano_letivo }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- COLUNA 2: SÉRIE -->
+                            <td data-label="Série">
+                                <span class="text-serie">{{ turma.serie }}</span>
+                            </td>
+
+                            <!-- COLUNA 3: TURNO -->
+                            <td data-label="Turno">
+                                <span class="badge-turno" [ngClass]="turma.turno.toLowerCase()">
+                                    {{ getTurnoLabel(turma.turno) }}
+                                </span>
+                            </td>
+
+                            <!-- COLUNA 4: DETALHES -->
+                            <td data-label="Detalhes">
+                                <div class="details-column">
+                                    <div class="detail-item">
+                                        <mat-icon class="icon-tiny">menu_book</mat-icon>
+                                        <span>{{ turma.nome_disciplina || '---' }}</span>
+                                    </div>
+                                    <div class="detail-item text-muted">
+                                        <mat-icon class="icon-tiny">person</mat-icon>
+                                        <span>{{ turma.nome_professor || '---' }}</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- COLUNA 5: AÇÕES (ADMIN) -->
+                            @if(auth.isAdmin()){
+                            <td data-label="Ações" class="actions-cell">
+                                <div class="actions-wrapper">
+
+                                    <!-- Botão + Aluno -->
+                                    <button mat-icon-button class="btn-action add"
+                                        (click)="openCadAlunoTurmaDialog(turma)" matTooltip="Matricular Aluno">
+                                        <mat-icon>person_add</mat-icon>
+                                    </button>
+
+                                    <!-- Editar -->
+                                    <button mat-icon-button class="btn-action edit" (click)="editarTurma(turma)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+
+                                    <!-- Excluir -->
+                                    <button mat-icon-button class="btn-action delete" (click)="removerTurma(turma)">
+                                        <mat-icon>delete_outline</mat-icon>
+                                    </button>
+                                </div>
+                            </td>
+                            }
+                        </tr>
+
+                        <!-- EMPTY STATE -->
+                        <tr *ngIf="turmas().length === 0" class="no-data-row">
+                            <td colspan="5">
+                                <div class="empty-state">
+                                    <mat-icon>class</mat-icon>
+                                    <p>Nenhuma turma encontrada.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINAÇÃO -->
+            <mat-paginator [length]="totalTurmas()" [pageSize]="pageSize()" [pageSizeOptions]="pageSizeOptions"
+                (page)="onPageChange($event)" showFirstLastButtons class="custom-paginator">
+            </mat-paginator>
+
+        </div>
+    </div>
+</section>
+
+<app-footer></app-footer>

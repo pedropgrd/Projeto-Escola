@@ -8,11 +8,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.component')
             .then(m => m.HomeComponent)
     },
-    {
-        path: 'noticias',
-        loadComponent: () => import('./pages/noticias/noticias.component')
-            .then(m => m.NoticiasComponent)
-    },
+    // {
+    //     path: 'noticias',
+    //     loadComponent: () => import('./pages/noticias/noticias.component')
+    //         .then(m => m.NoticiasComponent)
+    // },
     {
         path: 'login',
         loadComponent: () => import('./pages/login/login.component')
@@ -47,8 +47,57 @@ export const routes: Routes = [
             .then(m => m.CadastroProfessorComponent),
         canActivate: [adminGuard]
     },
+    {
+        path: 'cadastro-disciplina',
+        loadComponent: () => import('./pages/admin/cadastro-disciplina/cadastro-disciplina.component')
+            .then(m => m.CadastroDisciplinaComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'cadastro-turma',
+        loadComponent: () => import('./pages/admin/cadastro-turma/cadastro-turma.component')
+            .then(m => m.CadastroTurmaComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'gerenciar-usuarios',
+        loadComponent: () => import('./pages/admin/gerenciar-usuarios/gerenciar-usuarios.component')
+            .then(m => m.GerenciarUsuariosComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'nova-noticia',
+        loadComponent: () => import('./pages/admin/nova-noticia/nova-noticia.component')
+            .then(m => m.NovaNoticiaComponent),
+        canActivate: [adminGuard]
+    },
+    {
+        path: 'cadastro-servidor',
+        loadComponent: () => import('./pages/admin/cadastro-servidor/cadastro-servidor.component')
+            .then(m => m.CadastroServidorComponent),
+        canActivate: [adminGuard]
+    },
 
 
+// Turmas - Usuários autenticados
+    {
+        path: 'turmas',
+        loadComponent: () => import('./pages/turmas/turmas.component')
+            .then(m => m.TurmasComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path:'noticias',
+        loadComponent: () => import('./pages/noticias/noticias.component')
+            .then(m => m.NoticiasComponent),
+        canActivate: [authGuard]
+    },
+    {
+        path:'biblioteca',
+        loadComponent: () => import('./pages/biblioteca/biblioteca.component')
+            .then(m => m.BibliotecaComponent),
+        canActivate: [authGuard]
+    },
     // ==================== ROTA WILDCARD ====================
     {
         path: '**',

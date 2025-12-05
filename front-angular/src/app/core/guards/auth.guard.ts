@@ -122,8 +122,10 @@ export const adminGuard: CanActivateFn = (
         return false;
     }
 
-    if (!authService.hasRole(UserRole.ADMIN)) {
-        console.error('Acesso negado - apenas ADMIN');
+    const hasAccess = authService.hasAnyRole([UserRole.ADMIN, UserRole.SERVIDOR]);
+
+    if (!hasAccess) {
+        console.error('Acesso negado - apenas ADMIN e SERVIDOR');
         router.navigate(['/'], {
             queryParams: { error: 'admin_only' }
         });

@@ -11,13 +11,14 @@ class Aluno(SQLModel, table=True):
     __tablename__ = "aluno"
     
     id_aluno: Optional[int] = Field(default=None, primary_key=True)
-    id_usuario: int = Field(foreign_key="usuarios.id", unique=True, nullable=False)
+    id_usuario: Optional[int] = Field(default=None, foreign_key="usuarios.id", unique=True)
     matricula: str = Field(unique=True, index=True, nullable=False, max_length=20)
     nome: str = Field(nullable=False, max_length=150)
     cpf: str = Field(unique=True, index=True, nullable=False, max_length=14)
     data_nascimento: Optional[date] = None
     endereco: Optional[str] = Field(default=None, max_length=255)
     telefone: Optional[str] = Field(default=None, max_length=20)
+    nome_responsavel: str = Field(nullable=False, max_length=150)
     
     # Soft delete
     is_deleted: bool = Field(default=False)
@@ -39,6 +40,7 @@ class Aluno(SQLModel, table=True):
                 "cpf": "12345678800",
                 "data_nascimento": "2010-05-15",
                 "endereco": "Rua das Flores, 123",
-                "telefone": "11987654321"
+                "telefone": "11987654321",
+                "nome_responsavel": "Maria Silva Santos"
             }
         }
